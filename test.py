@@ -37,4 +37,13 @@ def test_datetimefortran():
     assert_allclose(utsec[0],43200)
     assert_allclose(stl[0],14.8)
 
-test_datetimefortran()
+def test_worldgrid():
+    try: import worldgrid
+    except: from . import worldgrid
+    glat,glon = worldgrid.latlonworldgrid(latstep=10,lonstep=20)
+    assert_allclose(glat[0,0],-90)
+    assert (glat[0,0]==glat[0,:]).all()
+    assert_allclose(glon[0,1],-160)
+    assert (glon[0,0]==glon[:,0]).all()
+
+test_worldgrid()
