@@ -9,7 +9,7 @@ def datetime2gtd(dtime,glon=nan):
     """
     Inputs:
     dtime: Numpy 1-D array of datetime.datetime OR string suitable for dateutil.parser.parse
-    glon: Numpy 2-D array of geodetic longitudes
+    glon: Numpy 2-D array of geodetic longitudes (degrees)
 
     Outputs:
     iyd: day of year
@@ -61,7 +61,7 @@ def yeardec2datetime(atime):
     boy = datetime(year, 1, 1)
     eoy = datetime(year + 1, 1, 1)
     seconds = remainder * (eoy - boy).total_seconds()
-    return boy + datetime.timedelta(seconds=seconds)
+    return boy + timedelta(seconds=seconds)
 
 def datetime2yeardec(adatetime):
     """
