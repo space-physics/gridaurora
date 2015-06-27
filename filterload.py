@@ -3,7 +3,7 @@ from __future__ import print_function,absolute_import,division
 from numpy import exp, arange, log, ones_like, isfinite,spacing
 from scipy.interpolate import interp1d
 import h5py
-from os.path import join
+from os.path import join,expanduser
 from pandas import DataFrame
 from warnings import warn
 # consider atmosphere
@@ -46,24 +46,24 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
             fwl = interp1d(newLambda,ones_like(newLambda),kind='linear')
     else:
         fwl = interp1d(newLambda,ones_like(newLambda),kind='linear')
-    atmTinterp = exp(fwl(newLambda))
+    atmTinterp = fwl(newLambda)
     if not isfinite(atmTinterp).all():
         warn('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 #%% BG3 filter
-    with h5py.File(bg3fn,'r',libver='latest') as f:
+    with h5py.File(expanduser(bg3fn),'r',libver='latest') as f:
         fbg3  = interp1d(f['/lamb'], log(f['/T']), kind='linear')
 #%% camera window
-    with h5py.File(windfn,'r',libver='latest') as f:
+    with h5py.File(expanduser(windfn),'r',libver='latest') as f:
         fwind = interp1d(f['/lamb'], log(f['/T']), kind='linear')
 #%% quantum efficiency
-    with h5py.File(qefn,'r',libver='latest') as f:
+    with h5py.File(expanduser(qefn),'r',libver='latest') as f:
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
 
 
     T = DataFrame(index=newLambda, data = {'bg3':   exp(fbg3(newLambda)),
                                            'window':exp(fwind(newLambda)),
                                            'qe':    exp(fqe(newLambda)),
-                                           'atm':   atmTinterp})
+                                           'atm':   atmTinterp}) #atm is ALREADY exp()
 
     T['sysNObg3'] = T[['window','qe','atm']].prod(axis=1)
     T['sys']      = T[['window','qe','bg3','atm']].prod(axis=1)
