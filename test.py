@@ -46,4 +46,3 @@ def test_worldgrid():
     assert_allclose(glon[0,1],-160)
     assert (glon[0,0]==glon[:,0]).all()
 
-test_worldgrid()
