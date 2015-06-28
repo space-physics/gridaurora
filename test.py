@@ -62,8 +62,13 @@ def test_opticalfilter():
 
     T = filterload.getSystemT(testlambda,bg3fn,windfn,qefn,obsalt_km,zenang_deg)
     assert_allclose(T.index,testlambda)
-    assert_allclose(T['sys'].values,
+    try: #with lowtran
+        assert_allclose(T['sys'].values,
                     [7.965214e-43, 4.411237e-01,9.311972e-04,1.016631e-05, 7.668004e-01],
+                    rtol=1e-6)
+    except:
+        assert_allclose(T['sys'].values,
+                    [8.213363e-4, 5.790669e-1, 1.058124e-3, 1.133114e-5, 7.854393e-1],
                     rtol=1e-6)
 
 if __name__ == '__main__':
