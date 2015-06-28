@@ -1,0 +1,3 @@
+[submodule "pybashutils"]
+	path = pybashutils
+	url = https://github.com/scienceopen/pybashutils
