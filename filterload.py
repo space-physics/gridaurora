@@ -14,7 +14,7 @@ try:
         from lowtran.pylowtran7 import golowtran
     useatm = True
 except ImportError as e:
-    warn('** filterload: failure to load LOWTRAN atmosphere model, proceeding without '
+    warn('failure to load LOWTRAN atmosphere model, proceeding without '
          'atmospheric absorption model.  {}'.format(e))
     useatm=False
 '''
@@ -43,10 +43,10 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
             atmTcleaned[atmTcleaned==0] = spacing(1) # to avoid log10(0)
             fwl = interp1d(atmT.index,log(atmTcleaned),axis=0)
         except AttributeError: #problem with lowtran
-            fwl = interp1d(newLambda,ones_like(newLambda),kind='linear')
+            fwl = interp1d(newLambda,log(ones_like(newLambda)),kind='linear')
     else:
-        fwl = interp1d(newLambda,ones_like(newLambda),kind='linear')
-    atmTinterp = fwl(newLambda)
+        fwl = interp1d(newLambda,log(ones_like(newLambda)),kind='linear')
+    atmTinterp = exp(fwl(newLambda))
     if not isfinite(atmTinterp).all():
         warn('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 #%% BG3 filter
