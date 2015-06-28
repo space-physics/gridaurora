@@ -4,3 +4,4 @@ dateutil
 numpy
 scipy
 nose
+h5py
