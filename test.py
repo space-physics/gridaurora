@@ -7,7 +7,8 @@ from os.path import join
 from warnings import warn
 #%% ztanh
 def test_ztanh():
-    from .ztanh import setupz # . for nose
+    try: from .ztanh import setupz # . for nose
+    except: from ztanh import setupz
     zgrid = setupz(np=300, zmin=90, gridmin=1.5, gridmax=10.575)
     assert_allclose(zgrid[[0,99,-1]],[90., 701.93775845, 2999.04573563])
 #%% fortrandates
@@ -71,6 +72,13 @@ def test_opticalfilter():
                     [8.213363e-4, 5.790669e-1, 1.058124e-3, 1.133114e-5, 7.854393e-1],
                     rtol=1e-6)
 
+    assert ((0 <= T.values) & (T.values <= 1)).all()
+
 if __name__ == '__main__':
-    warn("You must use  'nosetests' with this function.  Nothing tested.")
-    raise NotImplementedError
+    test_ztanh()
+    test_datetimefortran()
+    test_fortrandates()
+    test_opticalfilter()
+    test_utc()
+    test_worldgrid()
+
