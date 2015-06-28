@@ -3,7 +3,8 @@ from __future__ import division,absolute_import
 from datetime import datetime
 from numpy.testing import assert_allclose
 from pytz import timezone
-from six import integer_types
+from os.path import join
+from warnings import warn
 #%% ztanh
 def test_ztanh():
     from .ztanh import setupz # . for nose
@@ -46,3 +47,25 @@ def test_worldgrid():
     assert_allclose(glon[0,1],-160)
     assert (glon[0,0]==glon[:,0]).all()
 
+def test_opticalfilter():
+    try: import filterload
+    except: from . import filterload
+
+    dpath = 'precompute'
+    bg3fn =  join(dpath,'BG3transmittance.h5')
+    windfn = join(dpath,'ixonWindowT.h5')
+    qefn =   join(dpath,'emccdQE.h5')
+
+    testlambda = [250, 427.8, 555.7, 630.0, 777.4]
+    obsalt_km = 0
+    zenang_deg= 0
+
+    T = filterload.getSystemT(testlambda,bg3fn,windfn,qefn,obsalt_km,zenang_deg)
+    assert_allclose(T.index,testlambda)
+    assert_allclose(T['sys'].values,
+                    [7.965214e-43, 4.411237e-01,9.311972e-04,1.016631e-05, 7.668004e-01],
+                    rtol=1e-6)
+
+if __name__ == '__main__':
+    warn("You must use  'nosetests' with this function.  Nothing tested.")
+    raise NotImplementedError
