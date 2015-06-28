@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/scienceopen/gridaurora.svg?branch=master)](https://travis-ci.org/scienceopen/gridaurora)
+[![Code Climate](https://codeclimate.com/github/scienceopen/gridaurora/badges/gpa.svg)](https://codeclimate.com/github/scienceopen/gridaurora)
+
 # gridaurora
 Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling
 
