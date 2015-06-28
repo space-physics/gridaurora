@@ -1,3 +1,6 @@
 [submodule "pybashutils"]
 	path = pybashutils
 	url = https://github.com/scienceopen/pybashutils
+[submodule "lowtran"]
+	path = lowtran
+	url = https://github.com/scienceopen/lowtran
