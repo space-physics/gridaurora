@@ -28,7 +28,6 @@ script:
          echo "running coverage";
         coverage run test.py;
      else
-        pip -q install nose;
         nosetests -v test.py;
     fi
 
