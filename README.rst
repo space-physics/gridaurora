@@ -1,8 +1,14 @@
-[![Build Status](https://travis-ci.org/scienceopen/gridaurora.svg?branch=master)](https://travis-ci.org/scienceopen/gridaurora)
-[![Code Climate](https://codeclimate.com/github/scienceopen/gridaurora/badges/gpa.svg)](https://codeclimate.com/github/scienceopen/gridaurora)
-[![Coverage Status](https://coveralls.io/repos/scienceopen/gridaurora/badge.svg)](https://coveralls.io/r/scienceopen/gridaurora)
+.. image:: https://travis-ci.org/scienceopen/gridaurora.svg?branch=master
+    :target: https://travis-ci.org/scienceopen/gridaurora 
+.. image:: https://codeclimate.com/github/scienceopen/gridaurora/badges/gpa.svg
+   :target: https://codeclimate.com/github/scienceopen/gridaurora
+   :alt: Code Climate
+. image:: https://coveralls.io/repos/scienceopen/gridaurora/badge.svg?branch=master&service=github 
+    :target: https://coveralls.io/github/scienceopen/gridaurora?branch=master
 
-# gridaurora
+==========
+gridaurora
+==========
 Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling
 
 ========        ===========
