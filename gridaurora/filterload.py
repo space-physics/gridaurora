@@ -8,10 +8,7 @@ from pandas import DataFrame
 from warnings import warn
 # consider atmosphere
 try:
-    try:
-        from .lowtran.pylowtran7 import golowtran
-    except Exception:
-        from lowtran.pylowtran7 import golowtran
+    from lowtran.pylowtran7 import golowtran
     useatm = True
 except ImportError as e:
     warn('failure to load LOWTRAN atmosphere model, proceeding without '

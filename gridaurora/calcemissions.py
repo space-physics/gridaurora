@@ -6,10 +6,7 @@ from numpy import trapz, isfinite, concatenate, tile, nansum
 import h5py
 from pandas import DataFrame
 #
-try:
-    from .filterload import getSystemT
-except Exception:
-    from filterload import getSystemT
+from .filterload import getSystemT
 """
 inputs:
 spec: excitation rates, 3-D Panel, dimensions reaction x altitude x time
