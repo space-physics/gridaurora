@@ -7,14 +7,12 @@ from os.path import join
 from warnings import warn
 #%% ztanh
 def test_ztanh():
-    try: from .ztanh import setupz # . for nose
-    except: from ztanh import setupz
+    from gridaurora.ztanh import setupz
     zgrid = setupz(np=300, zmin=90, gridmin=1.5, gridmax=10.575)
     assert_allclose(zgrid[[0,99,-1]],[90., 701.93775845, 2999.04573563])
 #%% fortrandates
 def test_fortrandates():
-    try: import fortrandates
-    except: from . import fortrandates
+    from gridaurora import fortrandates
     adatetime=datetime(2013,7,2,12,0,0)
     yeardec = fortrandates.datetime2yeardec(adatetime)
     assert_allclose(yeardec,2013.5)
@@ -22,8 +20,7 @@ def test_fortrandates():
     assert fortrandates.yeardec2datetime(yeardec) == adatetime
 
 def test_utc():
-    try: import fortrandates
-    except: from . import fortrandates
+    from gridaurora import fortrandates
     adatetime=datetime(2013,7,2,12,0,0)
     estdt = timezone('EST').localize(adatetime)
     utcdt = fortrandates.forceutc(estdt)
@@ -31,8 +28,7 @@ def test_utc():
     assert utcdt.tzname()=='UTC'
 
 def test_datetimefortran():
-    try: import fortrandates
-    except: from . import fortrandates
+    from gridaurora import fortrandates
     adatetime=datetime(2013,7,2,12,0,0)
     iyd,utsec,stl= fortrandates.datetime2gtd(adatetime,glon=42)
     assert iyd[0]==183
@@ -40,17 +36,15 @@ def test_datetimefortran():
     assert_allclose(stl[0],14.8)
 
 def test_worldgrid():
-    try: import worldgrid
-    except: from . import worldgrid
-    glat,glon = worldgrid.latlonworldgrid(latstep=10,lonstep=20)
+    from gridaurora.worldgrid import latlonworldgrid
+    glat,glon = latlonworldgrid(latstep=10,lonstep=20)
     assert_allclose(glat[0,0],-90)
     assert (glat[0,0]==glat[0,:]).all()
     assert_allclose(glon[0,1],-160)
     assert (glon[0,0]==glon[:,0]).all()
 
 def test_opticalfilter():
-    try: import filterload
-    except: from . import filterload
+    from gridaurora import filterload
 
     dpath = 'precompute'
     bg3fn =  join(dpath,'BG3transmittance.h5')

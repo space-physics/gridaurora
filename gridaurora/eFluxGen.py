@@ -10,7 +10,7 @@ from pandas import DataFrame
 import h5py
 from warnings import warn
 #
-from pybashutils.findnearest import find_nearest
+from histutils.findnearest import find_nearest
 
 def maxwellian(E,E0,Q0,verbose=0):
     """

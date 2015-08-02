@@ -14,10 +14,8 @@ try:
 except Exception as e:
     warn('problem with Matplotlib, plots won"t work   {}'.format(e))
 #
-try:
-    from .filterload import getSystemT
-except:
-    from filterload import getSystemT
+from .filterload import getSystemT
+
 
 def opticalModel(sim,ver):
     #assert reqLambda.ndim == 1
