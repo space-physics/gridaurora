@@ -3,7 +3,7 @@
 .. image:: https://codeclimate.com/github/scienceopen/gridaurora/badges/gpa.svg
    :target: https://codeclimate.com/github/scienceopen/gridaurora
    :alt: Code Climate
-. image:: https://coveralls.io/repos/scienceopen/gridaurora/badge.svg?branch=master&service=github 
+.. image:: https://coveralls.io/repos/scienceopen/gridaurora/badge.svg?branch=master&service=github 
     :target: https://coveralls.io/github/scienceopen/gridaurora?branch=master
 
 ==========
