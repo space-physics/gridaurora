@@ -317,11 +317,9 @@ if __name__ == '__main__':
     sns.color_palette(sns.color_palette("cubehelix"))
     sns.set(context='talk', style='whitegrid',
         rc={'image.cmap': 'cubehelix_r'}) #for contour
-    #
-    import sys
-    sys.path.append('../transcarutils')
-    from readExcrates import readexcrates
-    from parseTranscar import readTranscarInput
+    # github.com/scienceopen/transcarread
+    from transcarread.readExcrates import readexcrates
+    from transcarread.parseTranscar import readTranscarInput
     #
     from argparse import ArgumentParser
     p = ArgumentParser(description = 'using excitation rates and other factors, creates volume emission rate profiles.')
