@@ -11,6 +11,20 @@ gridaurora
 ==========
 Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling
 
+Install
+=======
+from Terminal::
+	
+    git clone --depth 1 https://github.com/scienceopen/gridaurora
+    conda install --file requirements.txt
+    python setup.py install
+
+Note: you will need a Fortran compiler on your system so that f2py can 
+work. Yes, it's `possible on Windows too 
+<https://scivision.co/f2py-running-fortran-code-in-python-on-windows/>`_ 
+.
+
+
 ========        ===========
 function        description
 ========        ===========
