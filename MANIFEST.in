@@ -1,1 +1,1 @@
-include precompute *.h5
+include precompute/*.h5
