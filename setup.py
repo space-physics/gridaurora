@@ -16,7 +16,7 @@ setup(name='gridaurora',
           dependency_links = ['https://github.com/scienceopen/lowtran/tarball/master#egg=lowtran',
                              'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
           packages=['gridaurora'],
-          package_data={'gridaurora.precompute', ['*.h5']},
+          package_data={'gridaurora.precompute', ('*.h5')},
 	  )
 
 
