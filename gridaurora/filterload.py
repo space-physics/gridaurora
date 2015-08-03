@@ -11,8 +11,7 @@ try:
     from lowtran.pylowtran7 import golowtran
     useatm = True
 except ImportError as e:
-    warn('failure to load LOWTRAN atmosphere model, proceeding without '
-         'atmospheric absorption model.  {}'.format(e))
+    warn('failure to load LOWTRAN, proceeding without atmospheric absorption model.  {}'.format(e))
     useatm=False
 '''
 gets optical System Transmittance from filter, sensor window, and QE spec.

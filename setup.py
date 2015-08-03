@@ -12,7 +12,9 @@ setup(name='gridaurora',
 	  author='Michael Hirsch',
 	  author_email='hirsch617@gmail.com',
 	  url='https://github.com/scienceopen/gridaurora',
-	  install_requires=['pandas','six','pytz','numpy','scipy','h5py'],
+	  install_requires=['lowtran','histutils','pandas','six','pytz','numpy','scipy','h5py'],
+      dependency_links = ['https://github.com/scienceopen/lowtran/tarball/master#egg=lowtran',
+                          'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
       packages=['gridaurora'],
 	  )
 
