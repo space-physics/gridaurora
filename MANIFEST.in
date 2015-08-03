@@ -1,1 +1,1 @@
-include precompute/*.h5
+recursive-include precompute *.h5
