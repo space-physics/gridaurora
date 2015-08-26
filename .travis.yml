@@ -14,7 +14,7 @@ before_install:
   - wget $url -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH=$HOME/miniconda/bin:$PATH
-  - conda update --yes conda
+  - conda update --quiet --yes conda
   - python --version #just checking
   - sudo apt-get install gfortran
 
@@ -22,16 +22,16 @@ install:
  - if [[ -z $pyv ]]; then
    pip -q install coveralls;
   fi
- - conda install --yes --file requirements.txt
+ - conda install --quiet --yes --file requirements.txt
  - python setup.py install
 
 script:
-   - if [[ -z $pyv ]]; then
-         echo "running coverage";
-        coverage run test/test.py;
-     else
-        nosetests -v test/test.py;
-    fi
+ - if [[ -z $pyv ]]; then
+     echo "running coverage";
+     coverage run test/test.py;
+   else
+     nosetests -v test/test.py;
+   fi
 
 after_success:
   - if [[ -z $pyv ]]; then
