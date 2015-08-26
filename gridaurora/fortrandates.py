@@ -2,8 +2,32 @@ from __future__ import division
 from six import string_types
 from datetime import timedelta,datetime, time
 from pytz import UTC
-from numpy import atleast_1d, empty, atleast_2d,nan
+from numpy import atleast_1d, empty_like, atleast_2d,nan,empty
 from dateutil.parser import parse
+
+def datetime2yd(dtime):
+    """
+    Inputs:
+    dtime: Numpy 1-D array of datetime.datetime OR string suitable for dateutil.parser.parse
+
+    Outputs:
+    yd: yyyyddd four digit year, 3 digit day of year (INTEGER)
+    utsec: seconds from midnight utc
+    """
+    dtime = atleast_1d(dtime)
+
+    utsec=empty_like(dtime,dtype=float)
+    yd = empty_like(dtime,dtype=int)
+    for i,t in enumerate(dtime):
+        if isinstance(t,string_types):
+            t = parse(t)
+
+        t=forceutc(t)
+        utsec[i] = dt2utsec(t)
+        yd[i] = t.year*1000 + int(t.strftime('%j'))
+
+    return yd,utsec
+
 
 def datetime2gtd(dtime,glon=nan):
     """
@@ -17,7 +41,7 @@ def datetime2gtd(dtime,glon=nan):
     stl: local solar time
     """
     dtime = atleast_1d(dtime); glon=atleast_2d(glon)
-    iyd=empty(dtime.size,dtype=int); utsec=empty(dtime.size)
+    iyd=empty_like(dtime,dtype=int); utsec=empty_like(dtime,dtype=float)
     stl = empty((dtime.size,glon.shape[0],glon.shape[1]))
 
     for i,t in enumerate(dtime):
@@ -27,10 +51,15 @@ def datetime2gtd(dtime,glon=nan):
         t = forceutc(t)
         iyd[i] = int(t.strftime('%j'))
         #seconds since utc midnight
-        utsec[i] = timedelta.total_seconds(t-datetime.combine(t.date(),time(0,tzinfo=UTC)))
+        utsec[i] = dt2utsec(t)
 
         stl[i,...] = utsec[i]/3600 + glon/15 #FIXME let's be sure this is appropriate
     return iyd,utsec,stl
+
+def dt2utsec(dt):
+    """ seconds since utc midnight"""
+    return timedelta.total_seconds(dt-datetime.combine(dt.date(),time(0,tzinfo=UTC)))
+
 
 def forceutc(t):
     """
@@ -66,7 +95,7 @@ def yeardec2datetime(atime):
 
 def datetime2yeardec(adatetime):
     """
-    Convert adatetime into a float. The integer part of the float should
+    Convert a datetime into a float. The integer part of the float should
     represent the year.
     Order should be preserved. If adate<bdate, then d2t(adate)<d2t(bdate)
     time distances should be preserved: If bdate-adate=ddate-cdate then
