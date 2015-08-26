@@ -37,11 +37,12 @@ def forceutc(t):
     input: python datetime (naive, utc, non-utc)
     output: utc datetime
     """
-    if t.tzinfo == None:
-        t = t.replace(tzinfo = UTC)
-    else:
-        t = t.astimezone(UTC)
-    return t
+    if isinstance(t,datetime):
+        if t.tzinfo == None:
+            t = t.replace(tzinfo = UTC)
+        else:
+            t = t.astimezone(UTC)
+        return t
 
 """
 http://stackoverflow.com/questions/19305991/convert-fractional-years-to-a-real-date-in-python
