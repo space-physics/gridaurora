@@ -1,6 +1,8 @@
 sudo: required
 git:
   depth: 1
+notifications:
+  email: false
 language: python
 python:
   - "3.4"
