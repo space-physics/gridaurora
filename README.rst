@@ -1,5 +1,3 @@
-.. image:: https://travis-ci.org/scienceopen/gridaurora.svg?branch=master
-    :target: https://travis-ci.org/scienceopen/gridaurora 
 .. image:: https://codeclimate.com/github/scienceopen/gridaurora/badges/gpa.svg
    :target: https://codeclimate.com/github/scienceopen/gridaurora
    :alt: Code Climate
