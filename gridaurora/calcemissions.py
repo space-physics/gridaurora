@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 from __future__ import division,absolute_import
-from warnings import warn
-from os.path import join
+import logging
 from numpy import trapz, isfinite, concatenate, tile, nansum
 import h5py
-from pandas import DataFrame
-#
-from .filterload import getSystemT
+from pandas import DataFrame,Panel
+from matplotlib.pyplot import figure,close,subplots
+#from matplotlib.colors import LogNorm
+from matplotlib.ticker import MultipleLocator
+from matplotlib.dates import SecondLocator, DateFormatter, MinuteLocator
+try:
+    import seaborn as sns
+    sns.color_palette(sns.color_palette("cubehelix"))
+    sns.set(context='talk', style='whitegrid',
+        rc={'image.cmap': 'cubehelix_r'}) #for contour
+except:
+    pass
 """
 inputs:
 spec: excitation rates, 3-D Panel, dimensions reaction x altitude x time
@@ -18,11 +26,12 @@ br: flux-tube integrated intensity, dimension lamb
 See Eqn 9 of Appendix C of Zettergren PhD thesis 2007 to get a better insight on what this set of functions do.
 """
 doplotspectra = False
-spectraAminmax = (0.1,8e5) #for plotting
+spectraAminmax = (1e-1,8e5) #for plotting
 spectrallines=(391.44, 427.81, 557.7, 630.0, 777.4, 844.6) #297.2, 636.4,762.0, #for plotting
 
-def calcemissions(spec,tReqInd,sim,beamEnergy):
-    if spec is None:
+def calcemissions(spec,tReqInd,sim):
+    if not isinstance(spec,Panel):
+        logging.critical('I expect a Pandas Panel as input')
         return None, None
 
     ver = None; lamb = None; br=None
@@ -51,26 +60,22 @@ def calcemissions(spec,tReqInd,sim,beamEnergy):
         ver, lamb,br = getN21PG(spec,ver,lamb, br, sim.reactionfn)
 #%% Remove NaN wavelength entries
     if ver is None:
-        warn('you have not selected any reactions to generate VER')
+        logging.critical('you have not selected any reactions to generate VER')
         return None, None
-
+#%% sort by wavelength, eliminate NaN
     lamb, ver, br = sortelimlambda(lamb,ver,br)
     try:
         tver = ver[...,tReqInd]
         br = br[:,tReqInd]
     except IndexError as e:
-        warn('error in time index, falling back to last time value')
+        logging.error('error in time index, falling back to last time value')
         print(str(e))
         tver = ver[...,-1]
         br = br[:,-1]
-
+#%% assemble output
     dfver = DataFrame(data=tver, index=lamb, columns=spec.major_axis)
-#%% get filtered line integrated spectra
-    if doplotspectra:
-        optT = getSystemT(lamb,sim.bg3fn, sim.windowfn,sim.qefn,sim.obsalt_km,sim.zenang)
-        plotspectra(br,optT,beamEnergy,sim.lambminmax)
 
-    return dfver, ver
+    return dfver, ver,br
 
 def getMetastable(spec,ver,lamb,br,reactfn):
     with h5py.File(reactfn,'r',libver='latest') as f:
@@ -192,6 +197,8 @@ def sortelimlambda(lamb,ver,br):
 
     return lamb[lambSortInd], ver[lambSortInd,...],br[lambSortInd,:] #sort by wavelength ascending order
 
+#%% plots
+
 def showIncrVER(tTC,tReqInd,tctime,ver,tver,titxt,makePlots):
     saveplot = False
     z = ver.columns.values
@@ -272,12 +279,6 @@ def showIncrVER(tTC,tReqInd,tctime,ver,tver,titxt,makePlots):
             close(fg)
 
 def plotspectra(br,optT,E,lambminmax):
-    from matplotlib.pyplot import subplots
-    from matplotlib.ticker import MultipleLocator
-    import seaborn as sns
-    sns.color_palette(sns.color_palette("cubehelix"))
-    sns.set(context='notebook', style='whitegrid',
-        rc={'image.cmap': 'cubehelix_r'}) #for contour
 
     lamb = optT.index
 
@@ -289,7 +290,7 @@ def plotspectra(br,optT,E,lambminmax):
         ax.set_xlim(lambminmax)
         ax.set_ylim(spectraAminmax)
         ax.xaxis.set_major_locator(MultipleLocator(100))
-        ax.invert_xaxis()
+        #ax.invert_xaxis()
 
         for l in spectrallines:
             ax.text(l,bf[l]*1.7, '{:.1f}'.format(l),
@@ -306,51 +307,3 @@ def plotspectra(br,optT,E,lambminmax):
     ax2.stem(lamb,bf)
     _plotspectrasub(ax2,bf,'BG3 filtered')
     ax2.set_xlabel('wavelength [nm]')
-#%%
-if __name__ == '__main__':
-    import cProfile,pstats
-    import seaborn as sns
-    from matplotlib.pyplot import figure,show,close
-    #from matplotlib.colors import LogNorm
-    from matplotlib.ticker import MultipleLocator
-    from matplotlib.dates import SecondLocator, DateFormatter, MinuteLocator
-    sns.color_palette(sns.color_palette("cubehelix"))
-    sns.set(context='talk', style='whitegrid',
-        rc={'image.cmap': 'cubehelix_r'}) #for contour
-    # github.com/scienceopen/transcarread
-    from transcarread.readExcrates import readexcrates
-    from transcarread.parseTranscar import readTranscarInput
-    #
-    from argparse import ArgumentParser
-    p = ArgumentParser(description = 'using excitation rates and other factors, creates volume emission rate profiles.')
-    p.add_argument('--reactfn',help='one-time file with franck-condon factors,etc.',default='precompute/vjeinfc.h5')
-    p.add_argument('simpath',help='path where simulation inputs/outputs are')
-    p.add_argument('-r','--reacreq',help='reactions to include e.g. metastable atomic',nargs='+',default=['metastable','atomic','n21ng','n2meinel','n22pg','n21pg'])
-    p.add_argument('-m','--makeplot',help='specify plots to make e.g. vjinc vjinc1d',nargs='+',default=['eigtime','eigtime1d','spectra'])
-    p.add_argument('--datcarfn',help='path to dir.input/DATCAR',default='dir.input/DATCAR')
-    p.add_argument('--profile',help='profile performance',action='store_true')
-    a=p.parse_args()
-
-    tReqInd = 0 #arbitrary
-
-    excrpath = join(a.simpath,'dir.output')
-    excrates = readexcrates(excrpath)[0]
-
-    if a.profile:
-        proffn = 'calcemissions.pstats'
-        cProfile.run('calcemissions(excrates,tReqInd,a.reacreq,a.reactfn)',proffn)
-        pstats.Stats(proffn).sort_stats('time','cumulative').print_stats(50)
-    else:
-        tctime = readTranscarInput(join(a.simpath,a.datcarfn))
-        t=excrates.minor_axis.to_datetime().to_pydatetime()
-        #tdiff = t[0] - tctime['tstartPrecip']
-#%% plots
-        if 'spectra' in a.makeplot:
-            ver,tver,br=calcemissions(excrates, tReqInd, a.reacreq, a.reactfn)
-            plotspectra(br,ver.index)
-
-        for r in a.reacreq:
-            ver, tver = calcemissions(excrates, tReqInd, r, a.reactfn)[:2]
-            showIncrVER(t, tReqInd, tctime, ver,tver, str(r),a.makeplot)
-
-        show()

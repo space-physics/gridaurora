@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
 from __future__ import division,absolute_import
-from os.path import join
+import logging
 import h5py
-from numpy import arange
-from warnings import warn
+from pandas import DataFrame
 try:
-    from matplotlib.pyplot import figure, subplots,show #must be here to allow plotOptMod to be called from hist-feasibility
+    from matplotlib.pyplot import figure, subplots #must be here to allow plotOptMod to be called from hist-feasibility
     from matplotlib.ticker import MultipleLocator
     import seaborn as sns
     sns.color_palette(sns.color_palette("cubehelix"))
     sns.set(context='notebook', style='whitegrid',
         rc={'image.cmap': 'cubehelix_r'}) #for contour
 except Exception as e:
-    warn('problem with Matplotlib, plots won"t work   {}'.format(e))
+    logging.warning('problem with Matplotlib, plots won"t work   {}'.format(e))
 #
 from .filterload import getSystemT
-
-
+#%% computation
 def opticalModel(sim,ver):
     #assert reqLambda.ndim == 1
     #assert z.ndim == 1
@@ -31,12 +29,13 @@ def opticalModel(sim,ver):
     elif sim.opticalfilter == 'none':
         VERgray = ver.multiply(optT['sysNObg3'],axis=0).sum(axis=0)
     else:
-        warn('unknown OpticalFilter type: {}'
+        logging.warning('unknown OpticalFilter type: {}'
              '   falling back to using no filter at all'.format(sim.opticalfilter))
         VERgray = ver.multiply(optT['sysNObg3'],axis=0).sum(axis=0)
 
     return VERgray
 
+#%% plotting
 def plotOptMod(verNObg3gray,VERgray):
     """ called from either readTranscar.py or hist-feasibility/plotsnew.py """
     if VERgray is None and verNObg3gray is None: return
@@ -108,7 +107,7 @@ def plotOptMod(verNObg3gray,VERgray):
     ax2.legend(loc='best')
     ax2.grid(True)
 
-def comparejgr2013(altkm,zenang):
+def comparejgr2013(altkm,zenang,bg3fn, windfn, qefn):
     with h5py.File('precompute/trans_jgr2013a.h5','r',libver='latest') as fid:
         reqLambda = fid['/lambda'].value
         Tjgr2013 = fid['/T'].value
@@ -144,33 +143,19 @@ def plotAllTrans(optT,log):
     ax.xaxis.set_major_locator(MultipleLocator(100))
     ax.legend(loc='best')
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
-    p = ArgumentParser(description='computes optical transmission and compares (debug)')
-    p.add_argument('--path',help='path to HDF5 data',default='precompute')
-    p.add_argument('-a','--altkm',help='observer altitude (km)',type=float,default=0.)
-    p.add_argument('--zenang',help='zenith angle (deg)',type=float,default=0.)
-    p = p.parse_args()
+def plotPeigen(Peigen):
+    #Peigen DataFrame indexed by energy x altitude
+    if not isinstance(Peigen,DataFrame):
+        return
 
-    dpath = p.path
-    bg3fn =  join(dpath,'BG3transmittance.h5')
-    windfn =    join(dpath,'ixonWindowT.h5')
-    qefn =      join(dpath,'emccdQE.h5')
-
-    reqLambda = arange(200,1200,1)
-    #reqLambda = linspace(200,1000,500) #so coarse it misses features
-
-    optT = getSystemT(reqLambda, bg3fn, windfn, qefn,p.altkm,p.zenang)
-#%%
-    try:
-        comparejgr2013(p.altkm,p.zenang)
-#%% considering atmosphere
-        plotAllTrans(optT,False)
-        plotAllTrans(optT,True)
-        #plotOptMod(ver,VERgray,tTC,Ek,Eki) #called in readTranscar.py
-        show()
-
-    except Exception as e:
-        warn('problem plotting    {}'.format(e))
-        print(optT)
-
+    fg = figure()
+    ax = fg.gca()
+    pcm = ax.pcolormesh(Peigen.columns.values,
+                        Peigen.index.values,
+                        Peigen.values)
+    ax.autoscale(True,tight=True)
+    ax.set_xscale('log')
+    ax.set_xlabel('beam energy [eV]')
+    ax.set_ylabel('altitude [km]')
+    ax.set_title('Volume Emission Rate per unit diff num flux')
+    fg.colorbar(pcm)
