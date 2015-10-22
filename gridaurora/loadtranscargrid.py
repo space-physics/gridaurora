@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
 load and plot transcar energy grid
+Egrid is not what's used externally by other programs, but rather variable "bins"
 """
 from __future__ import division,absolute_import
 from numpy import loadtxt,log10,empty,arange,column_stack
 from pandas import DataFrame
 from os.path import expanduser
 from scipy.stats import linregress
+import h5py
 from matplotlib.pyplot import figure,show
 import seaborn
 
 flux0 =70114000000.0
 Nold=33
-Nnew=70
+Nnew=81 #100MeV
 fn = '~/code/transcar/transcar/BT_E1E2prev.csv'
 
 def loadregress(fn):
@@ -30,13 +32,25 @@ def loadregress(fn):
 
     return Enew
 
-def doplot(Egrid):
+def doplot(bins,Egrid=None):
     ax = figure().gca()
-    ax.plot(Egrid,marker='.')
-    #ax.plot(Ematt,marker='.',color='k')
-    ax.set_yscale('log')
-    ax.set_ylabel('eV')
-    ax.legend(['E1','E2','pr1','pr2'],loc='best')
+    bins[['low','high']].plot(logy=True,ax=ax,marker='.')
+    ax.set_xlabel('bin number')
+    ax.set_ylabel('bin energy [eV]')
+
+    ax = figure().gca()
+    bins['flux'].plot(logy=True,ax=ax,marker='.')
+    ax.set_xlabel('bin number')
+    ax.set_ylabel('flux [s$^{-1}$ sr$^{-1}$ cm$^{-2}$ eV$^{-1}$]')
+
+    if Egrid is not None:
+        ax = figure().gca()
+        ax.plot(Egrid,marker='.')
+        #ax.plot(Ematt,marker='.',color='k')
+        ax.set_yscale('log')
+        ax.set_ylabel('eV')
+        ax.legend(['E1','E2','pr1','pr2'],loc='best')
+
 
 def makebin(Egrid):
     E1 = Egrid[:,0]
@@ -60,6 +74,5 @@ if __name__ == '__main__':
 
     bins = makebin(Egrid)
 
-    doplot(Egrid)
-
+    doplot(bins)
     show()
