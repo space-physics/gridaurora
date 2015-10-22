@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 load and plot transcar energy grid
 Egrid is not what's used externally by other programs, but rather variable "bins"
@@ -8,14 +7,11 @@ from numpy import loadtxt,log10,empty,arange,column_stack
 from pandas import DataFrame
 from os.path import expanduser
 from scipy.stats import linregress
-import h5py
-from matplotlib.pyplot import figure,show
-import seaborn
+from matplotlib.pyplot import figure
 
 flux0 =70114000000.0
 Nold=33
 Nnew=81 #100MeV
-fn = '~/code/transcar/transcar/BT_E1E2prev.csv'
 
 def loadregress(fn):
 #%%
@@ -32,7 +28,7 @@ def loadregress(fn):
 
     return Enew
 
-def doplot(bins,Egrid=None,debug=False):
+def doplot(fn,bins,Egrid=None,debug=False):
 #%% main plot
     ax = figure().gca()
     ax.bar(left=bins['low'],
@@ -41,6 +37,7 @@ def doplot(bins,Egrid=None,debug=False):
     ax.set_yscale('log'); ax.set_xscale('log')
     ax.set_ylabel('flux [s$^{-1}$ sr$^{-1}$ cm$^{-2}$ eV$^{-1}$]')
     ax.set_xlabel('bin energy [eV]')
+    ax.set_title('Input flux used to generate eigenprofiles, based on {}'.format(fn))
 
 #%% debug plots
     if debug:
@@ -80,10 +77,3 @@ def makebin(Egrid):
     return DataFrame(columns=['low','high','flux'],
                      data=E)
 
-if __name__ == '__main__':
-    Egrid = loadregress(fn)
-
-    bins = makebin(Egrid)
-
-    doplot(bins)
-    show()
