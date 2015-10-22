@@ -32,24 +32,35 @@ def loadregress(fn):
 
     return Enew
 
-def doplot(bins,Egrid=None):
+def doplot(bins,Egrid=None,debug=False):
+#%% main plot
     ax = figure().gca()
-    bins[['low','high']].plot(logy=True,ax=ax,marker='.')
-    ax.set_xlabel('bin number')
-    ax.set_ylabel('bin energy [eV]')
-
-    ax = figure().gca()
-    bins['flux'].plot(logy=True,ax=ax,marker='.')
-    ax.set_xlabel('bin number')
+    ax.bar(left=bins['low'],
+           height=bins['flux'],
+           width=bins['high']-bins['low'])
+    ax.set_yscale('log'); ax.set_xscale('log')
     ax.set_ylabel('flux [s$^{-1}$ sr$^{-1}$ cm$^{-2}$ eV$^{-1}$]')
+    ax.set_xlabel('bin energy [eV]')
 
-    if Egrid is not None:
+#%% debug plots
+    if debug:
         ax = figure().gca()
-        ax.plot(Egrid,marker='.')
-        #ax.plot(Ematt,marker='.',color='k')
-        ax.set_yscale('log')
-        ax.set_ylabel('eV')
-        ax.legend(['E1','E2','pr1','pr2'],loc='best')
+        bins[['low','high']].plot(logy=True,ax=ax,marker='.')
+        ax.set_xlabel('bin number')
+        ax.set_ylabel('bin energy [eV]')
+
+        ax = figure().gca()
+        bins['flux'].plot(logy=True,ax=ax,marker='.')
+        ax.set_xlabel('bin number')
+        ax.set_ylabel('flux [s$^{-1}$ sr$^{-1}$ cm$^{-2}$ eV$^{-1}$]')
+
+        if Egrid is not None:
+            ax = figure().gca()
+            ax.plot(Egrid,marker='.')
+            #ax.plot(Ematt,marker='.',color='k')
+            ax.set_yscale('log')
+            ax.set_ylabel('eV')
+            ax.legend(['E1','E2','pr1','pr2'],loc='best')
 
 
 def makebin(Egrid):
