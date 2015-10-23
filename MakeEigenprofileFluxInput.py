@@ -4,6 +4,9 @@ creates energy grid of unit flux eV^-1
 unverified for proper scaling, fitted exponential curve to extrapolate original
 Zettergren grid from 50eV-18keV up to 100MeV
 
+example:
+python MakeEigenprofileFluxInput.py -i zettflux.csv -o ~/data/100MeVtop.h5
+
 Michael Hirsch
 """
 from __future__ import division,absolute_import
@@ -24,7 +27,7 @@ if __name__ == '__main__':
     bins = makebin(Egrid)
 
     if p.outputeigenfluxfn:
-        bins.to_hdf(expanduser(p.outputeigenfluxfn))
+        bins.to_hdf(expanduser(p.outputeigenfluxfn),'top')
 
     doplot(p.inputgridfn,bins)
     show()
