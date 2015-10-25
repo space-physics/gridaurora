@@ -13,31 +13,76 @@ python MakeIonoEigenprofile.py -i zettflux.csv -o ~/data/eigen.h5
 Michael Hirsch
 """
 from __future__ import division,absolute_import
+from collections import namedtuple
 from matplotlib.pyplot import show
 from os.path import expanduser
+from dateutil import rrule
+from dateutil.parser import parse
 import seaborn #optional pretty plots
 #
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
+from glowaurora.eigenprof import makeeigen,ekpcolor
+from glowaurora.runglow import plotprodloss,plotenerdep
+from histfeas.plotsnew import ploteigver
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles')
     p.add_argument('-i','--inputgridfn',help='original Zettergren input flux grid to base off of',default='zettflux.csv')
-    p.add_argument('-o','--outputeigenfluxfn',help='hdf5 file to write with ionospheric response (eigenprofiles)')
+    p.add_argument('-o','--outfn',help='hdf5 file to write with ionospheric response (eigenprofiles)')
+    p.add_argument('-t','--simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='+',required=True)#,default='1999-12-21T00:00:00Z')
+    p.add_argument('-c','--latlon',help='geodetic latitude/longitude (deg)',type=float,nargs=2,default=(70,0))
+    p.add_argument('--f107a',help='AVERAGE OF F10.7 FLUX',type=float,default=100)
+    p.add_argument('--f107p',help='DAILY F10.7 FLUX FOR PREVIOUS DAY',type=float,default=100)
+    p.add_argument('--f107',help='F10.7 for sim. day',type=float,default=100)
+    p.add_argument('--ap',help='daily ap',type=float,default=4)
+    p.add_argument('-m','--makeplot',help='show to show plots, png to save pngs of plots',nargs='+',default=['show'])
+    p.add_argument('-z','--zlim',help='minimum,maximum altitude [km] to plot',nargs=2,default=(None,None),type=float)
+
     p = p.parse_args()
 
-    if not p.outputeigenfluxfn:
+    if not p.outfn:
         print('you have not specified an output file with -o options, so I will only plot and not save result')
+
+    makeplot=p.makeplot
+
+    if len(p.simtime) == 1:
+        T = [parse(p.simtime[0])]
+    elif len(p.simtime) == 2:
+        T = list(rrule.rrule(rrule.HOURLY,
+                                 dtstart=parse(p.simtime[0]),
+                                 until =parse(p.simtime[1])))
 #%% input unit flux
-    Egrid = loadregress(p.inputgridfn)
-    bins = makebin(Egrid)
+    Egrid = loadregress(expanduser(p.inputgridfn))
+    Ebins = makebin(Egrid)
 
-    doplot(p.inputgridfn,bins)
+
+    EKpcolor,EK,diffnumflux = ekpcolor(Ebins)
 #%% ionospheric response
-    ver,photIon,isr,phitop,zceta,sza,EKpcolor,prates,lrates = makeeigen(p.eigenprof,dtime,p.latlon,
+    """ three output eigenprofiles
+    1) ver (optical emissions) 4-D array: time x energy x altitude x wavelength
+    2) prates (production) 4-D array:     time x energy x altitude x reaction
+    3) lrates (loss) 4-D array:           time x energy x altitude x reaction
+    """
+    ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs = makeeigen(EK,diffnumflux,T,p.latlon,
                                                                         p.f107a,p.f107,p.f107p,p.ap,
-                                                                        p.makeplot,p.odir,p.zlim)
+                                                                        p.makeplot,p.outfn,p.zlim)
+#%% plots
+    #input
+    doplot(p.inputgridfn,Ebins)
 
-
+    #output
+    glat,glon = p.latlon
+    z=ver.major_axis.values
+    sim = namedtuple('sim',['reacreq','opticalfilter']); sim.reacreq=sim.opticalfilter=''
+    for t in ver: #for each time
+        #VER eigenprofiles, summed over wavelength
+        ploteigver(EKpcolor,z,ver[t].sum(axis=2),(None,)*6,sim,'{} Vol. Emis. Rate '.format(t))
+        #volume production rate, summed over reaction
+        plotprodloss(EKpcolor,z,
+                     prates[t].sum(axis=2).values,lrates[t].sum(axis=2).values,
+                     t,glat,glon,p.zlim)
+        #energy deposition
+        plotenerdep(EKpcolor,z,tezs[t],t,glat,glon,p.zlim)
 
     show()
