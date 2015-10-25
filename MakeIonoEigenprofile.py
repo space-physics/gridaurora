@@ -21,6 +21,7 @@ from dateutil.parser import parse
 import seaborn #optional pretty plots
 #
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
+from gridaurora.writeeigen import writeeigen
 from glowaurora.eigenprof import makeeigen,ekpcolor
 from glowaurora.runglow import plotprodloss,plotenerdep
 from histfeas.plotsnew import ploteigver
@@ -75,6 +76,9 @@ if __name__ == '__main__':
     glat,glon = p.latlon
     z=ver.major_axis.values
     sim = namedtuple('sim',['reacreq','opticalfilter']); sim.reacreq=sim.opticalfilter=''
+
+    writeeigen(p.outfn,ver,prates,lrates,tezs,p.latlon)
+
     for t in ver: #for each time
         #VER eigenprofiles, summed over wavelength
         ploteigver(EKpcolor,z,ver[t].sum(axis=2),(None,)*6,sim,'{} Vol. Emis. Rate '.format(t))
