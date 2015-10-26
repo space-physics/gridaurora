@@ -24,10 +24,13 @@ def writeeigen(fn,Ebins,diffnumflux,ver,prates,lrates,tezs,latlon):
             d=f.create_dataset('/sensorloc',data=latlon)
             d.attrs['unit']='degrees';d.attrs['description']='geographic coordinates'
             #input precipitation flux
-            d=f.create_dataset('/Ebins',data=Ebins); d.attrs['unit']='eV'
+            d=f.create_dataset('/Ebins',data=Ebins);              d.attrs['unit']='eV'; d.attrs['description']='Energy bin edges'
+            d=f.create_dataset('/altitude',data=ver.major_axis);  d.attrs['unit']='km'
 
-            d=f.create_dataset('/altitude',data=ver.major_axis);    d.attrs['unit']='km'
-            d=f.create_dataset('/ut1_unix',data=ut1_unix);          d.attrs['unit']='sec. since Jan 1, 1970 midnight' #float
+            d=f.create_dataset('/ut1_unix',data=ut1_unix);
+            d.attrs['unit']='sec. since Jan 1, 1970 midnight' #float
+
+
             d=f.create_dataset('/diffnumflux',data=diffnumflux);    d.attrs['unit']='cm^-2 s^-1 eV^-1'
             #VER
             d=f.create_dataset('/ver/eigenprofile',data=ver.values,compression='gzip')
