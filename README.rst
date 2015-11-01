@@ -2,8 +2,8 @@
    :target: https://codeclimate.com/github/scienceopen/gridaurora
    :alt: Code Climate
 
-.. image:: https://coveralls.io/repos/scienceopen/gridaurora/badge.svg?branch=master&service=github
-    :target: https://coveralls.io/github/scienceopen/gridaurora?branch=master
+.. image:: https://travis-ci.org/scienceopen/gridaurora.svg?branch=master
+    :target: https://travis-ci.org/scienceopen/gridaurora
 
 .. image:: https://coveralls.io/repos/scienceopen/gridaurora/badge.svg?branch=master&service=github 
    :target: https://coveralls.io/github/scienceopen/gridaurora?branch=master 
