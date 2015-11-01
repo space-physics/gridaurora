@@ -8,9 +8,10 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 Michael Hirsch
 """
 from os.path import expanduser,isfile
-from six import integer_types
+from six import integer_types,PY2
 from numpy import loadtxt,nan
 from pandas import DataFrame
+if PY2: FileNotFoundError = IOError
 
 def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
     assert isinstance(yearmon,(integer_types))
@@ -35,4 +36,4 @@ def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
     return ApF107
 
 if __name__ == '__main__':
-    data = readmonthly('RecentIndices.txt')
+    data = readmonthlyApF107('RecentIndices.txt')

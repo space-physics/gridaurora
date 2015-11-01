@@ -1,11 +1,12 @@
-astropy
-matplotlib
-pandas
+setuptools
 six
+python-dateutil
 pytz
-dateutil
+nose
 numpy
 scipy
-nose
+pandas
 h5py
+astropy
+matplotlib
 seaborn
