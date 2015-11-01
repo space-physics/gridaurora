@@ -8,10 +8,13 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 Michael Hirsch
 """
 from os.path import expanduser,isfile
+from six import integer_types
 from numpy import loadtxt,nan
 from pandas import DataFrame
 
-def readmonthly(fn):
+def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
+    assert isinstance(yearmon,(integer_types))
+
     fn = expanduser(fn)
 
     if not isfile(fn):
@@ -27,7 +30,9 @@ def readmonthly(fn):
 
     data[data==-1] = nan #by defn of NOAA
 
-    return data
+    ApF107 = data.loc[yearmon,:]
+
+    return ApF107
 
 if __name__ == '__main__':
     data = readmonthly('RecentIndices.txt')
