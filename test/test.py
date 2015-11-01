@@ -1,10 +1,24 @@
 #!/usr/bin/env python
 from __future__ import division,absolute_import
 from datetime import datetime
+import pytz
 from numpy.testing import assert_allclose
 from os.path import join
-from warnings import warn
-#%% ztanh
+
+def test_dt2ut1():
+    from gridaurora.to_ut1 import to_ut1unix
+    ET = pytz.timezone('US/Eastern')
+
+    tnaive = datetime(2015,7,1,tzinfo=None)
+    tet =    ET.localize(datetime(2015,7,1)) #don't use tzinfo, weird partial hour https://pypi.python.org/pypi/pytz/
+    tstr=    '2015-07-01T00:00:00-0800'
+
+    assert_allclose(to_ut1unix(tnaive),1435708800.)
+    assert_allclose(to_ut1unix(tet),   1435723200.)
+    assert_allclose(to_ut1unix(tstr),  1435737600.)
+    assert_allclose(to_ut1unix(1435708800.),1435708800.)
+    assert_allclose(to_ut1unix([1435708800.]),1435708800.)
+
 def test_ztanh():
     from gridaurora.ztanh import setupz
     zgrid = setupz(np=300, zmin=90, gridmin=1.5, gridmax=10.575)
@@ -44,6 +58,7 @@ def test_opticalfilter():
     assert ((0 <= T.values) & (T.values <= 1)).all()
 
 if __name__ == '__main__':
+    test_dt2ut1()
     test_ztanh()
     test_worldgrid()
     test_opticalfilter()
