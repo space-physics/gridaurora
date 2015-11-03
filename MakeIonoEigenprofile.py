@@ -25,9 +25,11 @@ sns.set(rc={'image.cmap': 'cubehelix_r'}) #for contour
 #
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
 from gridaurora.writeeigen import writeeigen
+from gridaurora.zglow import glowalt
 from glowaurora.eigenprof import makeeigen,ekpcolor
 from glowaurora.plots import plotprodloss,plotenerdep
 from gridaurora.plots import ploteigver
+from reesaurora.rees_model import reesiono,plotA
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -37,7 +39,10 @@ if __name__ == '__main__':
     p.add_argument('-t','--simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='+',required=True)#,default='1999-12-21T00:00:00Z')
     p.add_argument('-c','--latlon',help='geodetic latitude/longitude (deg)',type=float,nargs=2,required=True)
     p.add_argument('-m','--makeplot',help='show to show plots, png to save pngs of plots',nargs='+',default=['show'])
+    p.add_argument('-M','--model',help='specify auroral model (glow,rees,transcar)',default='glow')
     p.add_argument('-z','--zlim',help='minimum,maximum altitude [km] to plot',nargs=2,default=(None,None),type=float)
+    p.add_argument('--isotropic',help='(rees model only) isotropic or non-isotropic pitch angle',action='store_true')
+    p.add_argument('--vlim',help='plotting limits on energy dep and production plots',nargs=2,type=float,default=(1e-7,1e1))
 
     p = p.parse_args()
 
@@ -62,28 +67,44 @@ if __name__ == '__main__':
     2) prates (production) 4-D array:     time x energy x altitude x reaction
     3) lrates (loss) 4-D array:           time x energy x altitude x reaction
     """
-    ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs,sion = makeeigen(EK,diffnumflux,T,p.latlon,
-                                                                        p.makeplot,p.outfn,p.zlim)
-#%% plots
-    #input
-    doplot(p.inputgridfn,Ebins)
-
-    #output
+    model = p.model.lower()
     glat,glon = p.latlon
-    z=ver.major_axis.values
-    sim = namedtuple('sim',['reacreq','opticalfilter']); sim.reacreq=sim.opticalfilter=''
 
-    writeeigen(p.outfn,EKpcolor,ver.labels.to_pydatetime(),ver.major_axis,
-               diffnumflux,ver,prates,lrates,tezs,p.latlon)
+    if model == 'glow':
+        ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs,sion = makeeigen(EK,diffnumflux,T,p.latlon,
+                                                                             p.makeplot,p.outfn,p.zlim)
+        z=ver.major_axis.values
 
-    for t in ver: #for each time
-        #VER eigenprofiles, summed over wavelength
-        ploteigver(EKpcolor,z,ver[t].sum(axis=2),(None,)*6,sim,'{} Vol. Emis. Rate '.format(t))
-        #volume production rate, summed over reaction
-        plotprodloss(EKpcolor,z,
-                     prates[t].sum(axis=2).values,lrates[t].sum(axis=2).values,
-                     t,glat,glon,p.zlim)
-        #energy deposition
-        plotenerdep(EKpcolor,z,tezs[t],t,glat,glon,p.zlim)
+        writeeigen(p.outfn,EKpcolor,T,z, diffnumflux,ver,prates,lrates,tezs,p.latlon)
+        #%% plots
+        #input
+        doplot(p.inputgridfn,Ebins)
+
+        #output
+        sim = namedtuple('sim',['reacreq','opticalfilter']); sim.reacreq=sim.opticalfilter=''
+
+        for t in ver: #for each time
+            #VER eigenprofiles, summed over wavelength
+            ploteigver(EKpcolor,z,ver[t].sum(axis=2),(None,)*6,sim,'{} Vol. Emis. Rate '.format(t))
+            #volume production rate, summed over reaction
+            plotprodloss(EKpcolor,z,
+                         prates[t].sum(axis=2).values,lrates[t].sum(axis=2).values,
+                         t,glat,glon,p.zlim)
+            #energy deposition
+            plotenerdep(EKpcolor,z,tezs[t],t,glat,glon,p.zlim)
+
+    elif model == 'rees':
+        assert len(T) == 1, 'only one time with rees for now.'
+        z=glowalt()
+        q = reesiono(T, z, Ebins['low'], glat, glon,p.isotropic)
+
+        writeeigen(p.outfn,Ebins,T,z,prates=q,tezs=None,latlon=(glat,glon))
+
+        plotA(q,'Volume Production Rate {}  {} {}'.format(T,glat,glon),p.vlim)
+    elif model == 'transcar':
+        raise NotImplementedError('Transcar coming soon')
+    else:
+        raise NotImplementedError('I am not yet able to handle your model {}'.format(model))
+#%% plots
 
     show()
