@@ -70,7 +70,7 @@ if __name__ == '__main__':
     z=ver.major_axis.values
     sim = namedtuple('sim',['reacreq','opticalfilter']); sim.reacreq=sim.opticalfilter=''
 
-    writeeigen(p.outfn,EKpcolor,ver.labels.to_pydatetime(),ver.major_axis(),
+    writeeigen(p.outfn,EKpcolor,ver.labels.to_pydatetime(),ver.major_axis,
                diffnumflux,ver,prates,lrates,tezs,p.latlon)
 
     for t in ver: #for each time
