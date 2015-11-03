@@ -13,7 +13,7 @@ setup(name='gridaurora',
 	  url='https://github.com/scienceopen/gridaurora',
 	  install_requires=['histutils',
                         'pathlib'],
-      extras_require=['lowtran'], #optional
+      extras_require=[{'lowtran':'lowtran'}], #optional
           dependency_links = ['https://github.com/scienceopen/lowtran/tarball/master#egg=lowtran',
                              'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
           packages=['gridaurora'],
