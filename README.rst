@@ -46,7 +46,7 @@ Example Command
 ---------------
 ::
 
-    python MakeIonoEigenprofile.py 2013-01-31T09:00:00Z -c 65 -148 -o out.h5 -M rees
+    python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o out.h5 -M rees
 
 
 Function Description
