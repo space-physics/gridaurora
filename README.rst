@@ -42,6 +42,15 @@ Once installed, select model by:
 -M glow    Stan Solomon's GLOW model
 =========  ==========
 
+Command Line Options
+--------------------
+-t      time, format yyyy-mm-ddTHH:MM:SSZ  where Z sets UTC time zone
+-c      lat, lon WGS84 geodetic degrees
+-o      output, hDF5  ends in .h5
+-M      model select (see table above)
+-z      min,max altitude to plot [km]
+
+
 Example Command
 ---------------
 ::
