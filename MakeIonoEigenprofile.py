@@ -18,7 +18,10 @@ from matplotlib.pyplot import show
 from os.path import expanduser
 from dateutil import rrule
 from dateutil.parser import parse
-import seaborn #optional pretty plots
+import seaborn as sns #optional pretty plots
+sns.color_palette(sns.color_palette("cubehelix"))
+sns.set(context='talk', style='whitegrid')
+sns.set(rc={'image.cmap': 'cubehelix_r'}) #for contour
 #
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
 from gridaurora.writeeigen import writeeigen
