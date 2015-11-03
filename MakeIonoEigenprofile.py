@@ -24,7 +24,7 @@ from gridaurora.loadtranscargrid import loadregress,makebin,doplot
 from gridaurora.writeeigen import writeeigen
 from glowaurora.eigenprof import makeeigen,ekpcolor
 from glowaurora.runglow import plotprodloss,plotenerdep
-from histfeas.plotsnew import ploteigver
+from gridaurora.plots import ploteigver
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -32,11 +32,7 @@ if __name__ == '__main__':
     p.add_argument('-i','--inputgridfn',help='original Zettergren input flux grid to base off of',default='zettflux.csv')
     p.add_argument('-o','--outfn',help='hdf5 file to write with ionospheric response (eigenprofiles)')
     p.add_argument('-t','--simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='+',required=True)#,default='1999-12-21T00:00:00Z')
-    p.add_argument('-c','--latlon',help='geodetic latitude/longitude (deg)',type=float,nargs=2,default=(70,0))
-    p.add_argument('--f107a',help='AVERAGE OF F10.7 FLUX',type=float,default=100)
-    p.add_argument('--f107p',help='DAILY F10.7 FLUX FOR PREVIOUS DAY',type=float,default=100)
-    p.add_argument('--f107',help='F10.7 for sim. day',type=float,default=100)
-    p.add_argument('--ap',help='daily ap',type=float,default=4)
+    p.add_argument('-c','--latlon',help='geodetic latitude/longitude (deg)',type=float,nargs=2,required=True)
     p.add_argument('-m','--makeplot',help='show to show plots, png to save pngs of plots',nargs='+',default=['show'])
     p.add_argument('-z','--zlim',help='minimum,maximum altitude [km] to plot',nargs=2,default=(None,None),type=float)
 
@@ -56,8 +52,6 @@ if __name__ == '__main__':
 #%% input unit flux
     Egrid = loadregress(expanduser(p.inputgridfn))
     Ebins = makebin(Egrid)
-
-
     EKpcolor,EK,diffnumflux = ekpcolor(Ebins)
 #%% ionospheric response
     """ three output eigenprofiles
@@ -66,7 +60,6 @@ if __name__ == '__main__':
     3) lrates (loss) 4-D array:           time x energy x altitude x reaction
     """
     ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs = makeeigen(EK,diffnumflux,T,p.latlon,
-                                                                        p.f107a,p.f107,p.f107p,p.ap,
                                                                         p.makeplot,p.outfn,p.zlim)
 #%% plots
     #input
