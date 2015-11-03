@@ -30,7 +30,8 @@ work. Yes, it's `possible on Windows too.
 Eigenprofiles
 =============
 Currently GLOW and Rees-Sergienko-Ivanov are available (Transcar in future).
-You will need to separately install scienceopen/reesaurora and scienceopen/glowaurora 
+You will need to separately install `scienceopen/reesaurora <https://github.com/scienceopen/reesaurora>`_ and 
+`scienceopen/glowaurora <https://github.com/scienceopen/glowaurora>`_.
 This is to keep the install process from becoming gigantic when you just want some of the models.
 
 Once installed, select model by:
