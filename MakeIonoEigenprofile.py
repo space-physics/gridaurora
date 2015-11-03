@@ -8,7 +8,7 @@ unverified for proper scaling, fitted exponential curve to extrapolate original
 Zettergren grid from 50eV-18keV up to 100MeV
 
 example:
-python MakeIonoEigenprofile.py -i zettflux.csv -o ~/data/eigen.h5
+python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o ~/data/eigen.h5
 
 Michael Hirsch
 """
