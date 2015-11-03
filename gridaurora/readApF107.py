@@ -30,7 +30,7 @@ def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
     if not fn.is_file():
         raise FileNotFoundError(str(fn.resolve()) +' download from ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt')
 
-    d = loadtxt(fn,comments=('#',':'), usecols=(0,1,7,8,9,10))
+    d = loadtxt(str(fn),comments=('#',':'), usecols=(0,1,7,8,9,10))
 #  genfromtxt didn't eliminate missing values, unsure if bug
 #    d = genfromtxt(fn,comments='#', usecols=(0,1,7,8,9,10), skip_header=2,dtype=float,
  #                missing_values={-1:-1},filling_values={-1:nan},invalid_raise=False)
