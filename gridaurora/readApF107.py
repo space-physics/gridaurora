@@ -8,6 +8,7 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 Michael Hirsch
 """
 from __future__ import division,absolute_import
+from pathlib import Path
 from os.path import expanduser,isfile
 from datetime import datetime
 from dateutil.parser import parse
@@ -17,6 +18,7 @@ from pandas import DataFrame
 if PY2: FileNotFoundError = IOError
 
 def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
+    fn = Path(fn)
 #%% date handle
     if isinstance(yearmon,string_types):
         yearmon = parse(yearmon)
@@ -28,8 +30,8 @@ def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
 #%% load data
     fn = expanduser(fn)
 
-    if not isfile(fn):
-        raise FileNotFoundError('download from ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt')
+    if not fn.is_file():
+        raise FileNotFoundError('{} download from ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt'.format(fn.resolve()))
 
     d = loadtxt(fn,comments=('#',':'), usecols=(0,1,7,8,9,10))
 #  genfromtxt didn't eliminate missing values, unsure if bug
