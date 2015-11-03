@@ -8,7 +8,6 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 Michael Hirsch
 """
 from __future__ import division,absolute_import
-from os.path import expanduser # only Python 3.5 has this pathlib method
 from pathlib import Path
 from datetime import datetime
 from dateutil.parser import parse
@@ -18,7 +17,7 @@ from pandas import DataFrame
 if PY2: FileNotFoundError = IOError
 
 def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
-    fn = Path(expanduser(fn))
+    fn = Path(fn)
 #%% date handle
     if isinstance(yearmon,string_types):
         yearmon = parse(yearmon)
