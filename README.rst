@@ -42,6 +42,16 @@ Once installed, select model by:
 -M glow    Stan Solomon's GLOW model
 =========  ==========
 
+Example Command
+---------------
+::
+
+    python MakeIonoEigenprofile.py 2013-01-31T09:00:00Z -c 65 -148 -o out.h5 -M rees
+
+
+Function Description
+====================
+
 
 ========        ===========
 function        description
