@@ -23,7 +23,7 @@ import seaborn #optional pretty plots
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
 from gridaurora.writeeigen import writeeigen
 from glowaurora.eigenprof import makeeigen,ekpcolor
-from glowaurora.runglow import plotprodloss,plotenerdep
+from glowaurora.plots import plotprodloss,plotenerdep
 from gridaurora.plots import ploteigver
 
 if __name__ == '__main__':
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     2) prates (production) 4-D array:     time x energy x altitude x reaction
     3) lrates (loss) 4-D array:           time x energy x altitude x reaction
     """
-    ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs = makeeigen(EK,diffnumflux,T,p.latlon,
+    ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs,sion = makeeigen(EK,diffnumflux,T,p.latlon,
                                                                         p.makeplot,p.outfn,p.zlim)
 #%% plots
     #input
