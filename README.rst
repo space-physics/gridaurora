@@ -13,6 +13,8 @@ gridaurora
 ==========
 Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling
 
+.. contents::
+
 Install
 =======
 from Terminal::
