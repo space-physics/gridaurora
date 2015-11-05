@@ -3,25 +3,24 @@
  Michael Hirsch
  based on Strickland 1993
 """
-from __future__ import division
-from os.path import expanduser
+from __future__ import division,absolute_import
+from pathlib2 import Path
+import logging
 from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,asfortranarray)
 from pandas import DataFrame
 import h5py
-from warnings import warn
 #
 from histutils.findnearest import find_nearest
 
-def maxwellian(E,E0,Q0,verbose=0):
+def maxwellian(E,E0,Q0):
     """
     Tanaka 2006 Eqn. 1
     http://odin.gi.alaska.edu/lumm/Papers/Tanaka_2006JA011744.pdf
     """
     Phi= Q0/(2*pi*E0**3) * E[:,None] * exp(-E[:,None]/E0)
-    
+
     Q = trapz(Phi,E,axis=0)
-    if verbose>0:
-        print('total flux Q: ' + (' '.join('{:.1e}'.format(q) for q in Q)))
+    logging.info('total flux Q: ' + (' '.join('{:.1e}'.format(q) for q in Q)))
     return Phi,Q
 
 def fluxgen(E,E0,Q0,Wbc,bl,bm,bh,Bm,Bhf,verbose=0):
@@ -96,7 +95,7 @@ def gaussflux(E,Wb,E0,Q0):
     return Qc * exp(-((E[:,None]-E0) / Wb)**2)
 
 
-def plotflux(E,E0, arc, base=None,hi=None,low=None,mid=None,dbglvl=0):
+def plotflux(E,E0, arc, base=None,hi=None,low=None,mid=None):
 #    tfs = 'xx-large'
 #    afs = 'x-large'
 #    tkfs = 'large'
@@ -120,7 +119,7 @@ def plotflux(E,E0, arc, base=None,hi=None,low=None,mid=None,dbglvl=0):
     #ax.set_xlim((1e2,1e4))
    # sns.despine(ax=ax)
 
-    if dbglvl>0 and base is not None:
+    if base is not None:
         ax = figure().gca()
         ax.loglog(E,base)
         ax.set_ylim((1e2,1e6))
@@ -179,15 +178,14 @@ if __name__ == '__main__':
     E = logspace(1.7,4.3,num=33,base=10) #like matt's transcar sim
 
     try:
-        with h5py.File(expanduser(p.infn),'r',libver='latest') as f:
+        with h5py.File(str(Path(p.infn).expanduser()),'r',libver='latest') as f:
             df = DataFrame(f['/diffnumflux_params'].value)
     except KeyError as e:
-        warn('trouble accessing {} {}'.format(p.infn,e))
-        raise
+        raise IOError('trouble accessing {} {}'.format(p.infn,e))
 
 
     df.dropna(axis=0,how='any',inplace=True)
-#%% Maxwellian 
+#%% Maxwellian
     Phimaxwell,Qmaxwell = maxwellian(E,df['E0'].values,df['Q0'].values, p.verbose)
     plotflux(E,df['E0'].values,Phimaxwell)
 #%% Strickland
@@ -197,6 +195,6 @@ if __name__ == '__main__':
 
     writeh5(p.save,Phi,E,df)
 
-    plotflux(E,df['E0'].values,Phi, base, hi,low,mid,p.verbose)
+    plotflux(E,df['E0'].values,Phi, base, hi,low,mid)
 
     show()

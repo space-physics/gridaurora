@@ -1,6 +1,6 @@
 from __future__ import division,absolute_import
 import logging
-from os.path import join,expanduser
+from pathlib2 import Path
 from numpy import in1d,array
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw
@@ -57,7 +57,7 @@ def writeplots(fg,plotprefix,tInd,method,progms,overridefmt=None):
     #PGF is slow and big file,
     #RAW crashes
     #JPG no faster than PNG
-
+    progms = Path(progms)
     tmpl = ('eps','jpg','png','pdf')
     used = in1d(tmpl,method)
     if progms and used.any():
@@ -65,6 +65,6 @@ def writeplots(fg,plotprefix,tInd,method,progms,overridefmt=None):
             fmt = overridefmt; dpi = epsdpi
         else:
             fmt = array(tmpl)[used][0]; dpi=plotdpi
-        cn = expanduser(join(progms,(plotprefix + '_t{:03d}.{}'.format(tInd,fmt))))
+        cn = (progms / (plotprefix + '_t{:03d}.{}'.format(tInd,fmt))).expanduser()
         logging.info('write {}'.format(cn))
-        fg.savefig(cn,bbox_inches='tight',dpi=dpi,format=fmt)  # this is slow and async
+        fg.savefig(str(cn),bbox_inches='tight',dpi=dpi,format=fmt)  # this is slow and async
