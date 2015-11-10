@@ -16,7 +16,10 @@ from numpy import loadtxt,nan
 from pandas import DataFrame
 if PY2: FileNotFoundError = IOError
 
-def readmonthlyApF107(yearmon,fn='RecentIndices.txt'):
+def readmonthlyApF107(yearmon,fn=None):
+    if not fn:
+        fn = Path(__file__).parent / 'data' / 'RecentIndices.txt'
+
     fn = Path(fn).expanduser()
 #%% date handle
     if isinstance(yearmon,string_types):
