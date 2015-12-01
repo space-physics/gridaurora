@@ -164,7 +164,7 @@ def writeh5(h5fn,Phi,E,fp):
 if __name__ == '__main__':
     from matplotlib.pyplot import figure, show
     import seaborn as sns
-    sns.set_context('talk')
+    sns.set_context('paper',font_scale=1.75)
     sns.set_style('whitegrid')
 
     from argparse import ArgumentParser
@@ -174,8 +174,8 @@ if __name__ == '__main__':
     p.add_argument('-o','--save',help='filename output to HDF5',default=None)
     p = p.parse_args()
 
-    #E = logspace(2,4.35,num=200,base=10) #like Strickland 1993
-    E = logspace(1.7,4.3,num=33,base=10) #like matt's transcar sim
+    E = logspace(2,4.35,num=200,base=10) #like Strickland 1993
+    #E = logspace(1.7,4.3,num=33,base=10) #like matt's transcar sim
 
     try:
         with h5py.File(str(Path(p.infn).expanduser()),'r',libver='latest') as f:
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 
     df.dropna(axis=0,how='any',inplace=True)
 #%% Maxwellian
-    Phimaxwell,Qmaxwell = maxwellian(E,df['E0'].values,df['Q0'].values, p.verbose)
+    Phimaxwell,Qmaxwell = maxwellian(E,df['E0'].values,df['Q0'].values)
     plotflux(E,df['E0'].values,Phimaxwell)
 #%% Strickland
     Phi,low,mid,hi,base,Q = fluxgen(E,df['E0'].values,df['Q0'].values,df['Wbc'].values,
