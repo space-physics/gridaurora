@@ -25,7 +25,6 @@ br: flux-tube integrated intensity, dimension lamb
 
 See Eqn 9 of Appendix C of Zettergren PhD thesis 2007 to get a better insight on what this set of functions do.
 """
-doplotspectra = False
 spectraAminmax = (1e-1,8e5) #for plotting
 spectrallines=(391.44, 427.81, 557.7, 630.0, 777.4, 844.6) #297.2, 636.4,762.0, #for plotting
 
@@ -78,7 +77,7 @@ def calcemissions(spec,tReqInd,sim):
     return dfver, ver,br
 
 def getMetastable(spec,ver,lamb,br,reactfn):
-    with h5py.File(reactfn,'r',libver='latest') as f:
+    with h5py.File(str(reactfn),'r',libver='latest') as f:
         A = f['/metastable/A'].value
         lambnew = f['/metastable/lambda'].value.ravel(order='F') #some are not 1-D!
 
@@ -92,7 +91,7 @@ def getAtomic(spec,ver,lamb, br,reactfn):
     """ prompt atomic emissions (nm)
     844.6 777.4
     """
-    with h5py.File(reactfn,'r',libver='latest') as f:
+    with h5py.File(str(reactfn),'r',libver='latest') as f:
         lambnew = f['/atomic/lambda'].value.ravel(order='F') #some are not 1-D!
 
     vnew = concatenate((spec['po3p3p'].values[None,...],
@@ -104,7 +103,7 @@ def getN21NG(spec,ver,lamb,br, reactfn):
     """
     excitation Franck-Condon factors (derived from Vallance Jones, 1974)
     """
-    with h5py.File(reactfn,'r',libver='latest') as f:
+    with h5py.File(str(reactfn),'r',libver='latest') as f:
         A = f['/N2+1NG/A'].value
         lambdaA = f['/N2+1NG/lambda'].value.ravel(order='F')
         franckcondon = f['/N2+1NG/fc'].value
@@ -112,7 +111,7 @@ def getN21NG(spec,ver,lamb,br, reactfn):
     return doBandTrapz(A,lambdaA,franckcondon, spec['p1ng'],lamb,ver,spec.major_axis,br)
 
 def getN2meinel(spec,ver,lamb,br,reactfn):
-    with h5py.File(reactfn,'r',libver='latest') as f:
+    with h5py.File(str(reactfn),'r',libver='latest') as f:
         A = f['/N2+Meinel/A'].value
         lambdaA = f['/N2+Meinel/lambda'].value.ravel(order='F')
         franckcondon = f['/N2+Meinel/fc'].value
@@ -123,7 +122,7 @@ def getN2meinel(spec,ver,lamb,br,reactfn):
 
 def getN22PG(spec,ver,lamb,br,reactfn):
     """ from Benesch et al, 1966a """
-    with h5py.File(reactfn,'r',libver='latest') as f:
+    with h5py.File(str(reactfn),'r',libver='latest') as f:
         A = f['/N2_2PG/A'].value
         lambdaA = f['/N2_2PG/lambda'].value.ravel(order='F')
         franckcondon = f['/N2_2PG/fc'].value
@@ -132,7 +131,7 @@ def getN22PG(spec,ver,lamb,br,reactfn):
 
 def getN21PG(spec,ver,lamb,br,reactfn):
 
-    with h5py.File(reactfn,'r',libver='latest') as fid:
+    with h5py.File(str(reactfn),'r',libver='latest') as fid:
         A = fid['/N2_1PG/A'].value
         lambnew = fid['/N2_1PG/lambda'].value.ravel(order='F')
         franckcondon = fid['/N2_1PG/fc'].value
