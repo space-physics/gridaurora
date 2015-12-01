@@ -67,4 +67,4 @@ def writeplots(fg,plotprefix,tInd,method,progms,overridefmt=None):
             fmt = array(tmpl)[used][0]; dpi=plotdpi
         cn = (progms / (plotprefix + '_t{:03d}.{}'.format(tInd,fmt))).expanduser()
         logging.info('write {}'.format(cn))
-        fg.savefig(str(cn),bbox_inches='tight',dpi=dpi,format=fmt)  # this is slow and async
+        fg.savefig(str(cn),bbox_inches='tight',dpi=dpi)  # this is slow and async
