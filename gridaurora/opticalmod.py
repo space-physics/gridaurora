@@ -3,15 +3,8 @@ from __future__ import division,absolute_import
 import logging
 import h5py
 from pandas import DataFrame
-try:
-    from matplotlib.pyplot import figure, subplots #must be here to allow plotOptMod to be called from hist-feasibility
-    from matplotlib.ticker import MultipleLocator
-    import seaborn as sns
-    sns.color_palette(sns.color_palette("cubehelix"))
-    sns.set(context='notebook', style='whitegrid',
-        rc={'image.cmap': 'cubehelix_r'}) #for contour
-except Exception as e:
-    logging.warning('problem with Matplotlib, plots won"t work   {}'.format(e))
+from matplotlib.pyplot import figure, subplots #must be here to allow plotOptMod to be called from hist-feasibility
+from matplotlib.ticker import MultipleLocator
 #
 from .filterload import getSystemT
 #%% computation

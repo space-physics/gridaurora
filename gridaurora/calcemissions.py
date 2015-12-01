@@ -8,13 +8,6 @@ from matplotlib.pyplot import figure,close,subplots
 #from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 from matplotlib.dates import SecondLocator, DateFormatter, MinuteLocator
-try:
-    import seaborn as sns
-    sns.color_palette(sns.color_palette("cubehelix"))
-    sns.set(context='talk', style='whitegrid',
-        rc={'image.cmap': 'cubehelix_r'}) #for contour
-except:
-    pass
 """
 inputs:
 spec: excitation rates, 3-D Panel, dimensions reaction x altitude x time
