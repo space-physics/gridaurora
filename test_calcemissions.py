@@ -3,11 +3,11 @@
 using excitation rates and other factors, creates volume emission rate profiles.
 """
 from __future__ import division,absolute_import
+from pathlib2 import Path
 import logging
 import h5py
-from os.path import join,expanduser
 from matplotlib.pyplot import show
-
+#
 from gridaurora.calcemissions import calcemissions,plotspectra,showIncrVER
 from gridaurora.filterload import getSystemT
 # github.com/scienceopen/transcarread
@@ -27,16 +27,16 @@ if __name__ == '__main__':
     p.add_argument('-m','--makeplot',help='specify plots to make e.g. vjinc vjinc1d',nargs='+',default=['eigtime','eigtime1d','spectra'])
     p.add_argument('--datcarfn',help='path to dir.input/DATCAR',default='dir.input/DATCAR')
     p.add_argument('--profile',help='profile performance',action='store_true')
-    p.add_argument('-p','--doplot',help='show plots of data',action='store_true')
     p.add_argument('-o','--outfile',help='HDF5 filename to write')
+    p.add_argument('-t','--tind',help='time index to use',type=int,default=40)
     p=p.parse_args()
 
-    tReqInd = 40 #arbitrary,
+    tReqInd = p.tind
     #NOTE: make sure tReqInd after precipitation starts or you're looking at airglow instead of aurora!
+    path = Path(p.path).expanduser()
+    simpath = path/('beam'+str(p.beamenergy))
 
-    simpath = join(p.path,'beam'+str(p.beamenergy))
-
-    excrpath = join(simpath,'dir.output')
+    excrpath = simpath/'dir.output'
     excrates = readexcrates(excrpath,'emissions.dat')[0]
     sim = SimpleSim(filt=None,inpath=simpath,reacreq=p.reacreq)
 #%% testing code timing only
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         pstats.Stats(proffn).sort_stats('time','cumulative').print_stats(50)
         exit()
 #%% normal usage, continue processing data
-    tctime = readTranscarInput(join(simpath,p.datcarfn))
+    tctime = readTranscarInput(simpath/p.datcarfn)
 
     t=excrates.minor_axis.to_datetime().to_pydatetime()
 
@@ -57,9 +57,9 @@ if __name__ == '__main__':
     optT = getSystemT(tver.index,sim.bg3fn, sim.windowfn,sim.qefn,sim.obsalt_km,sim.zenang)
 #%% write as hdf5
     if p.outfile:
-        h5fn = expanduser(p.outfile)
+        h5fn = str(Path(p.outfile).expanduser())
         print('writing output to '+h5fn)
-        with h5py.File(expanduser(h5fn),'w',libver='latest') as f:
+        with h5py.File(h5fn,'w',libver='latest') as f:
             d=f.create_dataset('/ver',data=tver.values) #volume emission rate per beam vs. altitude and wavelength
             d.attrs['units'] = 'photons cm^-3 sr^-1 s^-1 eV^-1'
             d=f.create_dataset('/wavelength',data=tver.index)
@@ -67,10 +67,10 @@ if __name__ == '__main__':
             d=f.create_dataset('/altitude',data=tver.columns)
             d.attrs['units'] = 'km'
 #%% plots
-    if p.doplot:
+    if p.makeplot:
         #spectra overall
         plotspectra(br,optT,p.beamenergy,sim.lambminmax)
-
+        show()
         #details of individual reactions
         for r in p.reacreq:
             sim.reacreq = r

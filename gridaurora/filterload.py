@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import absolute_import,division
+from pathlib2 import Path
 import logging
 from matplotlib.pyplot import figure
 from numpy import exp, log, ones_like, isfinite,spacing
 from scipy.interpolate import interp1d
 import h5py
-from os.path import expanduser
 from pandas import DataFrame
 # consider atmosphere
 try:
@@ -25,6 +25,9 @@ window: http://www.andor.com/pdfs/specifications/Andor_Camera_Windows_Supplement
 '''
 
 def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
+    bg3fn = Path(bg3fn).expanduser()
+    windfn = Path(windfn).expanduser()
+    qefn = Path(qefn).expanduser()
 #%% atmospheric absorption
     if useatm:
         if dbglvl>0: print('loading LOWTRAN7 atmosphere model...')
@@ -43,13 +46,13 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     if not isfinite(atmTinterp).all():
         logging.error('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 #%% BG3 filter
-    with h5py.File(expanduser(bg3fn),'r',libver='latest') as f:
+    with h5py.File(str(bg3fn),'r',libver='latest') as f:
         fbg3  = interp1d(f['/lamb'], log(f['/T']), kind='linear')
 #%% camera window
-    with h5py.File(expanduser(windfn),'r',libver='latest') as f:
+    with h5py.File(str(windfn),'r',libver='latest') as f:
         fwind = interp1d(f['/lamb'], log(f['/T']), kind='linear')
 #%% quantum efficiency
-    with h5py.File(expanduser(qefn),'r',libver='latest') as f:
+    with h5py.File(str(qefn),'r',libver='latest') as f:
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
 
 
@@ -62,7 +65,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     T['sys']      = T[['window','qe','bg3','atm']].prod(axis=1)
 
     return T
-#%% ploting
+#%% plotting
 def plotT(T,mmsl):
     ax = figure().gca()
     T[['bg3','window','qe','atm']].plot(ax=ax)
