@@ -7,8 +7,8 @@ from matplotlib.pyplot import figure,draw
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 
-epsdpi=300
-plotdpi=100
+dpi=300
+
 dymaj=100
 dymin=20
 
@@ -62,9 +62,9 @@ def writeplots(fg,plotprefix,tInd,method,progms,overridefmt=None):
     used = in1d(tmpl,method)
     if progms and used.any():
         if overridefmt is not None:
-            fmt = overridefmt; dpi = epsdpi
+            fmt = overridefmt
         else:
-            fmt = array(tmpl)[used][0]; dpi=plotdpi
+            fmt = array(tmpl)[used][0]
         cn = (progms / (plotprefix + '_t{:03d}.{}'.format(tInd,fmt))).expanduser()
         logging.info('write {}'.format(cn))
         fg.savefig(str(cn),bbox_inches='tight',dpi=dpi)  # this is slow and async
