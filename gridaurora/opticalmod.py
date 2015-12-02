@@ -121,7 +121,8 @@ def comparejgr2013(altkm,zenang,bg3fn, windfn, qefn):
 def plotAllTrans(optT,log):
     mutwl = optT.index
 
-    ax = figure().gca()
+    fg = figure(figsize=(7,5))
+    ax = fg.gca()
     ax.plot(mutwl,optT['sys'],label='optics')
     ax.plot(mutwl,optT['atm'],label='atmosphere')
     ax.plot(mutwl,optT[['sys','atm']].prod(axis=1),label='total',linewidth=2)
@@ -130,11 +131,13 @@ def plotAllTrans(optT,log):
         ax.set_ylim(bottom=1e-5)
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('T')
-    ax.set_title('Optical System Transmission and Atmospheric Absorption')
-    ax.grid(True)
+    ax.set_title('System Transmission')
+    ax.grid(True,'both')
     ax.invert_xaxis()
     ax.xaxis.set_major_locator(MultipleLocator(100))
-    ax.legend(loc='best')
+    ax.legend(loc='center',bbox_to_anchor=(0.3, 0.15))
+
+    return fg
 
 def plotPeigen(Peigen):
     #Peigen DataFrame indexed by energy x altitude
