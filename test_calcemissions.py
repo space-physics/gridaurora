@@ -13,8 +13,14 @@ sns.set_context('paper',font_scale=1.75)
 sns.set_style('whitegrid')
 
 #
+import seaborn as sns
+sns.color_palette("cubehelix")
+sns.set(context='paper', style='whitegrid',font_scale=2.1,
+        rc={'image.cmap': 'cubehelix_r'})
+#
 from gridaurora.calcemissions import calcemissions,plotspectra,showIncrVER
 from gridaurora.filterload import getSystemT
+from gridaurora.plots import writeplots
 # github.com/scienceopen/transcarread
 from transcarread.readExcrates import readexcrates
 from transcarread.parseTranscar import readTranscarInput
@@ -74,7 +80,8 @@ if __name__ == '__main__':
 #%% plots
     if p.makeplot:
         #spectra overall
-        plotspectra(br,optT,p.beamenergy,sim.lambminmax)
+        fg = plotspectra(br,optT,p.beamenergy,sim.lambminmax)
+        writeplots(fg,'spectra',0,p.makeplot,'./')
         show()
         #details of individual reactions
         for r in p.reacreq:
