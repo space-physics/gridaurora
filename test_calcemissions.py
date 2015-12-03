@@ -7,6 +7,11 @@ from pathlib2 import Path
 import logging
 import h5py
 from matplotlib.pyplot import show
+import seaborn as sns
+sns.color_palette(sns.color_palette("cubehelix"))
+sns.set_context('paper',font_scale=1.75)
+sns.set_style('whitegrid')
+
 #
 from gridaurora.calcemissions import calcemissions,plotspectra,showIncrVER
 from gridaurora.filterload import getSystemT
