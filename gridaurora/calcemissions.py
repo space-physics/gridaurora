@@ -276,8 +276,8 @@ def plotspectra(br,optT,E,lambminmax):
 
     def _plotspectrasub(ax,bf,txt):
         ax.set_yscale('log')
-        ax.set_title('Auroral emission spectrum, ' +  txt +
-                     ',integrated along flux tube for beam energy {:.0f} eV'.format(E))
+        ax.set_title('Auroral spectrum, ' +  txt +
+                     ',integrated along flux tube: $E_0$ = {:.0f} eV'.format(E))
         ax.set_ylabel('optical intensity')
         ax.set_xlim(lambminmax)
         ax.set_ylim(spectraAminmax)
@@ -289,13 +289,15 @@ def plotspectra(br,optT,E,lambminmax):
                     ha='center',va='bottom',fontsize='medium',rotation=60)
 
 
-    fg,((ax1,ax2)) = subplots(2,1,sharex=True)
+    fg,((ax1,ax2)) = subplots(2,1,sharex=True,figsize=(10,8))
     bf=br*optT['sysNObg3']
     ax1.stem(lamb,bf)
-    _plotspectrasub(ax1,bf,'')
+    _plotspectrasub(ax1,bf,'no filter')
 
 
     bf=br*optT['sys']
     ax2.stem(lamb,bf)
-    _plotspectrasub(ax2,bf,'BG3 filtered')
+    _plotspectrasub(ax2,bf,'BG3 filter')
     ax2.set_xlabel('wavelength [nm]')
+
+    return fg
