@@ -130,7 +130,7 @@ def plotAllTrans(optT,log):
         ax.set_yscale('log')
         ax.set_ylim(bottom=1e-5)
     ax.set_xlabel('wavelength [nm]')
-    ax.set_ylabel('T')
+    ax.set_ylabel('Transmission [dimensionless]')
     ax.set_title('System Transmission')
     ax.grid(True,'both')
     ax.invert_xaxis()
