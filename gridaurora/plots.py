@@ -27,7 +27,7 @@ def writeplots(fg,plotprefix,tind,method,progms,overridefmt=None,anno=None):
         else:
             fmt = array(tmpl)[used][0]
 
-        if tind:
+        if tind is not None: #need "is not None" in case tind==0
             suff = '{:03d}'.format(tind)
         else:
             suff = ''
