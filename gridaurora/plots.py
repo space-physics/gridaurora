@@ -7,7 +7,7 @@ from matplotlib.pyplot import figure,draw
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 
-dpi=600 #IEEE Transactions requires 600 dpi
+dpi=100 #IEEE Transactions requires 600 dpi
 
 dymaj=100
 dymin=20
