@@ -12,7 +12,7 @@ from gridaurora.opticalmod import opticalModel
 from gridaurora.calcemissions import calcemissions, sortelimlambda
 from transcarread.readTranscar import calcVERtc
 
-def getTranscar(sim):
+def getTranscar(sim,obsAlt_km,zenithang):
     zeroUnusedBeams = False
 
     if sim.loadver: #from JGR2013, NOT used much
@@ -27,7 +27,7 @@ def getTranscar(sim):
 
         Peigen = zeros((Plambda.shape[1], nEnergy), dtype=float, order='F')
         for iEn in range(nEnergy):
-            Peigen[:,iEn] = opticalModel(sim, Plambda.iloc[:,:,iEn].T) #Transpose here because indexing Panel flips axes of Dataframe?
+            Peigen[:,iEn] = opticalModel(sim, Plambda.iloc[:,:,iEn].T,obsAlt_km,zenithang) #Transpose here because indexing Panel flips axes of Dataframe?
 
         Peigenunfilt = Plambda.sum(axis=0) #from matlab, which already did this
     else: #read from transcar emissions.dat (TYPICALLY USED)
@@ -65,7 +65,7 @@ def getTranscar(sim):
                 Peigen= zeros((z.size, nEnergy), dtype=float, order='F')
 
             PlambdaAccum[...,iEn] = Plambda  #stores multiwavelength ver for each energy
-            Peigen[:,iEn] = opticalModel(sim,Plambda)
+            Peigen[:,iEn] = opticalModel(sim,Plambda,obsAlt_km,zenithang)
 
             if iEn != lowestBeamUsedInd:
                  if all( Peigen[:,iEn] == Peigen[:,lowestBeamUsedInd]):
