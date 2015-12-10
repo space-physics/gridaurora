@@ -25,11 +25,13 @@ if __name__ == '__main__':
     p.add_argument('path',help='root path to simulation output')
     p.add_argument('-p','--doplot',help='make plots of data',action='store_true')
     p.add_argument('-o','--outfn',help='hdf5 filename to write output to')
+    p.add_argument('--zenithang',help='angle from local vertical',type=float,default=12.5)
+    p.add_argument('--alt',help='kilometers',type=float,default=0.)
     p = p.parse_args()
 
     sim = SimpleSim(filt='bg3',inpath=p.path,transcarutc='2013-03-31T09:00:21Z') #set some default parameters bundled up as a Class
 
-    Peigen, EKpcolor, Peigenunfilt = getTranscar(sim)
+    Peigen, EKpcolor, Peigenunfilt = getTranscar(sim,p.alt,p.zenithang)
 #%% write output
     if p.outfn:
         h5fn = expanduser(p.outfn)

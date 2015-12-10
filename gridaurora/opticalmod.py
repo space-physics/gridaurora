@@ -8,14 +8,14 @@ from matplotlib.ticker import MultipleLocator
 #
 from .filterload import getSystemT
 #%% computation
-def opticalModel(sim,ver):
+def opticalModel(sim,ver,obsAlt_km,zenithang):
     #assert reqLambda.ndim == 1
     #assert z.ndim == 1
     #assert z.size == ver.shape[1]
     #assert reqLambda.size == ver.shape[0]
 
 #%% get system optical transmission T
-    optT = getSystemT(ver.index.values,sim.bg3fn, sim.windowfn,sim.qefn,sim.obsalt_km,sim.zenang)
+    optT = getSystemT(ver.index.values,sim.bg3fn, sim.windowfn,sim.qefn,obsAlt_km,zenithang)
 #%% first multiply VER by T, THEN sum overall wavelengths
     if sim.opticalfilter == 'bg3':
         VERgray = ver.multiply(optT['sys'],axis=0).sum(axis=0)
