@@ -12,22 +12,21 @@ dpi=100 #IEEE Transactions requires 600 dpi
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,method,progms,overridefmt=None,anno=None):
+def writeplots(fg,plotprefix,tind,method,odir,overridefmt=None,anno=None):
     draw() #Must have this here or plot doesn't update in animation multiplot mode!
     #TIF was not faster and was 100 times the file size!
     #PGF is slow and big file,
     #RAW crashes
     #JPG no faster than PNG
-    progms = Path(progms)
     tmpl = ('eps','jpg','png','pdf')
     used = in1d(tmpl,method)
-    if progms and used.any():
+    if used.any():
         if overridefmt is not None:
             fmt = overridefmt
         else:
             fmt = array(tmpl)[used][0]
 
-        if tind is not None: #need "is not None" in case tind==0
+        if tind is not None: #NOTE need "is not None" in case tind==0
             suff = '{:03d}'.format(tind)
         else:
             suff = ''
@@ -35,7 +34,7 @@ def writeplots(fg,plotprefix,tind,method,progms,overridefmt=None,anno=None):
         if anno:
             fg.text(0.15,0.8,anno,fontsize='x-large')
 
-        cn = (progms / (plotprefix + suff + '.{}'.format(fmt))).expanduser()
+        cn = (Path(odir) / (plotprefix + suff + '.{}'.format(fmt))).expanduser()
         print('write {}'.format(cn))
         fg.savefig(str(cn),bbox_inches='tight',dpi=dpi)  # this is slow and async
 #%%
