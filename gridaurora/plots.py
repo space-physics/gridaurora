@@ -1,4 +1,5 @@
-from __future__ import division,absolute_import
+from __future__ import division,absolute_import,unicode_literals
+from six import integer_types
 import logging
 from pathlib2 import Path
 from numpy import in1d,array
@@ -26,10 +27,7 @@ def writeplots(fg,plotprefix,tind,method,odir,overridefmt=None,anno=None):
         else:
             fmt = array(tmpl)[used][0]
 
-        if tind is not None: #NOTE need "is not None" in case tind==0
-            suff = '{:03d}'.format(tind)
-        else:
-            suff = ''
+        suff = nametime(tind)
 
         if anno:
             fg.text(0.15,0.8,anno,fontsize='x-large')
@@ -37,6 +35,14 @@ def writeplots(fg,plotprefix,tind,method,odir,overridefmt=None,anno=None):
         cn = (Path(odir) / (plotprefix + suff + '.{}'.format(fmt))).expanduser()
         print('write {}'.format(cn))
         fg.savefig(str(cn),bbox_inches='tight',dpi=dpi)  # this is slow and async
+
+def nametime(tind):
+    if isinstance(tind,integer_types) and tind<1e6:
+        return '{:03d}'.format(tind)
+    elif tind is not None:
+        return '{}'.format(tind) #for datetime or just strings or whatever
+    else: #is None
+        return ''
 #%%
 def ploteigver(EKpcolor,zKM,eigenprofile,
                vlim=(None,)*6,sim=None,tInd=None,makeplot=None,prefix=None,progms=None):
