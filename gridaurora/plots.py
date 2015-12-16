@@ -1,6 +1,7 @@
 from __future__ import division,absolute_import,unicode_literals
 from six import integer_types
 import logging
+from datetime import datetime
 from pathlib2 import Path
 from numpy import in1d,array
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
@@ -39,8 +40,10 @@ def writeplots(fg,plotprefix,tind,method,odir,overridefmt=None,anno=None):
 def nametime(tind):
     if isinstance(tind,integer_types) and tind<1e6:
         return '{:03d}'.format(tind)
+    elif isinstance(tind,datetime):
+        return tind.strftime('%Y-%m-%dT%H:%M:%S') 
     elif tind is not None:
-        return '{}'.format(tind) #for datetime or just strings or whatever
+        return str(tind)
     else: #is None
         return ''
 #%%
