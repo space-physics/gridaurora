@@ -4,7 +4,7 @@
  based on Strickland 1993
 """
 from __future__ import division,absolute_import
-from pathlib2 import Path
+from pathlib import Path
 import logging
 from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,asfortranarray)
 from pandas import DataFrame
