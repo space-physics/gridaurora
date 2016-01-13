@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-from __future__ import absolute_import,division
-from pathlib2 import Path
+from pathlib import Path
 import logging
 from matplotlib.pyplot import figure
 from numpy import exp, log, ones_like, isfinite,spacing

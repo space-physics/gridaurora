@@ -7,14 +7,12 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 
 Michael Hirsch
 """
-from __future__ import division,absolute_import
-from pathlib2 import Path
+from pathlib import Path
 from datetime import datetime
 from dateutil.parser import parse
-from six import integer_types,PY2,string_types
+from six import string_types
 from numpy import loadtxt,nan
 from pandas import DataFrame
-if PY2: FileNotFoundError = IOError
 
 def readmonthlyApF107(yearmon,fn=None):
     if not fn:
@@ -28,7 +26,7 @@ def readmonthlyApF107(yearmon,fn=None):
     if isinstance(yearmon,datetime):
         yearmon = int(str(yearmon.year) + '{:02d}'.format(yearmon.month))
 
-    assert isinstance(yearmon,(integer_types))
+    assert isinstance(yearmon,int)
 #%% load data
     if not fn.is_file():
         raise FileNotFoundError(str(fn.resolve()) +' download from ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt')
