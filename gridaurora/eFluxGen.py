@@ -4,9 +4,10 @@
  based on Strickland 1993
 """
 from __future__ import division,absolute_import
-from pathlib2 import Path
+from pathlib import Path
 import logging
-from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,asfortranarray)
+from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,
+                   asfortranarray,atleast_1d)
 from pandas import DataFrame
 import h5py
 #
@@ -14,13 +15,29 @@ from histutils.findnearest import find_nearest
 
 def maxwellian(E,E0,Q0):
     """
+    input:
+    ------
+    E: 1-D vector of energy bins [eV]
+    E0: characteristic energy (scalar or vector) [eV]
+    Q0: flux coefficient (scalar or vector) (to yield overall flux Q)
+
+    output:
+    -------
+    Phi: differential number flux
+    Q: total flux
+
     Tanaka 2006 Eqn. 1
     http://odin.gi.alaska.edu/lumm/Papers/Tanaka_2006JA011744.pdf
     """
+    E0 = atleast_1d(E0)
+    Q0 = atleast_1d(Q0)
+    assert E0.ndim==Q0.ndim==1
+    assert (Q0.size==1 or Q0.size==E0.size)
+
     Phi= Q0/(2*pi*E0**3) * E[:,None] * exp(-E[:,None]/E0)
 
     Q = trapz(Phi,E,axis=0)
-    logging.info('total flux Q: ' + (' '.join('{:.1e}'.format(q) for q in Q)))
+    logging.info('total maxwellian flux Q: ' + (' '.join('{:.1e}'.format(q) for q in Q)))
     return Phi,Q
 
 def fluxgen(E,E0,Q0,Wbc,bl,bm,bh,Bm,Bhf,verbose=0):
