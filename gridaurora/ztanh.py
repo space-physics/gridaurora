@@ -6,12 +6,21 @@ Michael Hirsch
 from numpy import tanh, linspace, cumsum, insert, gradient, median
 
 def setupz(np,zmin,gridmin,gridmax):
+    """
+    np: number of grid points
+    zmin: minimum STEP SIZE at minimum grid altitude [km]
+    gridmin: minimum altitude of grid [km]
+    gridmax: maximum altitude of grid [km]
+    """
 
     dz = _ztanh(np,gridmin,gridmax)
 
     return insert(cumsum(dz)+zmin, 0, zmin)[:-1]
 
 def _ztanh(np,gridmin,gridmax):
+    """
+    typically call via setupz instead
+    """
     x0 = linspace(0, 3.14, np) #arbitrarily picking 3.14 as where tanh gets to 99% of asymptote
     return tanh(x0)*gridmax+gridmin
 
