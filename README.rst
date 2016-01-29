@@ -11,9 +11,14 @@
 ==========
 gridaurora
 ==========
-Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling
+Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling.
 
 .. contents::
+
+Prereq
+======
+Python 3.5+
+Fortran compiler
 
 Install
 =======
