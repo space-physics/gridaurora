@@ -3,7 +3,7 @@
 using excitation rates and other factors, creates volume emission rate profiles.
 """
 from __future__ import division,absolute_import
-from pathlib2 import Path
+from pathlib import Path
 import logging
 import h5py
 from matplotlib.pyplot import show

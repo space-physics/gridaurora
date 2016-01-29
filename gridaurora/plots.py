@@ -2,7 +2,7 @@ from __future__ import division,absolute_import,unicode_literals
 from six import integer_types
 import logging
 from datetime import datetime
-from pathlib2 import Path
+from pathlib import Path
 from numpy import in1d,array
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw
@@ -41,7 +41,7 @@ def nametime(tind):
     if isinstance(tind,integer_types) and tind<1e6:
         return '{:03d}'.format(tind)
     elif isinstance(tind,datetime):
-        return tind.strftime('%Y-%m-%dT%H:%M:%S') 
+        return tind.strftime('%Y-%m-%dT%H:%M:%S')
     elif tind is not None:
         return str(tind)
     else: #is None
