@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 import logging
-from os.path import join
+from pathlib import Path
 from numpy import arange
 from gridaurora.filterload import getSystemT,plotT
 from matplotlib.pyplot import show
@@ -18,10 +19,11 @@ if __name__=="__main__":
     p.add_argument('--zenang',help='zenith angle (deg)',type=float,default=0.)
     p = p.parse_args()
 
+    inpath = Path(p.path).expanduser()
 
-    filterfn =  join(p.path,'BG3transmittance.h5')
-    windFN =    join(p.path,'ixonWindowT.h5')
-    qeFN =      join(p.path,'emccdQE.h5')
+    filterfn =  inpath/'BG3transmittance.h5'
+    windFN =    inpath/'ixonWindowT.h5'
+    qeFN =      inpath/'emccdQE.h5'
 
     T = selftest(filterfn, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
 

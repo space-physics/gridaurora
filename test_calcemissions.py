@@ -2,7 +2,6 @@
 """
 using excitation rates and other factors, creates volume emission rate profiles.
 """
-from __future__ import division,absolute_import
 from pathlib import Path
 import logging
 import h5py
