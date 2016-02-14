@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-from __future__ import division,absolute_import
+from pathlib import Path
 from datetime import datetime
 import pytz
-from numpy.testing import assert_allclose
-from os.path import join
+from numpy.testing import assert_allclose,run_module_suite
 
 def test_dt2ut1():
     from gridaurora.to_ut1 import to_ut1unix
@@ -35,10 +34,10 @@ def test_worldgrid():
 def test_opticalfilter():
     from gridaurora import filterload
 
-    dpath = 'precompute'
-    bg3fn =  join(dpath,'BG3transmittance.h5')
-    windfn = join(dpath,'ixonWindowT.h5')
-    qefn =   join(dpath,'emccdQE.h5')
+    dpath = Path('precompute')
+    bg3fn =  dpath/'BG3transmittance.h5'
+    windfn = dpath/'ixonWindowT.h5'
+    qefn =   dpath/'emccdQE.h5'
 
     testlambda = [250, 427.8, 555.7, 630.0, 777.4]
     obsalt_km = 0
@@ -58,8 +57,4 @@ def test_opticalfilter():
     assert ((0 <= T.values) & (T.values <= 1)).all()
 
 if __name__ == '__main__':
-    test_dt2ut1()
-    test_ztanh()
-    test_worldgrid()
-    test_opticalfilter()
-
+    run_module_suite()
