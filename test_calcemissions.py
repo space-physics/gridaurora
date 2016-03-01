@@ -7,12 +7,6 @@ import logging
 import h5py
 from matplotlib.pyplot import show
 import seaborn as sns
-sns.color_palette(sns.color_palette("cubehelix"))
-sns.set_context('paper',font_scale=1.75)
-sns.set_style('whitegrid')
-
-#
-import seaborn as sns
 sns.color_palette("cubehelix")
 sns.set(context='paper', style='whitegrid',font_scale=2.1,
         rc={'image.cmap': 'cubehelix_r'})
@@ -38,7 +32,7 @@ if __name__ == '__main__':
     p.add_argument('--datcarfn',help='path to dir.input/DATCAR',default='dir.input/DATCAR')
     p.add_argument('--profile',help='profile performance',action='store_true')
     p.add_argument('-o','--outfile',help='HDF5 filename to write')
-    p.add_argument('-t','--tind',help='time index to use',type=int,default=40)
+    p.add_argument('-t','--tind',help='time index to use',type=int,default=0)
     p=p.parse_args()
 
     tReqInd = p.tind
@@ -64,7 +58,7 @@ if __name__ == '__main__':
         logging.warning('you picked a time before precipitation started, so youre looking at AIRGLOW instead of AURORA!')
 
     tver,ver,br=calcemissions(excrates, tReqInd, sim)
-    optT = getSystemT(tver.index,sim.bg3fn, sim.windowfn,sim.qefn,sim.obsalt_km,sim.zenang)
+    optT = getSystemT(tver.index,sim.bg3fn, sim.windowfn, sim.qefn, sim.obsalt_km, sim.zenang)
 #%% write as hdf5
     if p.outfile:
         h5fn = str(Path(p.outfile).expanduser())

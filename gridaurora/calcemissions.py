@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-from __future__ import division,absolute_import
 import logging
 from numpy import trapz, isfinite, concatenate, tile, nansum
 import h5py
-from pandas import DataFrame,Panel
+from pandas import Series,DataFrame,Panel
 from matplotlib.pyplot import figure,close,subplots
 #from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
@@ -22,9 +21,7 @@ spectraAminmax = (1e-1,8e5) #for plotting
 spectrallines=(391.44, 427.81, 557.7, 630.0, 777.4, 844.6) #297.2, 636.4,762.0, #for plotting
 
 def calcemissions(spec,tReqInd,sim):
-    if not isinstance(spec,Panel):
-        logging.critical('I expect a Pandas Panel as input')
-        return None, None
+    assert isinstance(spec,Panel), 'I expect a Pandas Panel as input'
 
     ver = None; lamb = None; br=None
     """
@@ -288,6 +285,8 @@ def plotspectra(br,optT,E,lambminmax):
             ax.text(l,bf[l]*1.7, '{:.1f}'.format(l),
                     ha='center',va='bottom',fontsize='medium',rotation=60)
 
+#%%
+    br = Series(index=lamb,data=br)
 
     fg,((ax1,ax2)) = subplots(2,1,sharex=True,figsize=(10,8))
     bf=br*optT['sysNObg3']

@@ -13,7 +13,7 @@ def selftest(bg3fn,windfn,qefn, mmsLambda,obsalt_km,zenang_deg):
 if __name__=="__main__":
     from argparse import ArgumentParser
     p = ArgumentParser(description='mogrifies spectral transmission data from datasheets as manually converted into HDF5 data')
-    p.add_argument('--wlnm',help='START STOP STEP wavelength in nm',nargs=3,default=(200.,1000.,0.1),type=float)
+    p.add_argument('--wlnm',help='START STOP STEP wavelength in nm',nargs=3,default=(200.,1200.,0.1),type=float)
     p.add_argument('--path',help='path to HDF5 data',default='precompute')
     p.add_argument('-a','--altkm',help='observer altitude (km)',type=float,default=0.)
     p.add_argument('--zenang',help='zenith angle (deg)',type=float,default=0.)
