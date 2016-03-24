@@ -6,17 +6,15 @@ Please contact me with any questions.
 Michael Hirsch
 Sept 2015
 """
-from __future__ import division,absolute_import
-import logging
+from pathlib import Path
 import h5py
-from os.path import expanduser
 #
 from gridaurora.arcexcite import getTranscar
 from transcarread.readTranscar import SimpleSim
 from gridaurora.opticalmod import plotOptMod
 try:
     from histfeas.plotsnew import ploteig,ploteig1d
-except:
+except ImportError:
     pass #only used for plots
 
 if __name__ == '__main__':
@@ -32,10 +30,11 @@ if __name__ == '__main__':
     sim = SimpleSim(filt='bg3',inpath=p.path,transcarutc='2013-03-31T09:00:21Z') #set some default parameters bundled up as a Class
 
     Peigen, EKpcolor, Peigenunfilt = getTranscar(sim,p.alt,p.zenithang)
-#%% write output
+#%% write output (overwrites existing  HDF5 file)
     if p.outfn:
-        h5fn = expanduser(p.outfn)
-        with h5py.File(h5fn,'w',libver='latest') as f:
+        h5fn = Path(p.outfn).expanduser()
+        print('writing {}'.format(h5fn))
+        with h5py.File(str(h5fn),'w',libver='latest') as f:
             d=f.create_dataset('/eigenprofile',data=Peigen.values)
             d.attrs['units']='photons cm^-3 sr^-1 s^-1 eV^-1'
             d=f.create_dataset('/altitude',data=Peigen.index)
