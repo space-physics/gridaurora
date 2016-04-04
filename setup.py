@@ -6,6 +6,12 @@ import subprocess
 with open('README.rst','r') as f:
 	long_description = f.read()
 
+try:
+    subprocess.run(['conda','install','--yes','--quiet','--file','requirements.txt'])
+except Exception as e:
+    print('you will need to install packages in requirements.txt  {}'.format(e))
+
+
 setup(name='gridaurora',
       version='0.1.1',
 	  description='utilities for ionospheric gridding, particularly for the aurora',
@@ -20,11 +26,3 @@ setup(name='gridaurora',
    packages=['gridaurora'],
    package_data={'gridaurora.precompute': ['*.h5']},
 	  )
-
-#%%
-try:
-    subprocess.run(['conda','install','--yes','--quiet','--file','requirements.txt'])
-except Exception as e:
-    print('you will need to install packages in requirements.txt  {}'.format(e))
-    with open('requirements.txt','r') as f:
-        print(f.read())
