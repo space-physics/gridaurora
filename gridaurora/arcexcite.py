@@ -1,12 +1,10 @@
 # creates optical emissions from excitation rates
-from __future__ import division,absolute_import
+from pathlib import Path
 import logging
-from pandas import  DataFrame, Panel
+from xarray import  DataArray
 from numpy import zeros,append,where, loadtxt
 import h5py
 from pytz import UTC
-from warnings import warn
-from os.path import expanduser
 #
 from gridaurora.opticalmod import opticalModel
 from gridaurora.calcemissions import calcemissions, sortelimlambda
@@ -57,14 +55,14 @@ def getTranscar(sim,obsAlt_km,zenithang):
             if Plambda is None: #couldn't read this beam
                 logging.info('skipped reading beam {}'.format(Ek[iEn]))
                 continue
-            z = Plambda.columns.values
+            z = Plambda.alt_km
 
 
             if iEn == lowestBeamUsedInd:
                 PlambdaAccum = zeros((Plambda.shape[0],Plambda.shape[1],nEnergy),order='F')
                 Peigen= zeros((z.size, nEnergy), dtype=float, order='F')
 
-            PlambdaAccum[...,iEn] = Plambda  #stores multiwavelength ver for each energy
+            PlambdaAccum[...,iEn] = Plambda  # Nalt x Nwavelength x Nenergy
             Peigen[:,iEn] = opticalModel(sim,Plambda,obsAlt_km,zenithang)
 
             if iEn != lowestBeamUsedInd:
@@ -72,15 +70,13 @@ def getTranscar(sim,obsAlt_km,zenithang):
                     logging.error('all Peigen for beam {} are equal to Peigen for beam {}'.format(Ek[iEn],Ek[lowestBeamUsedInd]))
 
         if PlambdaAccum is None: #no beams at all were read
-            return None, None, None
+            return ValueError('No beams were usable')
 
-        Peigenunfilt = DataFrame(data=PlambdaAccum.sum(axis=0),
-                                 index=z,
-                                 columns=Ek)
+        Peigenunfilt = DataArray(data=PlambdaAccum.sum(axis=1), #sum over wavelength axis=1
+                                 coords=[('alt_km',z),('energy_ev',Ek)])
 
-    Peigen = DataFrame(data=Peigen,
-                       index=z,
-                       columns=Ek)
+    Peigen = DataArray(data=Peigen,
+                       coords=[('alt_km',z),('energy_ev',Ek)])
 
     return Peigen, EKpcolor, Peigenunfilt
 
@@ -106,14 +102,13 @@ def loadver(verfn):
     return pdatf,Ek
 
 def getBeamEnergies(beamEnergyCSV):
-    beamCSV = expanduser(beamEnergyCSV)
-    logging.info('Transcar sim. data dir: ' + str(beamCSV) )
+    beamCSV = Path(beamEnergyCSV).expanduser()
+    logging.info('Transcar sim. data dir: {}'.format(beamCSV) )
 
     try:
-        beamEnergies= loadtxt(beamCSV,usecols=[0,1],delimiter=',')
+        beamEnergies= loadtxt(str(beamCSV),usecols=[0,1],delimiter=',')
     except OSError as e:
-        warn('could not find file. {}'.format(e))
-        raise
+        raise OSError('could not find file. {}'.format(e))
 
     Ek = beamEnergies[:,0] #TODO should this value be in the log middle of these values?
     #Ek = Ek[Ek>minBeamEnergy] #nope, let's leave it to be zeroed later

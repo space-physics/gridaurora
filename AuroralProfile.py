@@ -13,9 +13,9 @@ from gridaurora.arcexcite import getTranscar
 from transcarread.readTranscar import SimpleSim
 from gridaurora.opticalmod import plotOptMod
 try:
-    from histfeas.plotsnew import ploteig,ploteig1d
-except ImportError:
-    pass #only used for plots
+    from histfeas.plotsnew import ploteigver,ploteig1d
+except ImportError as e:
+    print(e) #only used for plots
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -45,8 +45,8 @@ if __name__ == '__main__':
             d.attrs['units']='eV'
 #%% plotting
     if p.doplot:
-        ploteig(EKpcolor,Peigen.index.values,Peigen.values,(None,)*6,sim)
+        ploteigver(EKpcolor,Peigen.alt_km,Peigen.values,(None,)*6,sim)
 
         plotOptMod(Peigenunfilt,Peigen)
 
-        ploteig1d(EKpcolor[:-1],Peigen.index,Peigen.values,(None,)*6,sim)
+        ploteig1d(EKpcolor[:-1],Peigen.alt_km,Peigen.values,(None,)*6,sim)

@@ -3,12 +3,11 @@
  Michael Hirsch
  based on Strickland 1993
 """
-from __future__ import division,absolute_import
 from pathlib import Path
 import logging
 from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,
                    asfortranarray,atleast_1d)
-from pandas import DataFrame
+from xarray import DataSet
 import h5py
 #
 from histutils.findnearest import find_nearest
@@ -196,19 +195,19 @@ if __name__ == '__main__':
 
     try:
         with h5py.File(str(Path(p.infn).expanduser()),'r',libver='latest') as f:
-            df = DataFrame(f['/diffnumflux_params'].value)
+            df = DataSet(f['/diffnumflux_params'].value)
     except KeyError as e:
         raise IOError('trouble accessing {} {}'.format(p.infn,e))
 
 
     df.dropna(axis=0,how='any',inplace=True)
 #%% Maxwellian
-    Phimaxwell,Qmaxwell = maxwellian(E,df['E0'].values,df['Q0'].values)
+    Phimaxwell,Qmaxwell = maxwellian(E,df.loc[:,'E0'].values,df.loc[:,'Q0'].values)
     plotflux(E,df['E0'].values,Phimaxwell)
 #%% Strickland
-    Phi,low,mid,hi,base,Q = fluxgen(E,df['E0'].values,df['Q0'].values,df['Wbc'].values,
-                                    df['bl'].values,df['bm'].values,df['bh'].values,
-                                    df['Bm'].values,df['Bhf'].values, p.verbose)
+    Phi,low,mid,hi,base,Q = fluxgen(E,df.loc[:,'E0'].values,df.loc[:,'Q0'].values,df.loc[:,'Wbc'].values,
+                                    df.loc[:,'bl'].values,df.loc[:,'bm'].values,df.loc[:,'bh'].values,
+                                    df.loc[:,'Bm'].values,df.loc[:,'Bhf'].values, p.verbose)
 
     writeh5(p.save,Phi,E,df)
 

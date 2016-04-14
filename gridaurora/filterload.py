@@ -2,10 +2,10 @@
 from pathlib import Path
 import logging
 from matplotlib.pyplot import figure
-from numpy import exp, log, ones_like, isfinite,spacing
+from numpy import exp, log, ones_like, isfinite,spacing,column_stack,empty
 from scipy.interpolate import interp1d
 import h5py
-from pandas import DataFrame
+from xarray import DataArray
 # consider atmosphere
 try:
     from lowtran.pylowtran7 import golowtran
@@ -29,7 +29,8 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     qefn = Path(qefn).expanduser()
 #%% atmospheric absorption
     if useatm:
-        if dbglvl>0: print('loading LOWTRAN7 atmosphere model...')
+        if dbglvl>0:
+            print('loading LOWTRAN7 atmosphere model...')
         atmT = golowtran(obsalt_km,zenang_deg,
                          wlnm=(newLambda[0],newLambda[-1]),
                          c1={'model':5,'itype':3,'iemsct':0})
@@ -55,24 +56,24 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
 
 
-    T = DataFrame(index=newLambda, data = {'bg3':   exp(fbg3(newLambda)),
-                                           'window':exp(fwind(newLambda)),
-                                           'qe':    exp(fqe(newLambda)),
-                                           'atm':   atmTinterp}) #atm is ALREADY exp()
+    T = DataArray(column_stack((exp(fbg3(newLambda)),exp(fwind(newLambda)),exp(fqe(newLambda)),atmTinterp,empty(newLambda.size),empty(newLambda.size))),
+                  coords=[('wavelength_nm',newLambda),
+                          ('filter',['bg3','window','qe','atm','sysNObg3','sys'])])
+                                           #atm is ALREADY exp()
 
-    T['sysNObg3'] = T[['window','qe','atm']].prod(axis=1)
-    T['sys']      = T[['window','qe','bg3','atm']].prod(axis=1)
+    T.loc[:,'sysNObg3'] = T.loc[:,['window','qe','atm']].prod('filter')
+    T.loc[:,'sys']      = T.loc[:,['window','qe','bg3','atm']].prod('filter')
 
     return T
 #%% plotting
 def plotT(T,mmsl):
     ax1 = figure().gca()
-    T[['bg3','window','qe','atm']].plot(ax=ax1)
+    ax1.plot(T.wavelength_nm,T.loc[:,['bg3','window','qe','atm']])
     ax1.set_xlim(mmsl[:2])
     ax1.set_title('Component transmittance')
 #
     ax2 = figure().gca()
-    T[['sys','sysNObg3']].plot(ax=ax2)
+    ax2.plot(T.wavelength_nm,T.loc[:,['sys','sysNObg3']])
     ax2.set_title('System Transmittance')
 
     for a in (ax1,ax2):
