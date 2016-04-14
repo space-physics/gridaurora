@@ -17,13 +17,13 @@ def opticalModel(sim,ver,obsAlt_km,zenithang):
     optT = getSystemT(ver.wavelength_nm,sim.bg3fn, sim.windowfn,sim.qefn,obsAlt_km,zenithang)
 #%% first multiply VER by T, THEN sum overall wavelengths
     if sim.opticalfilter == 'bg3':
-        VERgray = (ver*optT['sys'][None,:]).sum('wavelength_nm')
+        VERgray = (ver*optT.loc[:,'sys'].values[None,:]).sum('wavelength_nm')
     elif sim.opticalfilter == 'none':
-        VERgray = (ver*optT['sysNObg3'][None,:]).sum('wavelength_nm')
+        VERgray = (ver*optT.loc[:,'sysNObg3'].values[None,:]).sum('wavelength_nm')
     else:
         logging.warning('unknown OpticalFilter type: {}'
              '   falling back to using no filter at all'.format(sim.opticalfilter))
-        VERgray = (ver*optT['sysNObg3'][None,:]).sum('wavelength_nm')
+        VERgray = (ver*optT.loc[:,'sysNObg3'].values[None,:]).sum('wavelength_nm')
 
     return VERgray
 
