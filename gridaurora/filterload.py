@@ -56,7 +56,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
 
 
-    T = DataArray(column_stack((exp(fbg3(newLambda)),exp(fwind(newLambda)),exp(fqe(newLambda)),atmTinterp,empty(newLambda.size),empty(newLambda.size))),
+    T = DataArray(column_stack((exp(fbg3(newLambda)),exp(fwind(newLambda)),exp(fqe(newLambda)),atmTinterp,empty(len(newLambda)),empty(len(newLambda)))),
                   coords=[('wavelength_nm',newLambda),
                           ('filter',['bg3','window','qe','atm','sysNObg3','sys'])])
                                            #atm is ALREADY exp()
