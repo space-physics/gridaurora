@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 import logging
-from numpy import trapz, isfinite, concatenate, tile, nansum
+from numpy import trapz, isfinite, concatenate, nansum
 import h5py
-from pandas import Series,DataFrame,Panel
+from xarray import DataArray
 from matplotlib.pyplot import figure,close,subplots
 #from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 from matplotlib.dates import SecondLocator, DateFormatter, MinuteLocator
 """
 inputs:
-spec: excitation rates, 3-D Panel, dimensions reaction x altitude x time
+spec: excitation rates, 3-D , dimensions time x altitude x reaction
 
 output:
 ver: a pandas DataFrame, wavelength x altitude
@@ -21,7 +21,10 @@ spectraAminmax = (1e-1,8e5) #for plotting
 spectrallines=(391.44, 427.81, 557.7, 630.0, 777.4, 844.6) #297.2, 636.4,762.0, #for plotting
 
 def calcemissions(spec,tReqInd,sim):
-    assert isinstance(spec,Panel), 'I expect a Pandas Panel as input'
+    if not sim.reacreq:
+        return
+
+    assert isinstance(spec,DataArray), 'I expect an xarray DataArray as input'
 
     ver = None; lamb = None; br=None
     """
@@ -49,20 +52,19 @@ def calcemissions(spec,tReqInd,sim):
         ver, lamb,br = getN21PG(spec,ver,lamb, br, sim.reactionfn)
 #%% Remove NaN wavelength entries
     if ver is None:
-        logging.critical('you have not selected any reactions to generate VER')
-        return None, None
+        raise ValueError('you have not selected any reactions to generate VER')
 #%% sort by wavelength, eliminate NaN
     lamb, ver, br = sortelimlambda(lamb,ver,br)
     try:
-        tver = ver[...,tReqInd]
-        br = br[:,tReqInd]
+        tver = ver[tReqInd,...]
+        br = br[tReqInd,:]
     except IndexError as e:
         logging.error('error in time index, falling back to last time value')
         print(str(e))
-        tver = ver[...,-1]
-        br = br[:,-1]
+        tver = ver[-1,...]
+        br = br[-1,:]
 #%% assemble output
-    dfver = DataFrame(data=tver, index=lamb, columns=spec.major_axis)
+    dfver = DataArray(data=tver, coords=[('alt_km',spec.alt_km),('wavelength_nm',lamb)])
 
     return dfver, ver,br
 
@@ -71,11 +73,14 @@ def getMetastable(spec,ver,lamb,br,reactfn):
         A = f['/metastable/A'].value
         lambnew = f['/metastable/lambda'].value.ravel(order='F') #some are not 1-D!
 
-    vnew = concatenate((A[:2,None,None] * spec['no1s'].values[None,...],
-                        A[2:4,None,None]* spec['no1d'].values[None,...],
-                        A[4:,None,None] * spec['noii2p'].values[None,...]), axis=0)
+    """
+    concatenate along the reaction dimension, axis=-1
+    """
+    vnew = concatenate((A[None,None,:2] * spec.loc[...,'no1s'].values[...,None],
+                        A[None,None,2:4]* spec.loc[...,'no1d'].values[...,None],
+                        A[None,None,4:] * spec.loc[...,'noii2p'].values[...,None]), axis=-1)
 
-    return catvl(spec.major_axis,ver,vnew,lamb,lambnew,br)
+    return catvl(spec.alt_km,ver,vnew,lamb,lambnew,br)
 
 def getAtomic(spec,ver,lamb, br,reactfn):
     """ prompt atomic emissions (nm)
@@ -84,10 +89,10 @@ def getAtomic(spec,ver,lamb, br,reactfn):
     with h5py.File(str(reactfn),'r',libver='latest') as f:
         lambnew = f['/atomic/lambda'].value.ravel(order='F') #some are not 1-D!
 
-    vnew = concatenate((spec['po3p3p'].values[None,...],
-                        tile(spec['po3p5p'],(lambnew.size-1,1,1))),axis=0)
+    vnew = concatenate((spec.loc[...,'po3p3p'].values[...,None],
+                        spec.loc[...,'po3p5p'].values[...,None]),axis=-1)
 
-    return catvl(spec.major_axis,ver,vnew,lamb,lambnew,br)
+    return catvl(spec.alt_km,ver,vnew,lamb,lambnew,br)
 
 def getN21NG(spec,ver,lamb,br, reactfn):
     """
@@ -98,7 +103,7 @@ def getN21NG(spec,ver,lamb,br, reactfn):
         lambdaA = f['/N2+1NG/lambda'].value.ravel(order='F')
         franckcondon = f['/N2+1NG/fc'].value
 
-    return doBandTrapz(A,lambdaA,franckcondon, spec['p1ng'],lamb,ver,spec.major_axis,br)
+    return doBandTrapz(A,lambdaA,franckcondon, spec.loc[...,'p1ng'],lamb,ver,spec.alt_km,br)
 
 def getN2meinel(spec,ver,lamb,br,reactfn):
     with h5py.File(str(reactfn),'r',libver='latest') as f:
@@ -108,7 +113,7 @@ def getN2meinel(spec,ver,lamb,br,reactfn):
     #normalize
     franckcondon = franckcondon/franckcondon.sum() #special to this case
 
-    return doBandTrapz(A,lambdaA,franckcondon, spec['pmein'],lamb,ver,spec.major_axis,br)
+    return doBandTrapz(A,lambdaA,franckcondon, spec.loc[...,'pmein'],lamb,ver,spec.alt_km,br)
 
 def getN22PG(spec,ver,lamb,br,reactfn):
     """ from Benesch et al, 1966a """
@@ -117,7 +122,7 @@ def getN22PG(spec,ver,lamb,br,reactfn):
         lambdaA = f['/N2_2PG/lambda'].value.ravel(order='F')
         franckcondon = f['/N2_2PG/fc'].value
 
-    return doBandTrapz(A,lambdaA,franckcondon,spec['p2pg'],lamb,ver,spec.major_axis,br)
+    return doBandTrapz(A,lambdaA,franckcondon,spec.loc[...,'p2pg'],lamb,ver,spec.alt_km,br)
 
 def getN21PG(spec,ver,lamb,br,reactfn):
 
@@ -136,13 +141,13 @@ def getN21PG(spec,ver,lamb,br,reactfn):
 
     consfac = franckcondon/franckcondon.sum() #normalize
     losscoef = (consfac / tau1PG).sum()
-    N01pg=spec['p1pg'] / losscoef
+    N01pg=spec.loc[...,'p1pg'] / losscoef
 
     scalevec = (A * consfac[:,None]).ravel(order='F') #for clarity (verified with matlab)
 
-    vnew = scalevec[:,None,None] * N01pg.values[None,...]
+    vnew = scalevec[None,None,:] * N01pg.values[...,None]
 
-    return catvl(spec.major_axis,ver,vnew,lamb,lambnew,br)
+    return catvl(spec.alt_km,ver,vnew,lamb,lambnew,br)
 
 def doBandTrapz(Aein,lambnew,fc,kin,lamb,ver,z,br):
     """
@@ -157,14 +162,18 @@ def doBandTrapz(Aein,lambnew,fc,kin,lamb,ver,z,br):
 
     scalevec = (Aein * tau[:,None] * fc[:,None]).ravel(order='F')
 
-    vnew = scalevec[:,None,None]*kin.values[None,...]
+    vnew = scalevec[None,None,:]*kin.values[...,None]
 
     return catvl(z,ver,vnew,lamb,lambnew,br)
 
 def catvl(z,ver,vnew,lamb,lambnew,br):
+    """
+    trapz integrates over axis=1, the altitude dimension
+    concatenate over reaction dimension, axis=-1
+    """
     if ver is not None:
-        br = concatenate((br,trapz(vnew,z,axis=1)), axis=0) #must come first!
-        ver=concatenate((ver,vnew), axis=0)
+        br = concatenate((br,trapz(vnew,z,axis=1)), axis=-1) #must come first!
+        ver=concatenate((ver,vnew), axis=-1)
         lamb=concatenate((lamb,lambnew))
     else:
         ver = vnew.copy(order='F')
@@ -175,16 +184,16 @@ def catvl(z,ver,vnew,lamb,lambnew,br):
 
 def sortelimlambda(lamb,ver,br):
     assert lamb.ndim == 1
-    assert lamb.size == ver.shape[0]
+    assert lamb.size == ver.shape[-1]
 #%% eliminate unused wavelengths and Einstein coeff
     mask = isfinite(lamb)
-    ver = ver[mask,...]
+    ver = ver[...,mask]
     lamb = lamb[mask]
-    br = br[mask,:]
+    br = br[:,mask]
 #%% sort by lambda
     lambSortInd = lamb.argsort() #lamb is made piecemeal and is overall non-monotonic
 
-    return lamb[lambSortInd], ver[lambSortInd,...],br[lambSortInd,:] #sort by wavelength ascending order
+    return lamb[lambSortInd], ver[...,lambSortInd],br[:,lambSortInd] #sort by wavelength ascending order
 
 #%% plots
 
@@ -269,7 +278,7 @@ def showIncrVER(tTC,tReqInd,tctime,ver,tver,titxt,makePlots):
 
 def plotspectra(br,optT,E,lambminmax):
 
-    lamb = optT.index
+    lamb = optT.wavelength_nm
 
     def _plotspectrasub(ax,bf,txt):
         ax.set_yscale('log')
@@ -286,8 +295,6 @@ def plotspectra(br,optT,E,lambminmax):
                     ha='center',va='bottom',fontsize='medium',rotation=60)
 
 #%%
-    br = Series(index=lamb,data=br)
-
     fg,((ax1,ax2)) = subplots(2,1,sharex=True,figsize=(10,8))
     bf=br*optT['sysNObg3']
     ax1.stem(lamb,bf)
