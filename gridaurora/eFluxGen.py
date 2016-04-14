@@ -7,7 +7,7 @@ from pathlib import Path
 import logging
 from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,
                    asfortranarray,atleast_1d)
-from xarray import DataSet
+from xarray import Dataset
 import h5py
 #
 from histutils.findnearest import find_nearest
@@ -195,7 +195,7 @@ if __name__ == '__main__':
 
     try:
         with h5py.File(str(Path(p.infn).expanduser()),'r',libver='latest') as f:
-            df = DataSet(f['/diffnumflux_params'].value)
+            df = Dataset(f['/diffnumflux_params'].value)
     except KeyError as e:
         raise IOError('trouble accessing {} {}'.format(p.infn,e))
 
