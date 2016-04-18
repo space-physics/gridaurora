@@ -1,5 +1,3 @@
-from __future__ import division,absolute_import,unicode_literals
-from six import integer_types
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -38,7 +36,7 @@ def writeplots(fg,plotprefix,tind,method,odir,overridefmt=None,anno=None):
         fg.savefig(str(cn),bbox_inches='tight',dpi=dpi)  # this is slow and async
 
 def nametime(tind):
-    if isinstance(tind,integer_types) and tind<1e6:
+    if isinstance(tind,int) and tind<1e6:
         return '{:03d}'.format(tind)
     elif isinstance(tind,datetime):
         return tind.strftime('%Y-%m-%dT%H:%M:%S')
