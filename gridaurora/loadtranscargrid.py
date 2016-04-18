@@ -2,7 +2,6 @@
 load and plot transcar energy grid
 Egrid is not what's used externally by other programs, but rather variable "bins"
 """
-from __future__ import division,absolute_import
 from numpy import loadtxt,log10,empty,arange,column_stack
 from pandas import DataFrame
 from os.path import expanduser
