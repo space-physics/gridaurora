@@ -1,19 +1,15 @@
-from __future__ import division,absolute_import
-from six import string_types
 import h5py
 from os.path import expanduser
 from datetime import datetime
 from pytz import UTC
-from pandas import Panel,Panel4D,DataFrame
-from numpy import ndarray
-#
+from xarray import DataArray
 from .to_ut1 import to_ut1unix
 
 epoch = datetime(1970,1,1,tzinfo=UTC)
 
 def writeeigen(fn,Ebins,t,z,diffnumflux=None,ver=None,prates=None,lrates=None,
                tezs=None,latlon=None):
-    if not isinstance(fn,string_types):
+    if not isinstance(fn,str):
         return
 
     if fn.endswith('.h5'):
@@ -38,32 +34,32 @@ def writeeigen(fn,Ebins,t,z,diffnumflux=None,ver=None,prates=None,lrates=None,
                 d.attrs['unit']='cm^-2 s^-1 eV^-1'
                 d.attrs['description'] = 'primary electron flux at "top" of modeled ionosphere'
 #%% VER
-            if isinstance(ver,(Panel4D)):
+            if isinstance(ver,DataArray):
                 d=f.create_dataset('/ver/eigenprofile',data=ver.values,compression='gzip')
                 d.attrs['unit']='photons cm^-3 sr^-1 s^-1'
                 d.attrs['size']='Ntime x NEnergy x Nalt x Nwavelength'
 
-                d=f.create_dataset('/ver/wavelength',data=ver.minor_axis)
+                d=f.create_dataset('/ver/wavelength',data=ver.wavelength_nm)
                 d.attrs['unit']='Angstrom'
 #%% prod
-            if isinstance(prates,(Panel,Panel4D)):
+            if isinstance(prates,DataArray):
                 d=f.create_dataset('/prod/eigenprofile',data=prates.values,compression='gzip')
                 d.attrs['unit']='particle cm^-3 sr^-1 s^-1'
-                if isinstance(prates,Panel):
+                if prates.ndim==3:
                     d.attrs['size']='Ntime x NEnergy x Nalt'
-                else:
+                else: #ndim==4
                     d.attrs['size']='Ntime x NEnergy x Nalt x Nreaction'
-                    d=f.create_dataset('/prod/reaction',data=prates.minor_axis,dtype=bdt)
+                    d=f.create_dataset('/prod/reaction',data=prates.reaction,dtype=bdt)
                 d.attrs['description']= 'reaction species state'
 #%% loss
-            if isinstance(lrates,(Panel4D)):
+            if isinstance(lrates,DataArray):
                 d=f.create_dataset('/loss/eigenprofiles',data=lrates.values,compression='gzip')
                 d.attrs['unit']='particle cm^-3 sr^-1 s^-1'
                 d.attrs['size']='Ntime x NEnergy x Nalt x Nreaction'
-                d=f.create_dataset('/loss/reaction',data=lrates.minor_axis,dtype=bdt)
+                d=f.create_dataset('/loss/reaction',data=lrates.reaction,dtype=bdt)
                 d.attrs['description']= 'reaction species state'
 #%% energy deposition
-            if isinstance(tezs,Panel):
+            if isinstance(tezs,DataArray):
                 d=f.create_dataset('/energydeposition',data=tezs.values,compression='gzip')
                 d.attrs['unit']='ergs cm^-3 s^-1'
                 d.attrs['size']='Ntime x Nalt x NEnergies'

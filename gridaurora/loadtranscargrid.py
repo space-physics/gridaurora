@@ -2,9 +2,9 @@
 load and plot transcar energy grid
 Egrid is not what's used externally by other programs, but rather variable "bins"
 """
+from pathlib import Path
 from numpy import loadtxt,log10,empty,arange,column_stack
-from pandas import DataFrame
-from os.path import expanduser
+from xarray import DataArray
 from scipy.stats import linregress
 from matplotlib.pyplot import figure
 
@@ -14,7 +14,7 @@ Nnew=81 #100MeV
 
 def loadregress(fn):
 #%%
-    Egrid = loadtxt(expanduser(fn),delimiter=',')
+    Egrid = loadtxt(str(Path(fn).expanduser()),delimiter=',')
 #    Ematt = asarray([logspace(1.7220248253079387,4.2082263059355824,num=Nold,base=10),
 #                    #[logspace(3.9651086925197356,9.689799159992674,num=33,base=exp(1)),
 #                     logspace(1.8031633895706722,4.2851520785250914,num=Nold,base=10)]).T
@@ -30,9 +30,9 @@ def loadregress(fn):
 def doplot(fn,bins,Egrid=None,debug=False):
 #%% main plot
     ax = figure().gca()
-    ax.bar(left=bins['low'],
-           height=bins['flux'],
-           width=bins['high']-bins['low'])
+    ax.bar(left=bins.loc[:,'low'],
+           height=bins.loc[:,'flux'],
+           width=bins.loc[:,'high']-bins.loc[:,'low'])
     ax.set_yscale('log'); ax.set_xscale('log')
     ax.set_ylabel('flux [s$^{-1}$ sr$^{-1}$ cm$^{-2}$ eV$^{-1}$]')
     ax.set_xlabel('bin energy [eV]')
@@ -73,6 +73,7 @@ def makebin(Egrid):
 
     E = column_stack((Elow,Ehigh,flux))
 
-    return DataFrame(columns=['low','high','flux'],
-                     data=E)
+    Ed= DataArray(data=E,dims=['energy','type'])
+    Ed['type']=['low','high','flux']
 
+    return Ed

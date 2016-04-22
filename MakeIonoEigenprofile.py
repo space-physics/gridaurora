@@ -12,7 +12,6 @@ python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o ~/data/eige
 
 Michael Hirsch
 """
-from __future__ import division,absolute_import
 from collections import namedtuple
 from matplotlib.pyplot import show
 from os.path import expanduser
@@ -29,15 +28,16 @@ from gridaurora.zglow import glowalt
 from glowaurora.eigenprof import makeeigen,ekpcolor
 from glowaurora.plots import plotprodloss,plotenerdep
 from gridaurora.plots import ploteigver
-from reesaurora.rees_model import reesiono,plotA
+from reesaurora.rees_model import reesiono
+from reesaurora.plots import plotA
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles')
     p.add_argument('-i','--inputgridfn',help='original Zettergren input flux grid to base off of',default='zettflux.csv')
     p.add_argument('-o','--outfn',help='hdf5 file to write with ionospheric response (eigenprofiles)')
-    p.add_argument('-t','--simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='+',required=True)#,default='1999-12-21T00:00:00Z')
-    p.add_argument('-c','--latlon',help='geodetic latitude/longitude (deg)',type=float,nargs=2,required=True)
+    p.add_argument('-t','--simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='+',default=['1999-12-21T00:00:00Z'])
+    p.add_argument('-c','--latlon',help='geodetic latitude/longitude (deg)',type=float,nargs=2,default=[65,-148.])
     p.add_argument('-m','--makeplot',help='show to show plots, png to save pngs of plots',nargs='+',default=['show'])
     p.add_argument('-M','--model',help='specify auroral model (glow,rees,transcar)',default='glow')
     p.add_argument('-z','--zlim',help='minimum,maximum altitude [km] to plot',nargs=2,default=(None,None),type=float)
@@ -59,7 +59,7 @@ if __name__ == '__main__':
                                  until =parse(p.simtime[1])))
 #%% input unit flux
     Egrid = loadregress(expanduser(p.inputgridfn))
-    Ebins = makebin(Egrid)
+    Ebins = makebin(Egrid)[:3]
     EKpcolor,EK,diffnumflux = ekpcolor(Ebins)
 #%% ionospheric response
     """ three output eigenprofiles
@@ -73,9 +73,8 @@ if __name__ == '__main__':
     if model == 'glow':
         ver,photIon,isr,phitop,zceta,sza,prates,lrates,tezs,sion = makeeigen(EK,diffnumflux,T,p.latlon,
                                                                              p.makeplot,p.outfn,p.zlim)
-        z=ver.major_axis.values
 
-        writeeigen(p.outfn,EKpcolor,T,z, diffnumflux,ver,prates,lrates,tezs,p.latlon)
+        writeeigen(p.outfn,EKpcolor,T,ver.z_km, diffnumflux,ver,prates,lrates,tezs,p.latlon)
         #%% plots
         #input
         doplot(p.inputgridfn,Ebins)
@@ -83,26 +82,28 @@ if __name__ == '__main__':
         #output
         sim = namedtuple('sim',['reacreq','opticalfilter']); sim.reacreq=sim.opticalfilter=''
 
-        for t in ver: #for each time
+        for t in ver: #TODO for each time
             #VER eigenprofiles, summed over wavelength
-            ploteigver(EKpcolor,z,ver[t].sum(axis=2),(None,)*6,sim,'{} Vol. Emis. Rate '.format(t))
+            ploteigver(EKpcolor,ver.z_km,ver.sum('wavelength_nm'),
+                       (None,)*6,sim,
+                       '{} Vol. Emis. Rate '.format(t))
             #volume production rate, summed over reaction
-            plotprodloss(EKpcolor,z,
-                         prates[t].sum(axis=2).values,lrates[t].sum(axis=2).values,
+            plotprodloss(prates.loc[:,'final',...].sum('reaction'),
+                         lrates.loc[:,'final',...].sum('reaction'),
                          t,glat,glon,p.zlim)
             #energy deposition
-            plotenerdep(EKpcolor,z,tezs[t],t,glat,glon,p.zlim)
+            plotenerdep(tezs,t,glat,glon,p.zlim)
 
     elif model == 'rees':
         assert len(T) == 1, 'only one time with rees for now.'
         z=glowalt()
-        q = reesiono(T, z, Ebins['low'], glat, glon,p.isotropic)
+        q = reesiono(T, z, Ebins.loc[:,'low'], glat, glon,p.isotropic)
 
         writeeigen(p.outfn,Ebins,T,z,prates=q,tezs=None,latlon=(glat,glon))
 
         plotA(q,'Volume Production Rate {}  {} {}'.format(T,glat,glon),p.vlim)
     elif model == 'transcar':
-        raise NotImplementedError('Transcar coming soon')
+        raise NotImplementedError('Transcar by request')
     else:
         raise NotImplementedError('I am not yet able to handle your model {}'.format(model))
 #%% plots
