@@ -39,7 +39,7 @@ def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
         return '{:03d}'.format(tind)
     elif isinstance(tind,datetime):
-        return tind.strftime('%Y-%m-%dT%H:%M:%S')
+        return tind.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] #-3 truncates to millisecond digits only (arbitrary)
     elif tind is not None:
         return str(tind)
     else: #is None
