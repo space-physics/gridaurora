@@ -63,6 +63,26 @@ Example Command
 
     python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o out.h5 -M rees
 
+Auroral Data Files
+==================
+``precompute/vjeinfc.h5`` is compiled from tables in Vallance Jones *Aurora* 1974 and other sources by Matthew Zettergren, and corrected and put into HDF5 format by Michael Hirsch. The information within concerns:
+
+N2+1NG:         N\ :sub:`2`\ :sup:`+` first negative group
+
+N2_1PG:         N\ :sub:`2` first positive group
+
+N2_2PG:         N\ :sub:`2` second positive group
+
+N2+Meinel:      N\ :sub:`2`\ :sup:`+` Meinel band
+
+atomic:         atomic oxygen
+
+metastable:     metastable O and O\ :sup:`+`
+
+each have the ``lamdba`` variable which is the wavelength in nanometers corresponding to the Einstein
+coefficient matrix ``A`` except ``atomic`` that used the reaction rates directly.
+
+The rows of ``A`` are  unicode:: U+0039D'
 
 Function Description
 ====================
