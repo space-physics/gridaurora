@@ -99,8 +99,7 @@ arranged A(𝜈',𝜈'') where:
 𝜈''
     lower state vibrational levels, decayed into from the upper state
 
-as discussed in Appendix C of Zettergren PhD thesis, Eqn. (C.2), 
-    :math:`A_\text{c} = (\pi/4) d^2`.
+as discussed in Appendix C of Zettergren PhD thesis, Eqn. (C.2), photon volume emission rate follows the relation P\ :sub:`𝜈',𝜈''` = A(𝜈',𝜈'') n\ :sub:`𝜈' 
 
 lamdba
 ~~~~~~
