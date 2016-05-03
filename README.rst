@@ -65,7 +65,10 @@ Example Command
 
 Auroral Data Files
 ==================
-``precompute/vjeinfc.h5`` is compiled from tables in Vallance Jones *Aurora* 1974 and other sources by Matthew Zettergren, and corrected and put into HDF5 format by Michael Hirsch. The information within concerns:
+
+precompute/vjeinfc.h5
+--------------------- 
+compiled from tables in Vallance Jones *Aurora* 1974 and other sources by Matthew Zettergren, and corrected and put into HDF5 format by Michael Hirsch. The information within concerns:
 
 N2+1NG        
     N\ :sub:`2`\ :sup:`+` first negative group
@@ -85,10 +88,10 @@ atomic
 metastable     
     metastable O and O\ :sup:`+`
 
-each have the ``lamdba`` variable which is the wavelength in nanometers corresponding to the Einstein
-coefficient matrix ``A`` except ``atomic`` that used the reaction rates directly.
 
-The Einstein coefficient matrix ``A`` is arranged A(𝜈',𝜈'') where:
+Einstein coefficient matrix A
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arranged A(𝜈',𝜈'') where:
 
 𝜈'      
     upper state vibrational levels, excited from ground state 𝜈''' by particle impact
@@ -96,8 +99,15 @@ The Einstein coefficient matrix ``A`` is arranged A(𝜈',𝜈'') where:
 𝜈''
     lower state vibrational levels, decayed into from the upper state
 
-𝜈'''
-    are the ground states
+as discussed in Appendix C of Zettergren PhD thesis, Eqn. (C.2), 
+    :math:`A_\text{c} = (\pi/4) d^2`.
+
+lamdba
+~~~~~~
+wavelength in nanometers corresponding to the Einstein coefficient matrix ``A`` 
+except ``atomic`` that uses the reaction rates directly.
+
+Franck
 
 Function Description
 ====================
