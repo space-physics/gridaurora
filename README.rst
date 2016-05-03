@@ -82,7 +82,11 @@ metastable:     metastable O and O\ :sup:`+`
 each have the ``lamdba`` variable which is the wavelength in nanometers corresponding to the Einstein
 coefficient matrix ``A`` except ``atomic`` that used the reaction rates directly.
 
-The rows of ``A`` are  unicode:: U+0039D'
+The matrix A is arranged A(𝜈',𝜈'') where:
+
+𝜈'      are the upper state vibrational levels, excited from ground state 𝜈''' by particle impact
+𝜈''     are the lower state vibrational levels, decayed into from the upper state
+𝜈'''    are the ground states
 
 Function Description
 ====================
