@@ -123,3 +123,8 @@ function        description
 ========        ===========
 ztanh.py        continuously varying grid using hyperbolic tangent. Inspired by suggestion from Prof. Matt Zettergren of ERAU.
 ========        ===========
+
+References
+==========
+
+.. [1] Zettergren, M. Boston University, PhD Thesis, `http://search.proquest.com/docview/304847517 <http://search.proquest.com/docview/304847517>`_
