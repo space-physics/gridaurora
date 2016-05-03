@@ -67,26 +67,37 @@ Auroral Data Files
 ==================
 ``precompute/vjeinfc.h5`` is compiled from tables in Vallance Jones *Aurora* 1974 and other sources by Matthew Zettergren, and corrected and put into HDF5 format by Michael Hirsch. The information within concerns:
 
-N2+1NG:         N\ :sub:`2`\ :sup:`+` first negative group
+N2+1NG        
+    N\ :sub:`2`\ :sup:`+` first negative group
 
-N2_1PG:         N\ :sub:`2` first positive group
+N2_1PG         
+    N\ :sub:`2` first positive group
 
-N2_2PG:         N\ :sub:`2` second positive group
+N2_2PG         
+    N\ :sub:`2` second positive group
 
-N2+Meinel:      N\ :sub:`2`\ :sup:`+` Meinel band
+N2+Meinel      
+    N\ :sub:`2`\ :sup:`+` Meinel band
 
-atomic:         atomic oxygen
+atomic        
+    atomic oxygen
 
-metastable:     metastable O and O\ :sup:`+`
+metastable     
+    metastable O and O\ :sup:`+`
 
 each have the ``lamdba`` variable which is the wavelength in nanometers corresponding to the Einstein
 coefficient matrix ``A`` except ``atomic`` that used the reaction rates directly.
 
-The matrix A is arranged A(𝜈',𝜈'') where:
+The Einstein coefficient matrix ``A`` is arranged A(𝜈',𝜈'') where:
 
-𝜈'      are the upper state vibrational levels, excited from ground state 𝜈''' by particle impact
-𝜈''     are the lower state vibrational levels, decayed into from the upper state
-𝜈'''    are the ground states
+𝜈'      
+    upper state vibrational levels, excited from ground state 𝜈''' by particle impact
+
+𝜈''
+    lower state vibrational levels, decayed into from the upper state
+
+𝜈'''
+    are the ground states
 
 Function Description
 ====================
