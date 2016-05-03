@@ -65,6 +65,9 @@ Example Command
 
 Auroral Data Files
 ==================
+The functions in ``gridaurora/calcemissions.py``, based on work by Zettergren, computes per-wavelength volume emission rate along a flux tube as a function of altitude along the tube. 
+Starting with quantities such as neutral densities computed by MSIS, differential number flux as a function of energy and altitude along the tube (this is what TRANSCAR computes), excitation cross sections as a function of energy, Franck-Condon factors and Einstein coefficients, the *prompt* volume emission rate may be computed.
+
 
 precompute/vjeinfc.h5
 --------------------- 
@@ -99,14 +102,17 @@ arranged A(𝜈',𝜈'') where:
 𝜈''
     lower state vibrational levels, decayed into from the upper state
 
-as discussed in Appendix C of Zettergren PhD thesis, Eqn. (C.2), photon volume emission rate follows the relation P\ :sub:`𝜈',𝜈''` = A(𝜈',𝜈'') n\ :sub:`𝜈' 
+as discussed in Appendix C of Zettergren PhD thesis, Eqn. (C.2), photon volume emission rate follows the relation P\ :sub:`𝜈',𝜈''` = A(𝜈',𝜈'') n\ :sub:`𝜈'` 
 
 lamdba
 ~~~~~~
 wavelength in nanometers corresponding to the Einstein coefficient matrix ``A`` 
 except ``atomic`` that uses the reaction rates directly.
 
-Franck
+Franck-Condon factor fc
+~~~~~~~~~~~~~~~~~~~~~~~
+as described in Zettergren thesis Appendix C, specifically for Eqn (C.6-C.8), the Franck-Condon factors
+modify the total upper state excitation cross section multiplicitively.
 
 Function Description
 ====================
