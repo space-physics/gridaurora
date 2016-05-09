@@ -9,10 +9,9 @@ from xarray import DataArray
 # consider atmosphere
 try:
     from lowtran.pylowtran7 import golowtran
-    useatm = True
 except ImportError as e:
     logging.error('failure to load LOWTRAN, proceeding without atmospheric absorption model.  {}'.format(e))
-    useatm=False
+    golowtran=None
 '''
 gets optical System Transmittance from filter, sensor window, and QE spec.
 Michael Hirsch 2014
@@ -28,7 +27,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     windfn = Path(windfn).expanduser()
     qefn = Path(qefn).expanduser()
 #%% atmospheric absorption
-    if useatm:
+    if golowtran is not None:
         if dbglvl>0:
             print('loading LOWTRAN7 atmosphere model...')
         atmT = golowtran(obsalt_km,zenang_deg,
