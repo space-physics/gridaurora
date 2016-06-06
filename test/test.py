@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-from pathlib import Path
+#!/usr/bin/env python
+from gridaurora import Path
 from datetime import datetime
 import pytz
 from numpy.testing import assert_allclose,run_module_suite
