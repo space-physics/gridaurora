@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-from pathlib import Path
+#!/usr/bin/env python
+from . import Path
 import logging
 from matplotlib.pyplot import figure
 from numpy import exp, log, ones_like, isfinite,spacing,column_stack,empty

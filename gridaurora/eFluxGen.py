@@ -3,7 +3,7 @@
  Michael Hirsch
  based on Strickland 1993
 """
-from pathlib import Path
+from . import Path
 import logging
 from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,
                    asfortranarray,atleast_1d)
