@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 import logging
 from datetime import datetime
-from pathlib import Path
+from . import Path
 from numpy import in1d,array
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw

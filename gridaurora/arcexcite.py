@@ -1,5 +1,8 @@
-# creates optical emissions from excitation rates
-from pathlib import Path
+#!/usr/bin/env python
+"""
+creates optical emissions from excitation rates
+"""
+from . import Path
 import logging
 from xarray import  DataArray
 from numpy import zeros,append,where, loadtxt
