@@ -13,7 +13,6 @@ with open('README.rst','r') as f:
 	long_description = f.read()
 
 setup(name='gridaurora',
-      version='0',
       packages=['gridaurora'],
 	  description='utilities for ionospheric gridding, particularly for the aurora',
 	  long_description=long_description,
