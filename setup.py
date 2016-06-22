@@ -9,13 +9,9 @@ try:
 except Exception as e:
     pass
 
-with open('README.rst','r') as f:
-	long_description = f.read()
-
 setup(name='gridaurora',
       packages=['gridaurora'],
 	  description='utilities for ionospheric gridding, particularly for the aurora',
-	  long_description=long_description,
 	  author='Michael Hirsch',
 	  url='https://github.com/scienceopen/gridaurora',
       data_files=[('gridaurora/data',['gridaurora/data/RecentIndices.txt'])],
