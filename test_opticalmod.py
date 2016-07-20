@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import logging
-from pathlib import Path
+from gridaurora import Path
 from numpy import arange
 from matplotlib.pyplot import show
 #

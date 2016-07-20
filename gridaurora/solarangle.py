@@ -1,4 +1,3 @@
-from __future__ import division,absolute_import
 from six import string_types
 from dateutil.parser import parse
 from numpy import ndarray

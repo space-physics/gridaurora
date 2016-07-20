@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import os,sys
 from setuptools import setup
 import subprocess
 
-exepath = os.path.dirname(sys.executable)
 try:
-    subprocess.call([os.path.join(exepath,'conda'),'install','--yes','--file','requirements.txt'])
+    subprocess.call(['conda','install','--file','requirements.txt'])
 except Exception as e:
     pass
 

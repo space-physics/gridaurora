@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """ loads VER profiles (ver vs. altitude, and optionally vs. energy,reaction type)
 Initially, we use eigenprofiles precomputed by Transcar.
 Please contact me with any questions.
@@ -6,7 +6,7 @@ Please contact me with any questions.
 Michael Hirsch
 Sept 2015
 """
-from pathlib import Path
+from gridaurora import Path
 import h5py
 #
 from gridaurora.arcexcite import getTranscar

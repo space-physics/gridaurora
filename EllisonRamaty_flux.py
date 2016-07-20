@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 A collection of models and parameterizations for differential number flux,
 typically taken in the collisonless region "above the top of the ionosphere"
