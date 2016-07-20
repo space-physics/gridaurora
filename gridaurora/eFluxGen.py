@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
  Michael Hirsch
  based on Strickland 1993

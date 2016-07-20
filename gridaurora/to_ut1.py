@@ -1,7 +1,6 @@
 """
 converts date string, datetime, or array thereof to UT1 UNIX, seconds since Unix Epoch
 """
-from __future__ import division,absolute_import
 from six import string_types,integer_types
 from pytz import UTC
 from numpy import ndarray

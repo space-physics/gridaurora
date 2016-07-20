@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 using excitation rates and other factors, creates volume emission rate profiles.
 """
-from pathlib import Path
+from gridaurora import Path
 import logging
 import h5py
 from matplotlib.pyplot import show

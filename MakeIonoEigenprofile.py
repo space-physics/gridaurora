@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Computes Eigenprofiles of Ionospheric response to flux tube input via the following steps:
 1. Generate unit input differential number flux vs. energy
@@ -12,9 +12,9 @@ python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o ~/data/eige
 
 Michael Hirsch
 """
+from gridaurora import Path
 from collections import namedtuple
 from matplotlib.pyplot import show
-from os.path import expanduser
 from dateutil import rrule
 from dateutil.parser import parse
 import seaborn as sns #optional pretty plots
@@ -58,7 +58,7 @@ if __name__ == '__main__':
                                  dtstart=parse(p.simtime[0]),
                                  until =parse(p.simtime[1])))
 #%% input unit flux
-    Egrid = loadregress(expanduser(p.inputgridfn))
+    Egrid = loadregress(Path(p.inputgridfn).expanduser())
     Ebins = makebin(Egrid)[:3]
     EKpcolor,EK,diffnumflux = ekpcolor(Ebins)
 #%% ionospheric response

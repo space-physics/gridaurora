@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 We should use:
 ftp://ftp.ngdc.noaa.gov/STP/GEOMAGNETIC_DATA/INDICES/KP_AP/
@@ -7,7 +8,7 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 
 Michael Hirsch
 """
-from pathlib import Path
+from . import Path
 from datetime import datetime
 from dateutil.parser import parse
 from six import string_types

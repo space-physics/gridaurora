@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 creates energy grid of unit flux eV^-1
 unverified for proper scaling, fitted exponential curve to extrapolate original
@@ -9,10 +9,9 @@ python MakeEigenprofileFluxInput.py -i zettflux.csv -o ~/data/100MeVtop.h5
 
 Michael Hirsch
 """
-from __future__ import division,absolute_import
 from matplotlib.pyplot import show
 import seaborn
-from os.path import expanduser
+from gridaurora import Path
 #
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
 
@@ -27,7 +26,7 @@ if __name__ == '__main__':
     bins = makebin(Egrid)
 
     if p.outputeigenfluxfn:
-        bins.to_hdf(expanduser(p.outputeigenfluxfn),'top')
+        bins.to_hdf(Path(p.outputeigenfluxfn).expanduser(),'top')
 
     doplot(p.inputgridfn,bins)
     show()

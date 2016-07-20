@@ -2,7 +2,7 @@
 load and plot transcar energy grid
 Egrid is not what's used externally by other programs, but rather variable "bins"
 """
-from pathlib import Path
+from . import Path
 from numpy import loadtxt,log10,empty,arange,column_stack
 from xarray import DataArray
 from scipy.stats import linregress

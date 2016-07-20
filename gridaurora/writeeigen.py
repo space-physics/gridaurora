@@ -1,5 +1,5 @@
 import h5py
-from os.path import expanduser
+from . import Path
 from datetime import datetime
 from pytz import UTC
 from xarray import DataArray
@@ -13,8 +13,8 @@ def writeeigen(fn,Ebins,t,z,diffnumflux=None,ver=None,prates=None,lrates=None,
         return
 
     if fn.endswith('.h5'):
-        fn = expanduser(fn)
-        print('writing to '+ fn)
+        fn = Path(fn).expanduser()
+        print('writing to {}'.format(fn))
 
         ut1_unix = to_ut1unix(t)
 

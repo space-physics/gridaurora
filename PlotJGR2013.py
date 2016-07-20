@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 plots various data from Dahlgren et al 2013 JGR paper
 """
