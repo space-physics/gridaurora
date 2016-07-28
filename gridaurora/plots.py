@@ -2,7 +2,6 @@
 import logging
 from datetime import datetime
 from . import Path
-from numpy import in1d,array
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw
 from matplotlib.colors import LogNorm
@@ -13,29 +12,26 @@ dpi=100 #IEEE Transactions requires 600 dpi
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,method,odir,overridefmt=None,anno=None):
+def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None):
     draw() #Must have this here or plot doesn't update in animation multiplot mode!
     #TIF was not faster and was 100 times the file size!
     #PGF is slow and big file,
     #RAW crashes
     #JPG no faster than PNG
-    tmpl = ('eps','jpg','png','pdf')
-    used = in1d(tmpl,method)
-    if used.any():
-        if overridefmt is not None:
-            fmt = overridefmt
-        else:
-            fmt = array(tmpl)[used][0]
+    if overridefmt is not None:
+        fmt = overridefmt
+    else:
+        fmt = 'png'
 
-        suff = nametime(tind)
+    suff = nametime(tind)
 
-        if anno:
-            fg.text(0.15,0.8,anno,fontsize='x-large')
+    if anno:
+        fg.text(0.15,0.8,anno,fontsize='x-large')
 
-        cn = (Path(odir) / (plotprefix + suff + '.{}'.format(fmt))).expanduser()
-        print('write {}'.format(cn))
-        fg.savefig(str(cn),bbox_inches='tight',dpi=dpi,
-                   facecolor=fg.get_facecolor(), edgecolor='none')  # this is slow and async
+    cn = (Path(odir) / (plotprefix + suff + '.{}'.format(fmt))).expanduser()
+    print('write {}'.format(cn))
+    fg.savefig(str(cn),bbox_inches='tight',dpi=dpi,
+               facecolor=fg.get_facecolor(), edgecolor='none')  # this is slow and async
 
 def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
