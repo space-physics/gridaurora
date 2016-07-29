@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import logging
+import pathvalidate
 from datetime import datetime
 from . import Path
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
@@ -7,12 +8,12 @@ from matplotlib.pyplot import figure,draw
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 
-dpi=100 #IEEE Transactions requires 600 dpi
+#IEEE Transactions requires 600 dpi
 
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None):
+def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100):
     draw() #Must have this here or plot doesn't update in animation multiplot mode!
     #TIF was not faster and was 100 times the file size!
     #PGF is slow and big file,
@@ -28,7 +29,7 @@ def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None):
     if anno:
         fg.text(0.15,0.8,anno,fontsize='x-large')
 
-    cn = (Path(odir) / (plotprefix + suff + '.{}'.format(fmt))).expanduser()
+    cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + '.{}'.format(fmt))
     print('write {}'.format(cn))
     fg.savefig(str(cn),bbox_inches='tight',dpi=dpi,
                facecolor=fg.get_facecolor(), edgecolor='none')  # this is slow and async
