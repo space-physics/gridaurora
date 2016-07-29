@@ -74,7 +74,7 @@ if __name__ == '__main__':
     if p.makeplot:
         #spectra overall
         fg = plotspectra(br,optT,p.beamenergy,sim.lambminmax)
-        writeplots(fg,'spectra',0,p.makeplot,'./')
+        writeplots(fg,'spectra',0,'.')
         show()
         #details of individual reactions
         for r in p.reacreq:
