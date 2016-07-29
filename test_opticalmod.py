@@ -37,7 +37,7 @@ if __name__ == '__main__':
 #%% considering atmosphere
         plotAllTrans(optT,False)
         fg=plotAllTrans(optT,True)
-        writeplots(fg,'opttrans.eps',0,p.makeplot,'./')
+        writeplots(fg,'opttrans.eps',0,'.')
 
         #plotOptMod(ver,VERgray,tTC,Ek,Eki) #called in readTranscar.py
         show()
