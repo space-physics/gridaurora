@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100):
+def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,facecolor=None):
     draw() #Must have this here or plot doesn't update in animation multiplot mode!
     #TIF was not faster and was 100 times the file size!
     #PGF is slow and big file,
@@ -31,8 +31,11 @@ def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100):
 
     cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + '.{}'.format(fmt))
     print('write {}'.format(cn))
-    fg.savefig(str(cn),bbox_inches='tight',dpi=dpi,
-               facecolor=fg.get_facecolor(), edgecolor='none')  # this is slow and async
+
+    if facecolor is None:
+        facecolor=fg.get_facecolor()
+
+    fg.savefig(str(cn),bbox_inches='tight',dpi=dpi, facecolor=facecolor, edgecolor='none')
 
 def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
