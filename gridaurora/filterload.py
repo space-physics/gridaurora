@@ -8,7 +8,7 @@ import h5py
 from xarray import DataArray
 # consider atmosphere
 try:
-    from lowtran.pylowtran7 import golowtran
+    from lowtran import golowtran
 except ImportError as e:
     logging.error('failure to load LOWTRAN, proceeding without atmospheric absorption model.  {}'.format(e))
     golowtran=None
