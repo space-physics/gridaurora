@@ -4,7 +4,7 @@ import pathvalidate
 from datetime import datetime
 from . import Path
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
-from matplotlib.pyplot import figure,draw
+from matplotlib.pyplot import figure,draw,close
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 
@@ -14,6 +14,9 @@ dymaj=100
 dymin=20
 
 def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,facecolor=None):
+    if fg is None or odir is None:
+        return
+#%%
     draw() #Must have this here or plot doesn't update in animation multiplot mode!
     #TIF was not faster and was 100 times the file size!
     #PGF is slow and big file,
@@ -36,6 +39,8 @@ def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,f
         facecolor=fg.get_facecolor()
 
     fg.savefig(str(cn),bbox_inches='tight',dpi=dpi, facecolor=facecolor, edgecolor='none')
+
+    close(fg)
 
 def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
