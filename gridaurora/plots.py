@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,facecolor=None):
+def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,facecolor=None,doclose=True):
     if fg is None or odir is None:
         return
 #%%
@@ -40,7 +40,8 @@ def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,f
 
     fg.savefig(str(cn),bbox_inches='tight',dpi=dpi, facecolor=facecolor, edgecolor='none')
 
-    close(fg)
+    if doclose:
+        close(fg)
 
 def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
