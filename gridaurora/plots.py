@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,odir=None, fmt='.png', anno=None,dpi=None,facecolor=None,doclose=True):
+def writeplots(fg,plotprefix,tind=None,odir=None, fmt='.png', anno=None,dpi=None,facecolor=None,doclose=True):
     if fg is None or odir is None:
         return
 #%%
