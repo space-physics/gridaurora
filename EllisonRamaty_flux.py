@@ -16,8 +16,8 @@ def dimhandler(E,E0,gamma,kappa,C0=None):
 #%% lite input validation
     E = asarray(E); E0 = atleast_1d(E0); gamma = atleast_1d(gamma); kappa = atleast_1d(kappa)
     C0 = atleast_1d(C0)
-    if E.ndim !=1 or E0.ndim != 1 or gamma.ndim !=1 or kappa.ndim!=1 or C0.ndim!=1:
-        print('E0, gamma, kappa, C0 must be scalar or vector. E must be vector'); return None
+    assert E.ndim == 1 and E0.ndim == 1 and gamma.ndim ==1 and kappa.ndim ==1 and C0.ndim==1,'E0, gamma, kappa, C0 must be scalar or vector. E must be vector'
+
     return E,E0,gamma,kappa,C0
 
 def plotdnf(E,phi,E0,gamma,kappa):

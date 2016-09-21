@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,facecolor=None,doclose=True):
+def writeplots(fg,plotprefix,tind,odir=None, fmt='.png', anno=None,dpi=None,facecolor=None,doclose=True):
     if fg is None or odir is None:
         return
 #%%
@@ -22,17 +22,13 @@ def writeplots(fg,plotprefix,tind,odir=None,overridefmt=None,anno=None,dpi=100,f
     #PGF is slow and big file,
     #RAW crashes
     #JPG no faster than PNG
-    if overridefmt is not None:
-        fmt = overridefmt
-    else:
-        fmt = 'png'
 
     suff = nametime(tind)
 
     if anno:
         fg.text(0.15,0.8,anno,fontsize='x-large')
 
-    cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + '.{}'.format(fmt))
+    cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + fmt)
     print('write {}'.format(cn))
 
     if facecolor is None:
