@@ -1,13 +1,9 @@
-#!/usr/bin/env python
 """
  Michael Hirsch
  based on Strickland 1993
 """
-from . import Path
 import logging
-from numpy import (pi,exp,logspace,arange,empty_like,isscalar, trapz,
-                   asfortranarray,atleast_1d)
-from xarray import Dataset
+from numpy import (pi,exp,arange,empty_like, trapz, asfortranarray,atleast_1d)
 import h5py
 #
 from histutils.findnearest import find_nearest
@@ -85,7 +81,9 @@ def midtail(E,E0,bm,Bm):
     return mid
 
 def hitail(E,diffnumflux,isimE0,E0,Bhf,bh,verbose):
-    # strickland 1993 said 0.2, but 0.145 gives better match to peak flux at 2500 = E0
+    """
+    strickland 1993 said 0.2, but 0.145 gives better match to peak flux at 2500 = E0
+    """
     Bh = empty_like(E0)
     for iE0 in arange(E0.size):
         Bh[iE0] = Bhf[iE0]*diffnumflux[isimE0[iE0],iE0]      #4100.
@@ -110,107 +108,9 @@ def gaussflux(E,Wb,E0,Q0):
     Qc = Q0/(pi**(3/2) * Wb*E0)
     return Qc * exp(-((E[:,None]-E0) / Wb)**2)
 
-
-def plotflux(E,E0, arc, base=None,hi=None,low=None,mid=None):
-#    tfs = 'xx-large'
-#    afs = 'x-large'
-#    tkfs = 'large'
-    lblstr = ['{:.0f}'.format(e0) for e0 in E0]
-    ax = figure().gca()
-    if isscalar(E0) and mid is not None:
-        ax.loglog(E,hi,'k:')
-        ax.loglog(E,low,'k:')
-        ax.loglog(E,mid,'k:')
-        ax.loglog(E,base,color='k')
-    ax.loglog(E,arc,linewidth=2)
-
-    #ax.grid(True,which='both')
-    ax.set_xlabel('Electron Energy [eV]')#,fontsize=afs,labelpad=-2)
-    ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')#,fontsize=afs)
-    ax.set_title('Input differential number flux')#,fontsize=tfs)
-    #ax.tick_params(axis='both', which='both')#,labelsize=tkfs)
-    ax.autoscale(True,tight=True)
-    ax.set_ylim((1e2,1e5))
-    ax.legend(lblstr,loc='best')#,prop={'size':'large'})
-    #ax.set_xlim((1e2,1e4))
-   # sns.despine(ax=ax)
-
-    if base is not None:
-        ax = figure().gca()
-        ax.loglog(E,base)
-        ax.set_ylim((1e2,1e6))
-        #ax.set_xlim((1e2,1e4))
-        ax.set_title('arc Gaussian base function, E0=' + str(E0)+ '[eV]' +
-                     '\n Wbc: width, Q0: height')
-        ax.set_xlabel('Electron Energy [eV]')
-        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
-        ax.legend(lblstr)
-
-        ax = figure().gca()
-        ax.loglog(E,low)
-        ax.set_ylim((1e2,1e6))
-        ax.set_title('arc low (E<E0).  Bl: height, bh: slope')
-        ax.set_xlabel('Electron Energy [eV]')
-        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
-
-        ax = figure().gca()
-        ax.loglog(E,mid)
-        ax.set_ylim((1e2,1e6))
-        ax.set_title('arc mid.  Bm:height, bm: slope')
-        ax.set_xlabel('Electron Energy [eV]')
-        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
-
-        ax = figure().gca()
-        ax.loglog(E,hi)
-        ax.set_ylim((1e2,1e6))
-        ax.set_title('arc hi (E>E0).  Bhf: height, bh: slope')
-        ax.set_xlabel('Electron Energy [eV]')
-        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
-
-
-
 def writeh5(h5fn,Phi,E,fp):
     if h5fn is not None:
         with h5py.File(h5fn,'w', libver='latest') as f:
             f.create_dataset('/diffnumflux',data=Phi)
             hE = f.create_dataset('/E',data=E); hE.attrs['Units'] = 'eV'
             f.create_dataset('/diffnumflux_params',data=fp)
-
-
-if __name__ == '__main__':
-    from matplotlib.pyplot import figure, show
-    import seaborn as sns
-    sns.set_context('paper',font_scale=1.75)
-    sns.set_style('whitegrid')
-
-    from argparse import ArgumentParser
-    p = ArgumentParser(description='generates diff. num flux based on Strickland 1993')
-    p.add_argument('infn',help='HDF5 file with table dataset containing parameters')
-    p.add_argument('-v','--verbose',help='set debugging verbosity',default=0,action='count')
-    p.add_argument('-o','--save',help='filename output to HDF5',default=None)
-    p = p.parse_args()
-
-    E = logspace(2,4.35,num=200,base=10) #like Strickland 1993
-    #E = logspace(1.7,4.3,num=33,base=10) #like matt's transcar sim
-
-    try:
-        with h5py.File(str(Path(p.infn).expanduser()),'r',libver='latest') as f:
-            df = Dataset(f['/diffnumflux_params'].value)
-    except KeyError as e:
-        raise IOError('trouble accessing {} {}'.format(p.infn,e))
-
-
-    df.dropna(axis=0,how='any',inplace=True)
-#%% Maxwellian
-    Phimaxwell,Qmaxwell = maxwellian(E,df.loc[:,'E0'].values,df.loc[:,'Q0'].values)
-    plotflux(E,df['E0'].values,Phimaxwell)
-#%% Strickland
-    Phi,low,mid,hi,base,Q = fluxgen(E,df.loc[:,'E0'].values,df.loc[:,'Q0'].values,df.loc[:,'Wbc'].values,
-                                    df.loc[:,'bl'].values,df.loc[:,'bm'].values,df.loc[:,'bh'].values,
-                                    df.loc[:,'Bm'].values,df.loc[:,'Bhf'].values, p.verbose)
-
-    writeh5(p.save,Phi,E,df)
-
-    plotflux(E,df['E0'].values,Phi, base, hi,low,mid)
-
-    show()
