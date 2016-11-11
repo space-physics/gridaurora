@@ -1,8 +1,8 @@
-#!/usr/bin/env python
 import logging
 import pathvalidate
 from datetime import datetime
 from . import Path
+from numpy import isscalar
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw,close
 from matplotlib.colors import LogNorm
@@ -48,6 +48,63 @@ def nametime(tind):
         return str(tind)
     else: #is None
         return ''
+#%%
+def plotflux(E,E0, arc, base=None,hi=None,low=None,mid=None,ttxt='Differential Number Flux'):
+    FMAX = 1e6
+    FMIN = 1e2
+
+    lblstr = ['{:.0f}'.format(e0) for e0 in E0]
+
+    ax = figure().gca()
+    if isscalar(E0) and mid is not None:
+        ax.loglog(E,hi,'k:')
+        ax.loglog(E,low,'k:')
+        ax.loglog(E,mid,'k:')
+        ax.loglog(E,base,color='k')
+    ax.loglog(E,arc,linewidth=2)
+
+    ax.grid(True,which='both')
+    ax.set_xlabel('Electron Energy [eV]')#,fontsize=afs,labelpad=-2)
+    ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')#,fontsize=afs)
+    ax.set_title(ttxt)
+    #ax.tick_params(axis='both', which='both')
+    ax.autoscale(True,tight=True)
+    ax.set_ylim((1e2,FMAX))
+    ax.legend(lblstr,loc='best')#,prop={'size':'large'})
+    #ax.set_xlim((1e2,1e4))
+   # sns.despine(ax=ax)
+
+    if base is not None:
+        ax = figure().gca()
+        ax.loglog(E,base)
+        ax.set_ylim((FMIN, FMAX))
+        #ax.set_xlim((1e2,1e4))
+        ax.set_title('arc Gaussian base function, E0=' + str(E0)+ '[eV]' +
+                     '\n Wbc: width, Q0: height')
+        ax.set_xlabel('Electron Energy [eV]')
+        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
+        ax.legend(lblstr)
+
+        ax = figure().gca()
+        ax.loglog(E,low)
+        ax.set_ylim((FMIN, FMAX))
+        ax.set_title('arc low (E<E0).  Bl: height, bh: slope')
+        ax.set_xlabel('Electron Energy [eV]')
+        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
+
+        ax = figure().gca()
+        ax.loglog(E,mid)
+        ax.set_ylim((FMIN, FMAX))
+        ax.set_title('arc mid.  Bm:height, bm: slope')
+        ax.set_xlabel('Electron Energy [eV]')
+        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
+
+        ax = figure().gca()
+        ax.loglog(E,hi)
+        ax.set_ylim((FMIN, FMAX))
+        ax.set_title('arc hi (E>E0).  Bhf: height, bh: slope')
+        ax.set_xlabel('Electron Energy [eV]')
+        ax.set_ylabel('Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]')
 #%%
 def ploteigver(EKpcolor,zKM,eigenprofile,
                vlim=(None,)*6,sim=None,tInd=None,makeplot=None,prefix=None,progms=None):
