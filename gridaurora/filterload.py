@@ -47,10 +47,16 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
         logging.error('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 #%% BG3 filter
     with h5py.File(str(bg3fn),'r',libver='latest') as f:
-        fbg3  = interp1d(f['/wavelength'], log(f['/T']), kind='linear', bounds_error=False)
-        fname = f['T'].attrs['name'].item()
-        if isinstance(fname,bytes):
-            fname = fname.decode('utf8')
+        try:
+            fbg3  = interp1d(f['/wavelength'], log(f['/T']), kind='linear', bounds_error=False)
+        except KeyError:
+            raise KeyError('could not find /wavelength in {}'.format(f.filename))
+        try:
+            fname = f['T'].attrs['name'].item()
+            if isinstance(fname,bytes):
+                fname = fname.decode('utf8')
+        except KeyError:
+            fname =''
 #%% camera window
     with h5py.File(str(windfn),'r',libver='latest') as f:
         fwind = interp1d(f['/lamb'], log(f['/T']), kind='linear')
