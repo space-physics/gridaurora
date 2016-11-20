@@ -16,6 +16,8 @@ r = linspace(1.01,4,100)
 
 Ne = na*exp(-(r-r0)/h) + nb*(r-1)**-1.5
 Li = 5.3/sqrt(Ne)
+#%% Lysak & Lotko 1996 Eqn 13
+#Te =
 #%% plot
 alt_km = r*6371-6371
 figure(3).clf()

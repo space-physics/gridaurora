@@ -144,3 +144,45 @@ def ploteigver(EKpcolor,zKM,eigenprofile,
         writeplots(fg,prefix,tInd,makeplot,progms)
     except Exception as e:
         logging.error('tind {}   {}'.format(tInd,e))
+
+def plotT(T,mmsl,name=''):
+
+    ax1 = figure().gca()
+    for c in ['filter','window','qe','atm']:
+        ax1.plot(T.wavelength_nm, T.sel(filt=c),label=c)
+    ax1.set_xlim(mmsl[:2])
+    ax1.set_title('{}  Component transmittance'.format(name))
+#
+    ax2 = figure().gca()
+    for s in ['sys','sysNObg3']:
+        ax2.plot(T.wavelength_nm, T.sel(filt=s), label=s)
+
+    ax2.set_title('{}  System Transmittance'.format(name))
+
+    for a in (ax1,ax2):
+        niceTax(a)
+
+def niceTax(a):
+    a.set_xlabel('wavelength (nm)')
+    a.set_ylabel('Transmittance (unitless)')
+ #   a.set_yscale('log')
+    a.legend(loc='best')
+#    a.set_ylim(1e-2,1)
+    a.invert_xaxis()
+    a.grid(True,which='both')
+
+def comparefilters(Ts,names):
+
+    ax = figure().gca()
+
+    for T,name in zip(Ts,names):
+        ax.plot(T.wavelength_nm,T.sel(filt='filter'),label=name)
+
+
+    lines = [630.,555.7,777.4,427.8,844.6,391.4]
+    for l in lines:
+        ax.axvline(l,linestyle='--',color='orange',alpha=0.8)
+
+    ax.set_title('Filter Transmittance')
+    niceTax(ax)
+
