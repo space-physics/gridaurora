@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pathlib import Path
 import logging
-from numpy import exp, log, ones_like, isfinite,spacing,column_stack,empty
+from numpy import exp, log, ones_like, isfinite,spacing,column_stack,empty,asarray
 from scipy.interpolate import interp1d
 import h5py
 from xarray import DataArray
@@ -27,6 +27,8 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
 
     windfn = Path(windfn).expanduser()
     qefn = Path(qefn).expanduser()
+
+    newLambda = asarray(newLambda)
 #%% atmospheric absorption
     if golowtran is not None:
         if dbglvl>0:
@@ -75,7 +77,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
                           ('filt',['filter','window','qe','atm','sysNObg3','sys'])])
                                            #atm is ALREADY exp()
 
-    T.loc[:,'sysNObg3'] = T.loc[:,['window','qe','atm']].prod('filt')
-    T.loc[:,'sys']      = T.loc[:,['window','qe','filter','atm']].prod('filt')
+    T.loc[:,'sysNObg3'] = T.sel(filt=['window','qe','atm']).prod('filt')
+    T.loc[:,'sys']      = T.sel(filt=['window','qe','filter','atm']).prod('filt')
 
     return T,fname
