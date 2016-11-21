@@ -14,30 +14,34 @@ dymaj=100
 dymin=20
 
 def writeplots(fg,plotprefix,tind=None,odir=None, fmt='.png', anno=None,dpi=None,facecolor=None,doclose=True):
-    if fg is None or odir is None:
-        return
-#%%
-    draw() #Must have this here or plot doesn't update in animation multiplot mode!
-    #TIF was not faster and was 100 times the file size!
-    #PGF is slow and big file,
-    #RAW crashes
-    #JPG no faster than PNG
+    try:
+        if fg is None or odir is None:
+            return
+    #%%
+        draw() #Must have this here or plot doesn't update in animation multiplot mode!
+        #TIF was not faster and was 100 times the file size!
+        #PGF is slow and big file,
+        #RAW crashes
+        #JPG no faster than PNG
 
-    suff = nametime(tind)
+        suff = nametime(tind)
 
-    if anno:
-        fg.text(0.15,0.8,anno,fontsize='x-large')
+        if anno:
+            fg.text(0.15,0.8,anno,fontsize='x-large')
 
-    cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + fmt)
-    print('write {}'.format(cn))
+        cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + fmt)
+        print('write {}'.format(cn))
 
-    if facecolor is None:
-        facecolor=fg.get_facecolor()
+        if facecolor is None:
+            facecolor=fg.get_facecolor()
 
-    fg.savefig(str(cn),bbox_inches='tight',dpi=dpi, facecolor=facecolor, edgecolor='none')
+        fg.savefig(str(cn),bbox_inches='tight',dpi=dpi, facecolor=facecolor, edgecolor='none')
 
-    if doclose:
-        close(fg)
+        if doclose:
+            close(fg)
+
+    except Exception as e:
+        logging.error('{}  when plotting {}'.format(e,plotprefix))
 
 def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
