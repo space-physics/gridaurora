@@ -178,10 +178,13 @@ def comparefilters(Ts,names):
     for T,name in zip(Ts,names):
         ax.plot(T.wavelength_nm,T.sel(filt='filter'),label=name)
 
+    forbidden = [630.,555.7,]
+    permitted = [391.4,427.8,844.6,777.4]
+    for l in forbidden:
+        ax.axvline(l,linestyle='--',color='darkred',alpha=0.8)
+    for l in permitted:
+        ax.axvline(l,linestyle='--',color='darkgreen',alpha=0.8)
 
-    lines = [630.,555.7,777.4,427.8,844.6,391.4]
-    for l in lines:
-        ax.axvline(l,linestyle='--',color='orange',alpha=0.8)
 
     ax.set_title('Filter Transmittance')
     niceTax(ax)
