@@ -43,7 +43,7 @@ def test_opticalfilter():
     obsalt_km = 0
     zenang_deg= 0
 
-    T = filterload.getSystemT(testlambda,bg3fn,windfn,qefn,obsalt_km,zenang_deg)
+    T,fname = filterload.getSystemT(testlambda,bg3fn,windfn,qefn,obsalt_km,zenang_deg)
     assert_allclose(T.wavelength_nm,testlambda)
     try: #with lowtran
         assert_allclose(T.loc[:,'sys'].values,
