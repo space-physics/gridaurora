@@ -24,18 +24,17 @@ if __name__=="__main__":
 
     inpath = Path(p.path).expanduser()
 
-    flist = ['BG3transmittance.h5','Wratten32transmittance.h5']
+    flist = ['BG3transmittance.h5','Wratten32transmittance.h5','NE01transmittance.h5']
     flist =  [inpath/f for f in flist]
 
     windFN =    inpath/'ixonWindowT.h5'
     qeFN =      inpath/'emccdQE.h5'
 #%%
-    if False:
-        Ts =[]; names=[]
-        for f in flist:
-            T,fname = selftest(f, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
-            Ts.append(T); names.append(fname)
-            plotT(T, p.wlnm,fname)
+    Ts =[]; names=[]
+    for f in flist:
+        T,fname = selftest(f, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
+        Ts.append(T); names.append(fname)
+        plotT(T, p.wlnm,fname)
 #%%
     comparefilters(Ts,names)
 
