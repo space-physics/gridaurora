@@ -4,7 +4,7 @@ from datetime import datetime
 from . import Path
 from numpy import isscalar
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
-from matplotlib.pyplot import figure,draw,close
+from matplotlib.pyplot import figure,draw,close,subplots
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 
@@ -166,6 +166,7 @@ def plotT(T,mmsl,name=''):
     for a in (ax1,ax2):
         niceTax(a)
 
+
 def niceTax(a):
     a.set_xlabel('wavelength (nm)')
     a.set_ylabel('Transmittance (unitless)')
@@ -177,19 +178,26 @@ def niceTax(a):
 
 def comparefilters(Ts,names):
 
-    ax = figure().gca()
+    fg, axs = subplots(len(Ts),1,sharex=True,sharey=True)
 
-    for T,name in zip(Ts,names):
-        ax.plot(T.wavelength_nm,T.sel(filt='filter'),label=name)
+    for T,name,ax in zip(Ts,names,axs):
+        try:
+            ax.plot(T.wavelength_nm, T.sel(filt='filter'), label=name)
+        except ValueError: # just a plain filter
+            assert T.ndim==1
+            ax.plot(T.wavelength_nm, T, label=name)
 
-    forbidden = [630.,555.7,]
-    permitted = [391.4,427.8,844.6,777.4]
-    for l in forbidden:
-        ax.axvline(l,linestyle='--',color='darkred',alpha=0.8)
-    for l in permitted:
-        ax.axvline(l,linestyle='--',color='darkgreen',alpha=0.8)
+        forbidden = [630.,555.7,]
+        permitted = [391.4,427.8,844.6,777.4]
+        for l in forbidden:
+            ax.axvline(l,linestyle='--',color='darkred',alpha=0.8)
+        for l in permitted:
+            ax.axvline(l,linestyle='--',color='darkgreen',alpha=0.8)
 
+        ax.set_title('{}'.format(name))
 
-    ax.set_title('Filter Transmittance')
-    niceTax(ax)
+    fg.suptitle('Transmittance')
 
+    ax.set_ylim((0,1))
+    ax.set_xlim(T.wavelength_nm[[-1,0]])
+    ax.set_xlabel('wavelength [nm]')
