@@ -39,20 +39,23 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
         try:
             atmTcleaned = atmT.values.squeeze()
             atmTcleaned[atmTcleaned==0] = spacing(1) # to avoid log10(0)
-            fwl = interp1d(atmT.index,log(atmTcleaned),axis=0)
+            fwl = interp1d(atmT.wavelength_nm,log(atmTcleaned),axis=0)
         except AttributeError: #problem with lowtran
             fwl = interp1d(newLambda,log(ones_like(newLambda)),kind='linear')
     else:
         fwl = interp1d(newLambda,log(ones_like(newLambda)),kind='linear')
+
     atmTinterp = exp(fwl(newLambda))
     if not isfinite(atmTinterp).all():
         logging.error('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 #%% BG3 filter
     with h5py.File(str(bg3fn),'r',libver='latest') as f:
         try:
+            assert isinstance(f['/T'], h5py.Dataset),'we only allow one transmission curve per file' # simple legacy behavior
             fbg3  = interp1d(f['/wavelength'], log(f['/T']), kind='linear', bounds_error=False)
         except KeyError:
             raise KeyError('could not find /wavelength in {}'.format(f.filename))
+
         try:
             fname = f['T'].attrs['name'].item()
             if isinstance(fname,bytes):
@@ -65,7 +68,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
 #%% quantum efficiency
     with h5py.File(str(qefn),'r',libver='latest') as f:
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
-
+#%% collect results into DataArray
 
     T = DataArray(column_stack((exp(fbg3(newLambda)),
                                 exp(fwind(newLambda)),
