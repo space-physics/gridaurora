@@ -2,7 +2,7 @@
 """
 creates optical emissions from excitation rates
 """
-from . import Path
+from pathlib import Path
 import logging
 from xarray import  DataArray
 from numpy import zeros,append,where, loadtxt

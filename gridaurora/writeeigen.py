@@ -1,5 +1,5 @@
 import h5py
-from . import Path
+from pathlib import Path
 from datetime import datetime
 from pytz import UTC
 from xarray import DataArray

@@ -1,4 +1,3 @@
-from six import string_types
 from dateutil.parser import parse
 from numpy import ndarray
 import astropy.units as u
@@ -13,9 +12,9 @@ def solarzenithangle(t,glat,glon,alt_m):
 
     """
     if isinstance(t,(tuple,list,ndarray)):
-        if isinstance(t[0],string_types):
+        if isinstance(t[0],str):
             t=map(parse,t)
-    elif isinstance(t,string_types):
+    elif isinstance(t,str):
         t=parse(t)
 
     obs = EarthLocation(lat=glat*u.deg, lon=glon*u.deg, height=alt_m*u.m)

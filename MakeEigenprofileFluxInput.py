@@ -11,7 +11,7 @@ Michael Hirsch
 """
 from matplotlib.pyplot import show
 import seaborn
-from gridaurora import Path
+from pathlib import Path
 #
 from gridaurora.loadtranscargrid import loadregress,makebin,doplot
 

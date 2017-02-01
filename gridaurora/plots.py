@@ -1,7 +1,7 @@
 import logging
 import pathvalidate
 from datetime import datetime
-from . import Path
+from pathlib import Path
 from numpy import isscalar
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw,close,subplots
