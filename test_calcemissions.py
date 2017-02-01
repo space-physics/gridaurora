@@ -2,7 +2,7 @@
 """
 using excitation rates and other factors, creates volume emission rate profiles.
 """
-from gridaurora import Path
+from pathlib import Path
 import logging
 import h5py
 from matplotlib.pyplot import show

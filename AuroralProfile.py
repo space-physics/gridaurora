@@ -6,7 +6,7 @@ Please contact me with any questions.
 Michael Hirsch
 Sept 2015
 """
-from gridaurora import Path
+from pathlib import Path
 import h5py
 #
 from gridaurora.arcexcite import getTranscar

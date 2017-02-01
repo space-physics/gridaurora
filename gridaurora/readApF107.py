@@ -8,10 +8,9 @@ ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt
 
 Michael Hirsch
 """
-from . import Path
+from pathlib import Path
 from datetime import datetime
 from dateutil.parser import parse
-from six import string_types
 from numpy import loadtxt,nan
 from pandas import DataFrame
 
@@ -21,7 +20,7 @@ def readmonthlyApF107(yearmon,fn=None):
 
     fn = Path(fn).expanduser()
 #%% date handle
-    if isinstance(yearmon,string_types):
+    if isinstance(yearmon,str):
         yearmon = parse(yearmon)
     #not elif
     if isinstance(yearmon,datetime):

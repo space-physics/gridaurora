@@ -12,7 +12,7 @@ python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o ~/data/eige
 
 Michael Hirsch
 """
-from gridaurora import Path
+from pathlib import Path
 from collections import namedtuple
 from matplotlib.pyplot import show
 from dateutil import rrule

@@ -1,7 +1,6 @@
 """
 converts date string, datetime, or array thereof to UT1 UNIX, seconds since Unix Epoch
 """
-from six import string_types,integer_types
 from pytz import UTC
 from numpy import ndarray
 from dateutil.parser import parse
@@ -18,9 +17,9 @@ def to_ut1unix(t):
     #keep this order
     if isinstance(t,datetime):
         t = [t]
-    elif isinstance(t,string_types):
+    elif isinstance(t,str):
         t=[parse(t)]
-    elif isinstance(t,(float,integer_types)) or isinstance(t[0],(float,integer_types)):
+    elif isinstance(t,(float,int)) or isinstance(t[0],(float,int)):
         return t
 
     assert isinstance(t,(tuple,list,ndarray))

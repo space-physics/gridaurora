@@ -1,18 +1,15 @@
 #!/usr/bin/env python
-import os,sys
 from setuptools import setup
-import subprocess
 
 try:
-    subprocess.call(['conda','install','--file','requirements.txt'])
+    import conda.cli
+    conda.cli.main('install','--file','requirements.txt')
 except Exception as e:
-    pass
+    print(e)
+
 
 setup(name='gridaurora',
       packages=['gridaurora'],
-	  description='utilities for ionospheric gridding, particularly for the aurora',
-	  author='Michael Hirsch',
-	  url='https://github.com/scienceopen/gridaurora',
       data_files=[('gridaurora/data',['gridaurora/data/RecentIndices.txt'])],
 	  install_requires=['histutils','pathvalidate'],
       extras_require={'lowtran':'lowtran'}, #optional
