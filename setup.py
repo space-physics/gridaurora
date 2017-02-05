@@ -6,6 +6,8 @@ try:
     conda.cli.main('install','--file','requirements.txt')
 except Exception as e:
     print(e)
+    import pip
+    pip.main(['install','-r','requirements.txt'])
 
 
 setup(name='gridaurora',
@@ -17,3 +19,4 @@ setup(name='gridaurora',
                      'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
       package_data={'gridaurora.precompute': ['*.h5']},
 	  )
+
