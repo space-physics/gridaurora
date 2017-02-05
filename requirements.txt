@@ -1,4 +1,3 @@
-setuptools
 python-dateutil
 pytz
 nose
