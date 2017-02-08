@@ -6,7 +6,7 @@ import logging
 from numpy import (pi,exp,arange,empty_like, trapz, asfortranarray,atleast_1d)
 import h5py
 #
-from histutils.findnearest import find_nearest
+from sciencedates import find_nearest
 
 def maxwellian(E,E0,Q0):
     """
