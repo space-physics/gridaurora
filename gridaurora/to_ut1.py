@@ -6,7 +6,7 @@ from numpy import ndarray
 from dateutil.parser import parse
 from datetime import datetime
 #
-from histutils.fortrandates import forceutc
+from sciencedates import forceutc
 
 epoch = datetime(1970,1,1,tzinfo=UTC)
 
