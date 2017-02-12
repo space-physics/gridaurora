@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-try:
-    import conda.cli
-    conda.cli.main('install','--file','requirements.txt')
-except Exception as e:
-    print(e)
-    import pip
-    pip.main(['install','-r','requirements.txt'])
+req = ['python-dateutil','pytz','nose','numpy','scipy','xarray','h5py','astropy','matplotlib','seaborn',
+      'sciencedates',
+        'pathvalidate']
 
 
 setup(name='gridaurora',
       packages=['gridaurora'],
       author='Michael Hirsch, Ph.D.',
+      description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scienceopen/gridaurora',
       data_files=[('gridaurora/data',['gridaurora/data/RecentIndices.txt'])],
-	  install_requires=['sciencedates','pathvalidate'],
+	  install_requires=req,
       extras_require={'lowtran':'lowtran'}, #optional
       dependency_links = [
       'https://github.com/scienceopen/lowtran/tarball/master#egg=lowtran',],
