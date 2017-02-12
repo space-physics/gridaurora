@@ -11,6 +11,7 @@ setup(name='gridaurora',
       author='Michael Hirsch, Ph.D.',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scienceopen/gridaurora',
+      version='0.5',
       data_files=[('gridaurora/data',['gridaurora/data/RecentIndices.txt'])],
 	  install_requires=req,
       extras_require={'lowtran':'lowtran'}, #optional
