@@ -49,7 +49,7 @@ def test_opticalfilter():
         assert_allclose(T.loc[:,'sys'].values,
                     [7.965214e-43, 4.411237e-01,9.311972e-04,1.016631e-05, 7.668004e-01],
                     rtol=1e-6)
-    except:
+    except AssertionError:
         assert_allclose(T.loc[:,'sys'].values,
                     [8.213363e-4, 5.790669e-1, 1.058124e-3, 1.133114e-5, 7.854393e-1],
                     rtol=1e-6)
