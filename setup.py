@@ -19,7 +19,7 @@ setup(name='gridaurora',
       classifiers=[
           'Intended Audience :: Science/Research',
           'Development Status :: 5 - Production/Stable',
-          'License :: OSI Approved :: GPLv3+ License',
+          'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Programming Language :: Python :: 3',
           ],
