@@ -4,6 +4,8 @@ from datetime import datetime
 import pytz
 from numpy.testing import assert_allclose,run_module_suite
 
+rdir = Path(__file__).parents[1]
+
 def test_dt2ut1():
     from gridaurora.to_ut1 import to_ut1unix
     ET = pytz.timezone('US/Eastern')
@@ -34,7 +36,7 @@ def test_worldgrid():
 def test_opticalfilter():
     from gridaurora import filterload
 
-    dpath = Path('precompute')
+    dpath = rdir/'precompute'
     bg3fn =  dpath/'BG3transmittance.h5'
     windfn = dpath/'ixonWindowT.h5'
     qefn =   dpath/'emccdQE.h5'

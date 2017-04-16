@@ -35,7 +35,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
             print('loading LOWTRAN7 atmosphere model...')
         atmT = golowtran(obsalt_km,zenang_deg,
                          wlnm=(newLambda[0],newLambda[-1]),
-                         c1={'model':5,'itype':3,'iemsct':0})
+                         c1={'model':5,'itype':3,'iemsct':0}).loc[:,'transmission']
         try:
             atmTcleaned = atmT.values.squeeze()
             atmTcleaned[atmTcleaned==0] = spacing(1) # to avoid log10(0)
@@ -76,8 +76,9 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
                                 atmTinterp,
                                 empty(newLambda.size),
                                 empty(newLambda.size))),
-                  coords=[('wavelength_nm',newLambda),
-                          ('filt',['filter','window','qe','atm','sysNObg3','sys'])])
+                  coords={'wavelength_nm':newLambda,
+                         'filt':['filter','window','qe','atm','sysNObg3','sys']},
+                  dims=['wavelength_nm','filt'])
                                            #atm is ALREADY exp()
 
     T.loc[:,'sysNObg3'] = T.sel(filt=['window','qe','atm']).prod('filt')
