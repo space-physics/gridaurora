@@ -12,10 +12,10 @@ setup(name='gridaurora',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
       version='1.0.1',
-      package_data={'gridaurora':'data/RecentIndices.txt'},
+      package_data={'gridaurora':['data/RecentIndices.txt'],
+                    'gridaurora.precompute': ['*.h5']},
 	  install_requires=req,
       extras_require={'lowtran':'lowtran'}, #optional
-      package_data={'gridaurora.precompute': ['*.h5']},
       classifiers=[
           'Intended Audience :: Science/Research',
           'Development Status :: 5 - Production/Stable',
