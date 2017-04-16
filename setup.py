@@ -12,11 +12,16 @@ setup(name='gridaurora',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
       version='0.5',
-      data_files=[('gridaurora/data',['gridaurora/data/RecentIndices.txt'])],
+      data_files=[('gridaurora/data',['RecentIndices.txt'])],
 	  install_requires=req,
       extras_require={'lowtran':'lowtran'}, #optional
-      dependency_links = [
-      'https://github.com/scivision/lowtran/tarball/master#egg=lowtran',],
       package_data={'gridaurora.precompute': ['*.h5']},
+      classifiers=[
+          'Intended Audience :: Science/Research',
+          'Development Status :: 5 - Production/Stable',
+          'License :: OSI Approved :: GPLv3+ License',
+          'Topic :: Scientific/Engineering :: Atmospheric Science',
+          'Programming Language :: Python :: 3',
+          ],
 	  )
 
