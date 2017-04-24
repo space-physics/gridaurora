@@ -21,8 +21,8 @@ QE: http://www.andor.com/pdfs/specifications/Andor_iXon_Ultra_897_Specifications
 window: http://www.andor.com/pdfs/specifications/Andor_Camera_Windows_Supplementary_Specifications.pdf
 '''
 
-def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
-    assert isinstance(bg3fn,(Path,str))
+def getSystemT(newLambda, bg3fn:Path, windfn,qefn,obsalt_km,zenang_deg, verbose=False):
+
     bg3fn = Path(bg3fn).expanduser()
 
     windfn = Path(windfn).expanduser()
@@ -31,11 +31,11 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     newLambda = asarray(newLambda)
 #%% atmospheric absorption
     if golowtran is not None:
-        if dbglvl>0:
+        c1={'model':5,'itype':3,'iemsct':0,'h1':obsalt_km,'angle':zenang_deg,
+            'wlnmlim':(newLambda[0],newLambda[-1])}
+        if verbose:
             print('loading LOWTRAN7 atmosphere model...')
-        atmT = golowtran(obsalt_km,zenang_deg,
-                         wlnm=(newLambda[0],newLambda[-1]),
-                         c1={'model':5,'itype':3,'iemsct':0}).loc[:,'transmission']
+        atmT = golowtran(c1).loc[...,'transmission']
         try:
             atmTcleaned = atmT.values.squeeze()
             atmTcleaned[atmTcleaned==0] = spacing(1) # to avoid log10(0)
@@ -49,7 +49,7 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     if not isfinite(atmTinterp).all():
         logging.error('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 #%% BG3 filter
-    with h5py.File(str(bg3fn),'r',libver='latest') as f:
+    with h5py.File(bg3fn,'r',libver='latest') as f:
         try:
             assert isinstance(f['/T'], h5py.Dataset),'we only allow one transmission curve per file' # simple legacy behavior
             fbg3  = interp1d(f['/wavelength'], log(f['/T']), kind='linear', bounds_error=False)
@@ -63,10 +63,10 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
         except KeyError:
             fname =''
 #%% camera window
-    with h5py.File(str(windfn),'r',libver='latest') as f:
+    with h5py.File(windfn,'r',libver='latest') as f:
         fwind = interp1d(f['/lamb'], log(f['/T']), kind='linear')
 #%% quantum efficiency
-    with h5py.File(str(qefn),'r',libver='latest') as f:
+    with h5py.File(qefn,'r',libver='latest') as f:
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
 #%% collect results into DataArray
 
@@ -84,4 +84,4 @@ def getSystemT(newLambda, bg3fn,windfn,qefn,obsalt_km,zenang_deg,dbglvl=0):
     T.loc[:,'sysNObg3'] = T.sel(filt=['window','qe','atm']).prod('filt')
     T.loc[:,'sys']      = T.sel(filt=['window','qe','filter','atm']).prod('filt')
 
-    return T,fname
+    return T, fname
