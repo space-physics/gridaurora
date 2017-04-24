@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-req = ['python-dateutil','pytz','nose','numpy','scipy','xarray','h5py','astropy','matplotlib','seaborn',]
+req = ['python-dateutil','pytz','nose','numpy','scipy','xarray','h5py','astropy','matplotlib','seaborn','pathlib2']
 pipreq=['sciencedates','lowtran',
         'pathvalidate']
 # %%
@@ -18,7 +18,7 @@ setup(name='gridaurora',
       author='Michael Hirsch, Ph.D.',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
-      version='1.1.0',
+      version='1.1.1',
       package_data={'gridaurora':['data/RecentIndices.txt'],
                     'gridaurora.precompute': ['*.h5']},
       classifiers=[
