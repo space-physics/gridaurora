@@ -18,7 +18,7 @@ setup(name='gridaurora',
       author='Michael Hirsch, Ph.D.',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
-      version='1.0.3',
+      version='1.0.4',
       package_data={'gridaurora':['data/RecentIndices.txt'],
                     'gridaurora.precompute': ['*.h5']},
       classifiers=[
