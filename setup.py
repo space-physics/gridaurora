@@ -8,8 +8,8 @@ try:
     import conda.cli
     conda.cli.main('install',*req)
 except Exception as e:
-    pip.main(['install',*req])
-pip.main(['install',*pipreq])
+    pip.main(['install']+req)
+pip.main(['install']+pipreq)
 # %%
 from setuptools import setup
 
@@ -18,7 +18,7 @@ setup(name='gridaurora',
       author='Michael Hirsch, Ph.D.',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
-      version='1.0.4',
+      version='1.0.5',
       package_data={'gridaurora':['data/RecentIndices.txt'],
                     'gridaurora.precompute': ['*.h5']},
       classifiers=[
