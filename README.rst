@@ -1,12 +1,11 @@
-.. image:: https://codeclimate.com/github/scienceopen/gridaurora/badges/gpa.svg
-   :target: https://codeclimate.com/github/scienceopen/gridaurora
-   :alt: Code Climate
+.. image:: https://zenodo.org/badge/36744963.svg
+   :target: https://zenodo.org/badge/latestdoi/36744963
 
-.. image:: https://travis-ci.org/scienceopen/gridaurora.svg?branch=master
-    :target: https://travis-ci.org/scienceopen/gridaurora
+.. image:: https://travis-ci.org/scivision/gridaurora.svg?branch=master
+    :target: https://travis-ci.org/scivision/gridaurora
 
-.. image:: https://coveralls.io/repos/scienceopen/gridaurora/badge.svg?branch=master&service=github 
-   :target: https://coveralls.io/github/scienceopen/gridaurora?branch=master 
+.. image:: https://coveralls.io/repos/scivision/gridaurora/badge.svg?branch=master&service=github 
+   :target: https://coveralls.io/github/scivision/gridaurora?branch=master 
 
 ==========
 gridaurora
@@ -15,18 +14,11 @@ Discretizations of space (grids) and time conversions useful for aeronomy and au
 
 .. contents::
 
-Prereq
-======
-Python 3.5+
-Fortran compiler
-
 Install
 =======
-from Terminal::
+::
 
-    git clone --depth 1 https://github.com/scienceopen/gridaurora
-    conda install --file requirements.txt
-    python setup.py install
+    pip install gridaurora
 
 Note: you will need a Fortran compiler on your system so that f2py can
 work. Yes, it's `possible on Windows too.
@@ -35,8 +27,8 @@ work. Yes, it's `possible on Windows too.
 Eigenprofiles
 =============
 Currently GLOW and Rees-Sergienko-Ivanov are available (Transcar in future).
-You will need to separately install `scienceopen/reesaurora <https://github.com/scienceopen/reesaurora>`_ and 
-`scienceopen/glowaurora <https://github.com/scienceopen/glowaurora>`_.
+You will need to separately install `scivision/reesaurora <https://github.com/scivision/reesaurora>`_ and 
+`scivision/glowaurora <https://github.com/scivision/glowaurora>`_.
 This is to keep the install process from becoming gigantic when you just want some of the models.
 
 Once installed, select model by:
