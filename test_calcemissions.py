@@ -14,10 +14,8 @@ sns.set(context='paper', style='whitegrid',font_scale=2.1,
 from gridaurora.calcemissions import calcemissions,plotspectra,showIncrVER
 from gridaurora.filterload import getSystemT
 from gridaurora.plots import writeplots
-# github.com/scienceopen/transcarread
-from transcarread.readExcrates import readexcrates
-from transcarread.parseTranscar import readTranscarInput
-from transcarread.readTranscar import SimpleSim
+# github.com/scivision/transcarread
+from transcarread import readTranscarInput,readexcrates, SimpleSim
 
 if __name__ == '__main__':
     import cProfile,pstats

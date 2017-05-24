@@ -10,7 +10,7 @@ from pathlib import Path
 import h5py
 #
 from gridaurora.arcexcite import getTranscar
-from transcarread.readTranscar import SimpleSim
+from transcarread import SimpleSim
 from gridaurora.opticalmod import plotOptMod
 try:
     from histfeas.plotsnew import ploteigver,ploteig1d

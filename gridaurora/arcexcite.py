@@ -11,7 +11,7 @@ from pytz import UTC
 #
 from gridaurora.opticalmod import opticalModel
 from gridaurora.calcemissions import calcemissions, sortelimlambda
-from transcarread.readTranscar import calcVERtc
+from transcarread import calcVERtc
 
 def getTranscar(sim,obsAlt_km,zenithang):
     zeroUnusedBeams = False
