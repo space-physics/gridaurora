@@ -1,9 +1,6 @@
 language: python
 
 python:
-  - 2.7
-  - 3.4
-  - 3.5
   - 3.6
 
 os:
@@ -27,7 +24,6 @@ before_install:
         wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
       fi
       
-install:
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - hash -r
@@ -37,8 +33,8 @@ install:
     - conda create -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
     - pip -q install coveralls
-
-    - python setup.py develop
+    
+install: python setup.py develop
 
 script: coverage run tests/test.py -v
 
