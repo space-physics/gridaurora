@@ -28,5 +28,6 @@ setup(name='gridaurora',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Programming Language :: Python :: 3',
           ],
+      install_requires=pip+pipreq,
 	  )
 
