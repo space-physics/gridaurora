@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-req = ['python-dateutil','pytz','nose','numpy','scipy','xarray','h5py','astropy','matplotlib','seaborn','pathlib2']
+req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py','astropy','matplotlib', 'seaborn','pathlib2']
 pipreq=['sciencedates','lowtran',
         'pathvalidate']
 # %%
@@ -28,6 +28,6 @@ setup(name='gridaurora',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Programming Language :: Python :: 3',
           ],
-      install_requires=pip+pipreq,
+      install_requires=req+pipreq,
 	  )
 
