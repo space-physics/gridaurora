@@ -38,8 +38,8 @@ if __name__ == '__main__':
     path = Path(p.path).expanduser()
     simpath = path/('beam'+str(p.beamenergy))
 
-    excrpath = simpath/'dir.output'
-    excrates = readexcrates(excrpath,'emissions.dat')[0]
+    excrpath = simpath/'dir.output/emissions.dat'
+    excrates = readexcrates(excrpath)[0]
     sim = SimpleSim(filt=None,inpath=simpath,reacreq=p.reacreq)
 #%% testing code timing only
     if p.profile:

@@ -56,7 +56,7 @@ def getTranscar(sim,obsAlt_km,zenithang):
 
             Plambda = calcemissions(spec,tTCind,sim)[0]
             if Plambda is None: #couldn't read this beam
-                logging.info('skipped reading beam {}'.format(Ek[iEn]))
+                logging.info(f'skipped reading beam {Ek[iEn]}')
                 continue
             z = Plambda.alt_km
 
