@@ -18,7 +18,7 @@ Install
 =======
 ::
 
-    pip install gridaurora
+    pip install -e .
 
 Note: you will need a Fortran compiler on your system so that f2py can
 work. Yes, it's `possible on Windows too.

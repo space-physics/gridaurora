@@ -1,15 +1,7 @@
 #!/usr/bin/env python
-req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py','astropy','matplotlib', 'seaborn','pathlib2']
-pipreq=['sciencedates','lowtran',
+req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py','astropy','matplotlib', 'seaborn',
+       'sciencedates','lowtran',
         'pathvalidate']
-# %%
-import pip
-try:
-    import conda.cli
-    conda.cli.main('install',*req)
-except Exception as e:
-    pip.main(['install']+req)
-pip.main(['install']+pipreq)
 # %%
 from setuptools import setup
 
@@ -28,6 +20,7 @@ setup(name='gridaurora',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Programming Language :: Python :: 3',
           ],
-      install_requires=req+pipreq,
+      install_requires=req,
+      python_requires='>=3.6',
 	  )
 
