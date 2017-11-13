@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py','astropy','matplotlib', 'seaborn',
-       'sciencedates','lowtran',
+       'sciencedates','lowtran','transcarread',
         'pathvalidate']
 # %%
 from setuptools import setup
