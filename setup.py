@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py','astropy','matplotlib', 'seaborn',
-       'sciencedates','lowtran','transcarread',
+req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py',
+       'sciencedates',
         'pathvalidate']
 # %%
 from setuptools import setup
@@ -22,5 +22,7 @@ setup(name='gridaurora',
           ],
       install_requires=req,
       python_requires='>=3.6',
+      extras_require={'plot':['matplotlib', 'seaborn',],
+                      'io':['lowtran','transcarread','astropy',],},
 	  )
 
