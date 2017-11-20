@@ -3,10 +3,10 @@ req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py',
        'sciencedates',
         'pathvalidate']
 # %%
-from setuptools import setup
+from setuptools import setup,find_packages
 
 setup(name='gridaurora',
-      packages=['gridaurora'],
+      packages=find_packages(),
       author='Michael Hirsch, Ph.D.',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
