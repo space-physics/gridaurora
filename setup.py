@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-req = ['python-dateutil','pytz', 'nose','numpy','scipy','xarray', 'h5py',
+install_requires = ['python-dateutil','pytz','numpy','scipy','xarray', 'h5py',
        'sciencedates',
         'pathvalidate']
+tests_require=[ 'nose','coveralls']
 # %%
 from setuptools import setup,find_packages
 
@@ -20,9 +21,11 @@ setup(name='gridaurora',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Programming Language :: Python :: 3',
           ],
-      install_requires=req,
+      install_requires=install_requires,
       python_requires='>=3.6',
       extras_require={'plot':['matplotlib', 'seaborn',],
-                      'io':['lowtran','transcarread','astropy',],},
+                      'io':['lowtran','transcarread','astropy',],
+                      'test':tests_require},
+      tests_require=tests_require,
 	  )
 

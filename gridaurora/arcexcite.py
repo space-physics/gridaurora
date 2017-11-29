@@ -5,7 +5,7 @@ creates optical emissions from excitation rates
 from pathlib import Path
 import logging
 from xarray import  DataArray
-from numpy import zeros,append,where, loadtxt
+from numpy import zeros,append, loadtxt
 import h5py
 from pytz import UTC
 #
@@ -86,7 +86,7 @@ def getTranscar(sim,obsAlt_km,zenithang):
 def getbeamsused(zeroUnusedBeams,Ek,minbeamenergy):
     if zeroUnusedBeams:
         try:
-            return where(Ek>=minbeamenergy)[0][0]
+            return Ek >= minbeamenergy
         except IndexError:
             logging.warning('** You have picked a minimum energy outside the simulation energy range, falling back to using all beams')
 
