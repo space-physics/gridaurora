@@ -2,7 +2,7 @@
 install_requires = ['python-dateutil','pytz','numpy','scipy','xarray', 'h5py',
        'sciencedates',
         'pathvalidate']
-tests_require=[ 'nose','coveralls']
+tests_require=['nose','coveralls']
 # %%
 from setuptools import setup,find_packages
 
@@ -25,7 +25,7 @@ setup(name='gridaurora',
       python_requires='>=3.6',
       extras_require={'plot':['matplotlib', 'seaborn',],
                       'io':['lowtran','transcarread','astropy',],
-                      'test':tests_require},
+                      'tests':tests_require},
       tests_require=tests_require,
 	  )
 
