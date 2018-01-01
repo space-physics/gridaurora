@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 dymaj=100
 dymin=20
 
-def writeplots(fg,plotprefix,tind=None,odir=None, fmt='.png', anno=None,dpi=None,facecolor=None,doclose=True):
+def writeplots(fg,plotprefix, tind=None, odir=None, fmt='.png', anno=None, dpi=None, facecolor=None, doclose=True):
     try:
         if fg is None or odir is None:
             return
@@ -35,19 +35,19 @@ def writeplots(fg,plotprefix,tind=None,odir=None, fmt='.png', anno=None,dpi=None
         if facecolor is None:
             facecolor=fg.get_facecolor()
 
-        fg.savefig(str(cn),bbox_inches='tight',dpi=dpi, facecolor=facecolor, edgecolor='none')
+        fg.savefig(str(cn), bbox_inches='tight', dpi=dpi, facecolor=facecolor, edgecolor='none')
 
         if doclose:
             close(fg)
 
     except Exception as e:
-        logging.error('{}  when plotting {}'.format(e,plotprefix))
+        logging.error(f'{e}  when plotting {plotprefix}')
 
 def nametime(tind):
     if isinstance(tind,int) and tind<1e6:
         return '{:03d}'.format(tind)
     elif isinstance(tind,datetime):
-        return tind.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] #-3 truncates to millisecond digits only (arbitrary)
+        return tind.isoformat()[:-3] #-3 truncates to millisecond digits only (arbitrary)
     elif tind is not None:
         return str(tind)
     else: #is None
