@@ -2,7 +2,7 @@
 install_requires = ['python-dateutil','pytz','numpy','scipy','xarray', 'h5py',
        'sciencedates',
         'pathvalidate']
-tests_require=['nose','coveralls']
+tests_require=['pytest','nose','coveralls']
 # %%
 from setuptools import setup,find_packages
 
@@ -11,7 +11,7 @@ setup(name='gridaurora',
       author='Michael Hirsch, Ph.D.',
       description='Gridding for auroral and ionospheric modeling',
       url='https://github.com/scivision/gridaurora',
-      version='1.1.5',
+      version='1.1.6',
       package_data={'gridaurora':['data/RecentIndices.txt'],
                     'gridaurora.precompute': ['*.h5']},
       classifiers=[

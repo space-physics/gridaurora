@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from numpy import isscalar
 from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
-from matplotlib.pyplot import figure,draw,close,subplots
+from matplotlib.pyplot import figure,draw,close
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
 
@@ -30,12 +30,12 @@ def writeplots(fg,plotprefix, tind=None, odir=None, fmt='.png', anno=None, dpi=N
             fg.text(0.15,0.8,anno,fontsize='x-large')
 
         cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + fmt)
-        print('write {}'.format(cn))
+        print('write',cn)
 
         if facecolor is None:
             facecolor=fg.get_facecolor()
 
-        fg.savefig(str(cn), bbox_inches='tight', dpi=dpi, facecolor=facecolor, edgecolor='none')
+        fg.savefig(cn, bbox_inches='tight', dpi=dpi, facecolor=facecolor, edgecolor='none')
 
         if doclose:
             close(fg)
@@ -177,8 +177,8 @@ def niceTax(a):
     a.grid(True,which='both')
 
 def comparefilters(Ts,names):
-
-    fg, axs = subplots(len(Ts),1,sharex=True,sharey=True)
+    fg = figure()
+    axs = fg.subplots(len(Ts),1,sharex=True,sharey=True)
 
     for T,name,ax in zip(Ts,names,axs):
         try:
