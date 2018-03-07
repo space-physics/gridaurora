@@ -14,10 +14,10 @@ git:
   depth: 3
 
 
-install: python -m pip install -e .[tests]
+install: pip -q install -e .[tests]
 
 script: 
   - pytest
-  - coverage run tests/test.py -v
+  - coverage run tests/test_all.py -v
 
 after_success: coveralls
