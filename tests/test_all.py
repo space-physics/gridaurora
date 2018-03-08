@@ -1,13 +1,17 @@
 #!/usr/bin/env python
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+from pathlib import Path
 from datetime import datetime
 import pytz
 from numpy.testing import assert_allclose,run_module_suite
-
+import gridaurora
+#
 rdir = Path(__file__).parents[1]
+
+
+def test_f107apread():
+    f107ap = gridaurora.readmonthlyApF107(201708,)
+    assert (f107ap == [77.9, 76.3, 12. , 10.7]).all()
+
 
 def test_dt2ut1():
     from gridaurora.to_ut1 import to_ut1unix
@@ -23,10 +27,12 @@ def test_dt2ut1():
     assert_allclose(to_ut1unix(1435708800.),1435708800.)
     assert_allclose(to_ut1unix([1435708800.]),1435708800.)
 
+
 def test_ztanh():
     from gridaurora.ztanh import setupz
     zgrid = setupz(np=300, zmin=90, gridmin=1.5, gridmax=10.575)
     assert_allclose(zgrid[[0,99,-1]],[90., 701.93775845, 2999.04573563])
+
 
 def test_worldgrid():
     from gridaurora.worldgrid import latlonworldgrid
@@ -35,6 +41,7 @@ def test_worldgrid():
     assert (glat[0,0]==glat[0,:]).all()
     assert_allclose(glon[0,1],-160)
     assert (glon[0,0]==glon[:,0]).all()
+
 
 def test_opticalfilter():
     from gridaurora import filterload
@@ -60,6 +67,7 @@ def test_opticalfilter():
                     rtol=1e-6)
 
     assert ((0 <= T.values) & (T.values <= 1)).all()
+
 
 if __name__ == '__main__':
     run_module_suite()

@@ -9,7 +9,7 @@ from xarray import DataArray
 try:
     from lowtran import golowtran
 except ImportError as e:
-    logging.error('failure to load LOWTRAN, proceeding without atmospheric absorption model.  {}'.format(e))
+    logging.error(f'failure to load LOWTRAN, proceeding without atmospheric absorption model.  {e}')
     golowtran=None
 '''
 gets optical System Transmittance from filter, sensor window, and QE spec.

@@ -11,7 +11,6 @@ sns.set(context='paper', style='whitegrid',font_scale=2,
 #
 from gridaurora.filterload import getSystemT
 from gridaurora.opticalmod import comparejgr2013,plotAllTrans
-from gridaurora.plots import writeplots
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -37,11 +36,10 @@ if __name__ == '__main__':
 #%% considering atmosphere
         plotAllTrans(optT,False)
         fg=plotAllTrans(optT,True)
-        writeplots(fg,'opttrans.eps',0,'.')
 
         #plotOptMod(ver,VERgray,tTC,Ek,Eki) #called in readTranscar.py
         show()
 
     except Exception as e:
-        logging.warning('problem plotting    {}'.format(e))
+        logging.warning(f'problem plotting    {e}')
         print(optT)
