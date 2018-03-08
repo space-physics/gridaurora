@@ -3,6 +3,9 @@
 
 .. image:: https://travis-ci.org/scivision/gridaurora.svg?branch=master
     :target: https://travis-ci.org/scivision/gridaurora
+    
+.. image:: https://ci.appveyor.com/api/projects/status/2jjhaq3rqjrw77vg?svg=true
+    :target: https://ci.appveyor.com/project/scivision/gridaurora
 
 .. image:: https://coveralls.io/repos/scivision/gridaurora/badge.svg?branch=master&service=github 
    :target: https://coveralls.io/github/scivision/gridaurora?branch=master 
