@@ -20,7 +20,8 @@ def readmonthlyApF107(yearmon:Union[str,datetime], fn:Union[str,Path]=None, forc
     Michael Hirsch, Ph.D.
     """
     if not fn:
-        fn = Path(__file__).parents[1] / 'data' / 'RecentIndices.txt'
+        fn = Path(__file__).parent / 'data' / 'RecentIndices.txt'
+        fn.parent.mkdir(exist_ok=True)
 
     fn = Path(fn).expanduser()
 #%% date handle
