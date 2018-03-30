@@ -9,8 +9,11 @@ rdir = Path(__file__).parents[1]
 
 
 def test_f107apread():
-    f107ap = gridaurora.readmonthlyApF107(201708,)
-    assert (f107ap == [77.9, 76.3, 12. , 10.7]).all()
+    f107ap = gridaurora.readmonthlyApF107(201708)
+    assert f107ap['f107o'] == 77.9
+    assert f107ap['f107s'] == 76.3
+    assert f107ap['Apo'] == 12.
+    assert f107ap['Aps'] == 10.7
 
 
 def test_dt2ut1():
@@ -55,18 +58,19 @@ def test_opticalfilter():
     obsalt_km = 0
     zenang_deg= 0
 
-    T,fname = filterload.getSystemT(testlambda,bg3fn,windfn,qefn,obsalt_km,zenang_deg)
+    T = filterload.getSystemT(testlambda,bg3fn,windfn,qefn,obsalt_km,zenang_deg)
     assert_allclose(T.wavelength_nm,testlambda)
     try: #with lowtran
-        assert_allclose(T.loc[:,'sys'].values,
+        assert_allclose(T['sys'],
                     [7.965214e-43, 4.411237e-01,9.311972e-04,1.016631e-05, 7.668004e-01],
                     rtol=1e-6)
     except AssertionError:
-        assert_allclose(T.loc[:,'sys'].values,
+        assert_allclose(T['sys'],
                     [8.213363e-4, 5.790669e-1, 1.058124e-3, 1.133114e-5, 7.854393e-1],
                     rtol=1e-6)
 
-    assert ((0 <= T.values) & (T.values <= 1)).all()
+    for f in T.data_vars:
+        assert ((0 <= T[f]) & (T[f] <= 1)).all()
 
 
 if __name__ == '__main__':

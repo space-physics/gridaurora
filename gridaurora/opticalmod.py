@@ -14,16 +14,16 @@ def opticalModel(sim,ver,obsAlt_km,zenithang):
     """
     assert isinstance(ver,DataArray)
 #%% get system optical transmission T
-    optT,fname = getSystemT(ver.wavelength_nm,sim.bg3fn, sim.windowfn,sim.qefn,obsAlt_km,zenithang)
+    optT = getSystemT(ver.wavelength_nm,sim.bg3fn, sim.windowfn,sim.qefn,obsAlt_km,zenithang)
 #%% first multiply VER by T, THEN sum overall wavelengths
     if sim.opticalfilter == 'bg3':
-        VERgray = (ver*optT.sel(filt='sys').values[None,:]).sum('wavelength_nm')
+        VERgray = (ver*optT['sys'].values[None,:]).sum('wavelength_nm')
     elif sim.opticalfilter == 'none':
-        VERgray = (ver*optT.sel(filt='sysNObg3').values[None,:]).sum('wavelength_nm')
+        VERgray = (ver*optT['sysNObg3'].values[None,:]).sum('wavelength_nm')
     else:
-        logging.warning('unknown OpticalFilter type: {}'
-             '   falling back to using no filter at all'.format(sim.opticalfilter))
-        VERgray = (ver*optT.sel(filt='sysNObg3').values[None,:]).sum('wavelength_nm')
+        logging.warning(f'unknown OpticalFilter type: {sim.opticalfilter}'
+                        '   falling back to using no filter at all')
+        VERgray = (ver*optT['sysNObg3'].values[None,:]).sum('wavelength_nm')
 
     return VERgray
 
@@ -107,7 +107,7 @@ def comparejgr2013(altkm,zenang,bg3fn, windfn, qefn):
     optT = getSystemT(reqLambda, bg3fn, windfn, qefn,altkm,zenang)
 
     ax = figure().gca()
-    ax.semilogy(reqLambda,optT.loc[:,'sys'],'b',label='HST')
+    ax.semilogy(reqLambda,optT['sys'],'b',label='HST')
     ax.semilogy(reqLambda,Tjgr2013,'r',label='JGR2013')
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('T')
@@ -122,9 +122,9 @@ def plotAllTrans(optT,log):
 
     fg = figure(figsize=(7,5))
     ax = fg.gca()
-    ax.plot(mutwl,optT.loc[:,'sys'],label='optics')
-    ax.plot(mutwl,optT.loc[:,'atm'],label='atmosphere')
-    ax.plot(mutwl,optT.loc[:,['sys','atm']].prod('filter'),label='total',linewidth=2)
+    ax.plot(mutwl,optT['sys'],label='optics')
+    ax.plot(mutwl,optT['atm'],label='atmosphere')
+    ax.plot(mutwl,optT['sys']*optT['atm'],label='total',linewidth=2)
     if log:
         ax.set_yscale('log')
         ax.set_ylim(bottom=1e-5)

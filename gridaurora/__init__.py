@@ -9,7 +9,7 @@ import urllib.request
 
 URL = 'ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt'
 
-def readmonthlyApF107(yearmon:Union[str,datetime], fn:Union[str,Path]=None, forcedownload:bool=False) -> xarray.DataArray:
+def readmonthlyApF107(yearmon:Union[str,datetime], fn:Union[str,Path]=None, forcedownload:bool=False) -> xarray.Dataset:
     """
     We should use:
     ftp://ftp.ngdc.noaa.gov/STP/GEOMAGNETIC_DATA/INDICES/KP_AP/
@@ -27,9 +27,12 @@ def readmonthlyApF107(yearmon:Union[str,datetime], fn:Union[str,Path]=None, forc
 #%% date handle
     if isinstance(yearmon, str):
         yearmon = parse(yearmon)
+    elif isinstance(yearmon,np.datetime64):
+        yearmon = yearmon.astype(datetime)
+
     #not elif
     if isinstance(yearmon, datetime):
-        yearmon = int(str(yearmon.year) + f'{yearmon.month:02d}')
+        yearmon = int(f'{yearmon.year:d}{yearmon.month:02d}')
 
     assert isinstance(yearmon,int)
 #%% load data
@@ -44,12 +47,14 @@ def readmonthlyApF107(yearmon:Union[str,datetime], fn:Union[str,Path]=None, forc
 #%% process and pack data
     yearmonth= [int(f'{ym[0]:.0f}{ym[1]:02.0f}') for ym in dat[:,:2]]
 
-    data = xarray.DataArray(data=dat[:,2:],
-                            dims=['time','param'],
-                            coords={'time':yearmonth,'param':['f107o','f107s','Apo','Aps']})
+    data = xarray.Dataset({'f107o':('time',dat[:,2]),
+                           'f107s':('time',dat[:,3]),
+                           'Apo':('time',dat[:,4]),
+                           'Aps':('time',dat[:,5]),},
+                            coords={'time':yearmonth})
 
     data = data.fillna(-1) #by defn of NOAA
-
-    ApF107 = data.loc[yearmon,:]
+# %% pull out the time we want
+    ApF107 = data.sel(time=yearmon)
 
     return ApF107

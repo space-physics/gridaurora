@@ -149,19 +149,19 @@ def ploteigver(EKpcolor,zKM,eigenprofile,
     except Exception as e:
         logging.error('tind {}   {}'.format(tInd,e))
 
-def plotT(T,mmsl,name=''):
+def plotT(T,mmsl):
 
     ax1 = figure().gca()
     for c in ['filter','window','qe','atm']:
-        ax1.plot(T.wavelength_nm, T.sel(filt=c),label=c)
+        ax1.plot(T.wavelength_nm, T[c]),label=c)
     ax1.set_xlim(mmsl[:2])
-    ax1.set_title('{}  Component transmittance'.format(name))
+    ax1.set_title(f'{T.filename}  Component transmittance')
 #
     ax2 = figure().gca()
     for s in ['sys','sysNObg3']:
-        ax2.plot(T.wavelength_nm, T.sel(filt=s), label=s)
+        ax2.plot(T.wavelength_nm, T[s], label=s)
 
-    ax2.set_title('{}  System Transmittance'.format(name))
+    ax2.set_title(f'{T.filename}  System Transmittance')
 
     for a in (ax1,ax2):
         niceTax(a)
@@ -176,16 +176,16 @@ def niceTax(a):
     a.invert_xaxis()
     a.grid(True,which='both')
 
-def comparefilters(Ts,names):
+def comparefilters(Ts):
     fg = figure()
     axs = fg.subplots(len(Ts),1,sharex=True,sharey=True)
 
-    for T,name,ax in zip(Ts,names,axs):
+    for T,ax in zip(Ts,axs):
         try:
-            ax.plot(T.wavelength_nm, T.sel(filt='filter'), label=name)
+            ax.plot(T.wavelength_nm, T['filter'], label=T.filename)
         except ValueError: # just a plain filter
             assert T.ndim==1
-            ax.plot(T.wavelength_nm, T, label=name)
+            ax.plot(T.wavelength_nm, T, label=T.filename)
 
         forbidden = [630.,555.7,]
         permitted = [391.4,427.8,844.6,777.4]
@@ -194,7 +194,7 @@ def comparefilters(Ts,names):
         for l in permitted:
             ax.axvline(l,linestyle='--',color='darkgreen',alpha=0.8)
 
-        ax.set_title('{}'.format(name))
+        ax.set_title(f'{T.filename}')
 
     fg.suptitle('Transmittance')
 

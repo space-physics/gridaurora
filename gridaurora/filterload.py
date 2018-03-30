@@ -4,13 +4,13 @@ import logging
 from numpy import exp, log, ones_like, isfinite,spacing,column_stack,empty,asarray
 from scipy.interpolate import interp1d
 import h5py
-from xarray import DataArray
+import xarray
 # consider atmosphere
 try:
-    from lowtran import golowtran
+    import lowtran
 except ImportError as e:
     logging.error(f'failure to load LOWTRAN, proceeding without atmospheric absorption model.  {e}')
-    golowtran=None
+    lowtran = None
 '''
 gets optical System Transmittance from filter, sensor window, and QE spec.
 Michael Hirsch 2014
@@ -21,7 +21,8 @@ QE: http://www.andor.com/pdfs/specifications/Andor_iXon_Ultra_897_Specifications
 window: http://www.andor.com/pdfs/specifications/Andor_Camera_Windows_Supplementary_Specifications.pdf
 '''
 
-def getSystemT(newLambda, bg3fn:Path, windfn,qefn,obsalt_km,zenang_deg, verbose=False):
+def getSystemT(newLambda, bg3fn:Path, windfn,qefn,
+               obsalt_km,zenang_deg, verbose:bool=False) -> xarray.Dataset:
 
     bg3fn = Path(bg3fn).expanduser()
 
@@ -30,12 +31,12 @@ def getSystemT(newLambda, bg3fn:Path, windfn,qefn,obsalt_km,zenang_deg, verbose=
 
     newLambda = asarray(newLambda)
 #%% atmospheric absorption
-    if golowtran is not None:
-        c1={'model':5,'itype':3,'iemsct':0,'h1':obsalt_km,'angle':zenang_deg,
+    if lowtran is not None:
+        c1={'model':5,'h1':obsalt_km,'angle':zenang_deg,
             'wlnmlim':(newLambda[0],newLambda[-1])}
         if verbose:
             print('loading LOWTRAN7 atmosphere model...')
-        atmT = golowtran(c1).loc[...,'transmission']
+        atmT = lowtran.transmittance(c1)['transmission'].squeeze()
         try:
             atmTcleaned = atmT.values.squeeze()
             atmTcleaned[atmTcleaned==0] = spacing(1) # to avoid log10(0)
@@ -70,18 +71,14 @@ def getSystemT(newLambda, bg3fn:Path, windfn,qefn,obsalt_km,zenang_deg, verbose=
         fqe =  interp1d(f['/lamb'], log(f['/QE']), kind='linear')
 #%% collect results into DataArray
 
-    T = DataArray(column_stack((exp(fbg3(newLambda)),
-                                exp(fwind(newLambda)),
-                                exp(fqe(newLambda)),
-                                atmTinterp,
-                                empty(newLambda.size),
-                                empty(newLambda.size))),
-                  coords={'wavelength_nm':newLambda,
-                         'filt':['filter','window','qe','atm','sysNObg3','sys']},
-                  dims=['wavelength_nm','filt'])
-                                           #atm is ALREADY exp()
+    T = xarray.Dataset({'filter':('wavelength_nm',exp(fbg3(newLambda))),
+                        'window':('wavelength_nm',exp(fwind(newLambda))),
+                        'qe':    ('wavelength_nm',exp(fqe(newLambda))),
+                        'atm':   ('wavelength_nm',atmTinterp),},
+                  coords={'wavelength_nm':newLambda},
+                  attrs={'filename':fname})
 
-    T.loc[:,'sysNObg3'] = T.sel(filt=['window','qe','atm']).prod('filt')
-    T.loc[:,'sys']      = T.sel(filt=['window','qe','filter','atm']).prod('filt')
+    T['sysNObg3'] = T['window'] * T['qe'] * T['atm']
+    T['sys']      = T['sysNObg3'] * T['filter']
 
-    return T, fname
+    return T

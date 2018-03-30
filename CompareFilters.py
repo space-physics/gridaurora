@@ -34,18 +34,19 @@ if __name__=="__main__":
     windFN =    inpath/'ixonWindowT.h5'
     qeFN =      inpath/'emccdQE.h5'
 #%%
-    Ts =[]; names=[]
+    Ts =[]
     for f in flist:
-        T,fname = selftest(f, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
-        Ts.append(T); names.append(fname)
+        T = selftest(f, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
+        Ts.append(T)
         #plotT(T, p.wlnm,fname)
 #%% Rayleigh 1924
     Tr = 1.
     RayleighFilterNames = ['Hoya V-10','Wratten 21']
     for r in RayleighFilterNames:
-        Tr *= Ts[names.index(r)].sel(filt='filter')
+        Tr *= Ts[r]['filter']
+    Tr.filename='Rayleigh 1924'
     Ts.append(Tr)
-    names.append('Rayleigh 1924')
+    
 #%%
     comparefilters(Ts,names)
 

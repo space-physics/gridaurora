@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import logging
 from numpy import trapz, isfinite, concatenate, nansum
 import h5py
-from xarray import DataArray
+import xarray
 from matplotlib.pyplot import figure,close,subplots
 #from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
@@ -20,11 +20,10 @@ See Eqn 9 of Appendix C of Zettergren PhD thesis 2007 to get a better insight on
 spectraAminmax = (1e-1,8e5) #for plotting
 spectrallines=(391.44, 427.81, 557.7, 630.0, 777.4, 844.6) #297.2, 636.4,762.0, #for plotting
 
-def calcemissions(spec,tReqInd,sim):
+def calcemissions(rates:xarray, sim):
     if not sim.reacreq:
         return
 
-    assert isinstance(spec,DataArray), 'I expect an xarray DataArray as input'
 
     ver = None; lamb = None; br=None
     """
@@ -34,67 +33,62 @@ def calcemissions(spec,tReqInd,sim):
     """
 #%% METASTABLE
     if 'metastable' in sim.reacreq:
-        ver, lamb,br = getMetastable(spec,ver,lamb,br, sim.reactionfn)
+        ver, lamb,br = getMetastable(rates,ver,lamb,br, sim.reactionfn)
 #%% PROMPT ATOMIC OXYGEN EMISSIONS
     if 'atomic' in sim.reacreq:
-        ver, lamb,br = getAtomic(spec, ver, lamb, br, sim.reactionfn)
+        ver, lamb,br = getAtomic(rates, ver, lamb, br, sim.reactionfn)
 #%% N2 1N EMISSIONS
     if 'n21ng' in sim.reacreq:
-        ver, lamb,br = getN21NG(spec,ver,lamb, br, sim.reactionfn)
+        ver, lamb,br = getN21NG(rates,ver,lamb, br, sim.reactionfn)
 #%% N2+ Meinel band
     if 'n2meinel' in sim.reacreq:
-        ver, lamb,br = getN2meinel(spec,ver,lamb, br, sim.reactionfn)
+        ver, lamb,br = getN2meinel(rates,ver,lamb, br, sim.reactionfn)
 #%% N2 2P (after Vallance Jones, 1974)
     if 'n22pg' in sim.reacreq:
-        ver, lamb,br = getN22PG(spec,ver,lamb, br, sim.reactionfn)
+        ver, lamb,br = getN22PG(rates,ver,lamb, br, sim.reactionfn)
 #%% N2 1P
     if 'n21pg' in sim.reacreq:
-        ver, lamb,br = getN21PG(spec,ver,lamb, br, sim.reactionfn)
+        ver, lamb,br = getN21PG(rates,ver,lamb, br, sim.reactionfn)
 #%% Remove NaN wavelength entries
     if ver is None:
         raise ValueError('you have not selected any reactions to generate VER')
 #%% sort by wavelength, eliminate NaN
     lamb, ver, br = sortelimlambda(lamb,ver,br)
-    try:
-        tver = ver[tReqInd,...]
-        br = br[tReqInd,:]
-    except IndexError as e:
-        logging.error('error in time index, falling back to last time value')
-        print(str(e))
-        tver = ver[-1,...]
-        br = br[-1,:]
 #%% assemble output
-    dfver = DataArray(data=tver, coords=[('alt_km',spec.alt_km),('wavelength_nm',lamb)])
+    dfver = DataArray(data=ver, coords=[('alt_km',rates.alt_km),
+                                        ('wavelength_nm',lamb)])
 
     return dfver, ver,br
 
-def getMetastable(spec,ver,lamb,br,reactfn):
-    with h5py.File(str(reactfn),'r',libver='latest') as f:
-        A = f['/metastable/A'].value
+def getMetastable(rates,ver,lamb,br,reactfn):
+    with h5py.File(reactfn,'r') as f:
+        A = f['/metastable/A'][:]
         lambnew = f['/metastable/lambda'].value.ravel(order='F') #some are not 1-D!
 
     """
     concatenate along the reaction dimension, axis=-1
     """
-    vnew = concatenate((A[None,None,:2] * spec.loc[...,'no1s'].values[...,None],
-                        A[None,None,2:4]* spec.loc[...,'no1d'].values[...,None],
-                        A[None,None,4:] * spec.loc[...,'noii2p'].values[...,None]), axis=-1)
+    vnew = concatenate((A[:2] * rates.loc[...,'no1s'].values[:,None],
+                        A[2:4]* rates.loc[...,'no1d'].values[:,None],
+                        A[4:] * rates.loc[...,'noii2p'].values[:,None]), axis=-1)
 
-    return catvl(spec.alt_km,ver,vnew,lamb,lambnew,br)
+    assert vnew.shape == (rates.shape[0], A.size)
 
-def getAtomic(spec,ver,lamb, br,reactfn):
+    return catvl(rates.alt_km, ver, vnew, lamb, lambnew, br)
+
+def getAtomic(rates,ver,lamb, br,reactfn):
     """ prompt atomic emissions (nm)
     844.6 777.4
     """
-    with h5py.File(str(reactfn),'r',libver='latest') as f:
+    with h5py.File(reactfn,'r') as f:
         lambnew = f['/atomic/lambda'].value.ravel(order='F') #some are not 1-D!
 
-    vnew = concatenate((spec.loc[...,'po3p3p'].values[...,None],
-                        spec.loc[...,'po3p5p'].values[...,None]),axis=-1)
+    vnew = concatenate((rates.loc[...,'po3p3p'].values[...,None],
+                        rates.loc[...,'po3p5p'].values[...,None]),axis=-1)
 
-    return catvl(spec.alt_km,ver,vnew,lamb,lambnew,br)
+    return catvl(rates.alt_km,ver,vnew,lamb,lambnew,br)
 
-def getN21NG(spec,ver,lamb,br, reactfn):
+def getN21NG(rates,ver,lamb,br, reactfn):
     """
     excitation Franck-Condon factors (derived from Vallance Jones, 1974)
     """
@@ -103,9 +97,9 @@ def getN21NG(spec,ver,lamb,br, reactfn):
         lambdaA = f['/N2+1NG/lambda'].value.ravel(order='F')
         franckcondon = f['/N2+1NG/fc'].value
 
-    return doBandTrapz(A,lambdaA,franckcondon, spec.loc[...,'p1ng'],lamb,ver,spec.alt_km,br)
+    return doBandTrapz(A,lambdaA,franckcondon, rates.loc[...,'p1ng'],lamb,ver,rates.alt_km,br)
 
-def getN2meinel(spec,ver,lamb,br,reactfn):
+def getN2meinel(rates,ver,lamb,br,reactfn):
     with h5py.File(str(reactfn),'r',libver='latest') as f:
         A = f['/N2+Meinel/A'].value
         lambdaA = f['/N2+Meinel/lambda'].value.ravel(order='F')
@@ -113,18 +107,18 @@ def getN2meinel(spec,ver,lamb,br,reactfn):
     #normalize
     franckcondon = franckcondon/franckcondon.sum() #special to this case
 
-    return doBandTrapz(A,lambdaA,franckcondon, spec.loc[...,'pmein'],lamb,ver,spec.alt_km,br)
+    return doBandTrapz(A,lambdaA,franckcondon, rates.loc[...,'pmein'],lamb,ver,rates.alt_km,br)
 
-def getN22PG(spec,ver,lamb,br,reactfn):
+def getN22PG(rates,ver,lamb,br,reactfn):
     """ from Benesch et al, 1966a """
     with h5py.File(str(reactfn),'r',libver='latest') as f:
         A = f['/N2_2PG/A'].value
         lambdaA = f['/N2_2PG/lambda'].value.ravel(order='F')
         franckcondon = f['/N2_2PG/fc'].value
 
-    return doBandTrapz(A,lambdaA,franckcondon,spec.loc[...,'p2pg'],lamb,ver,spec.alt_km,br)
+    return doBandTrapz(A,lambdaA,franckcondon,rates.loc[...,'p2pg'],lamb,ver,rates.alt_km,br)
 
-def getN21PG(spec,ver,lamb,br,reactfn):
+def getN21PG(rates,ver,lamb,br,reactfn):
 
     with h5py.File(str(reactfn),'r',libver='latest') as fid:
         A = fid['/N2_1PG/A'].value
@@ -141,13 +135,13 @@ def getN21PG(spec,ver,lamb,br,reactfn):
 
     consfac = franckcondon/franckcondon.sum() #normalize
     losscoef = (consfac / tau1PG).sum()
-    N01pg=spec.loc[...,'p1pg'] / losscoef
+    N01pg=rates.loc[...,'p1pg'] / losscoef
 
     scalevec = (A * consfac[:,None]).ravel(order='F') #for clarity (verified with matlab)
 
     vnew = scalevec[None,None,:] * N01pg.values[...,None]
 
-    return catvl(spec.alt_km,ver,vnew,lamb,lambnew,br)
+    return catvl(rates.alt_km,ver,vnew,lamb,lambnew,br)
 
 def doBandTrapz(Aein,lambnew,fc,kin,lamb,ver,z,br):
     """
@@ -166,19 +160,23 @@ def doBandTrapz(Aein,lambnew,fc,kin,lamb,ver,z,br):
 
     return catvl(z,ver,vnew,lamb,lambnew,br)
 
-def catvl(z,ver,vnew,lamb,lambnew,br):
+def catvl(z, ver, vnew, lamb, lambnew, br):
     """
-    trapz integrates over axis=1, the altitude dimension
-    concatenate over reaction dimension, axis=-1
+    trapz integrates over altitude axis, axis = -2
+    concatenate over reaction dimension, axis = -1
+
+    br: column integrated brightness
+    lamb: wavelength [nm]
+    ver: volume emission rate  [photons / cm^-3 s^-3 ...]
     """
     if ver is not None:
-        br = concatenate((br,trapz(vnew,z,axis=1)), axis=-1) #must come first!
+        br = concatenate((br, trapz(vnew,z,axis=-2)), axis=-1) #must come first!
         ver=concatenate((ver,vnew), axis=-1)
         lamb=concatenate((lamb,lambnew))
     else:
         ver = vnew.copy(order='F')
         lamb = lambnew.copy()
-        br = trapz(ver,z,axis=1)
+        br = trapz(ver, z, axis=-2)
 
     return ver, lamb, br
 

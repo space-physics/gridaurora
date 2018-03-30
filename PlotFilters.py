@@ -32,12 +32,12 @@ if __name__=="__main__":
     windFN =    inpath/'ixonWindowT.h5'
     qeFN =      inpath/'emccdQE.h5'
 #%%
-    Ts =[]; names=[]
+    Ts =[]
     for f in flist:
-        T,fname = selftest(f, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
-        Ts.append(T); names.append(fname)
-        plotT(T, p.wlnm,fname)
+        T = selftest(f, windFN, qeFN, p.wlnm,p.altkm,p.zenang)
+        Ts.append(T)
+        plotT(T, p.wlnm)
 #%%
-    comparefilters(Ts,names)
+    comparefilters(Ts)
 
     show()
