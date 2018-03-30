@@ -25,6 +25,10 @@ def readmonthlyApF107(yearmon:Union[str,datetime], fn:Union[str,Path]=None, forc
 
     fn = Path(fn).expanduser()
 #%% date handle
+    if isinstance(yearmon,(tuple,list,np.ndarray)):
+        logging.warning(f'taking only first time {yearmon[0]}, would you like multiple times upgrade to code?')
+        yearmon = yearmon[0]
+
     if isinstance(yearmon, str):
         yearmon = parse(yearmon)
     elif isinstance(yearmon,np.datetime64):
