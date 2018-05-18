@@ -29,6 +29,10 @@ setup(name='gridaurora',
                       'io':['lowtran','transcarread','astropy','pandas',],
                       'tests':tests_require},
       tests_require=tests_require,
+      scripts=['Alfven.py','FluxGenerator.py','PlotFilteredSpectrum.py',
+        'AuroralProfile.py', 'MakeEigenprofileFluxInput.py','PlotFilters.py',
+        'CompareFilters.py', 'MakeIonoEigenprofile.py', 'PlotJGR2013.py',
+        'EllisonRamaty_flux.py','PlotEmissionProfiles.py'],
       include_package_data=True,
 	  )
 
