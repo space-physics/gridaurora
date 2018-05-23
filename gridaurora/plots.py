@@ -1,5 +1,4 @@
 import logging
-import pathvalidate
 from datetime import datetime
 from pathlib import Path
 from numpy import isscalar
@@ -7,7 +6,11 @@ from numpy.ma import masked_invalid #for pcolormesh, which doesn't like NaN
 from matplotlib.pyplot import figure,draw,close
 from matplotlib.colors import LogNorm
 from matplotlib.ticker import MultipleLocator
-
+import os
+if os.name =='nt':
+    import pathvalidate
+else:
+    pathvalidate=None
 #IEEE Transactions requires 600 dpi
 
 dymaj=100
@@ -28,8 +31,11 @@ def writeplots(fg,plotprefix, tind=None, odir=None, fmt='.png', anno=None, dpi=N
 
         if anno:
             fg.text(0.15,0.8,anno,fontsize='x-large')
+        if pathvalidate is not None:
+            cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + fmt)
+        else:
+            cn = Path(odir).expanduser() / (plotprefix + suff + fmt)
 
-        cn = Path(odir).expanduser() / pathvalidate.sanitize_filename(plotprefix + suff + fmt)
         print('write',cn)
 
         if facecolor is None:
@@ -153,7 +159,7 @@ def plotT(T,mmsl):
 
     ax1 = figure().gca()
     for c in ['filter','window','qe','atm']:
-        ax1.plot(T.wavelength_nm, T[c]),label=c)
+        ax1.plot(T.wavelength_nm, T[c],label=c)
     ax1.set_xlim(mmsl[:2])
     ax1.set_title(f'{T.filename}  Component transmittance')
 #
