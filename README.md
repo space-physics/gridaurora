@@ -1,6 +1,6 @@
 [![image](https://zenodo.org/badge/36744963.svg)](https://zenodo.org/badge/latestdoi/36744963)
 [![image](https://travis-ci.org/scivision/gridaurora.svg?branch=master)](https://travis-ci.org/scivision/gridaurora)
-[![image](https://coveralls.io/repos/scivision/gridaurora/badge.svg?branch=master&service=github)](https://coveralls.io/github/scivision/gridaurora?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/scivision/gridaurora/badge.svg?branch=master)](https://coveralls.io/github/scivision/gridaurora?branch=master)
 [![image](https://ci.appveyor.com/api/projects/status/2jjhaq3rqjrw77vg?svg=true)](https://ci.appveyor.com/project/scivision/gridaurora)
 [![pypi versions](https://img.shields.io/pypi/pyversions/gridaurora.svg)](https://pypi.python.org/pypi/gridaurora)
 [![pypi format](https://img.shields.io/pypi/format/gridaurora.svg)](https://pypi.python.org/pypi/gridaurora)
@@ -24,9 +24,7 @@ Currently GLOW and Rees-Sergienko-Ivanov are available (Transcar in future).
 You can install these models with
 
 ```sh
-pip install reesaurora
-
-pip install glowaurora
+pip install -e .[models]
 ```
 
 Once installed, select model by:
