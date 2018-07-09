@@ -6,8 +6,10 @@ as is commonly stated.
 """
 from numpy import gradient, exp, logspace, asarray, atleast_1d
 from matplotlib.pyplot import figure,show
+from argparse import ArgumentParser
 
-def EllisonRamaty(E,E0,gamma,kappa,C0):
+
+def EllisonRamaty(E: np.ndarray, E0: np.ndarray, gamma: np.ndarray, kappa: np.ndarra, C0: np.ndarray):
     E,E0,gamma,kappa,C0 = dimhandler(E,E0,gamma,kappa,C0)
 #%% do work
     return C0 * E[:,None]**(-gamma) * exp(-((E[:,None]-E0)/gradient(E)[:,None])**kappa)
@@ -37,9 +39,9 @@ def plotdnf(E,phi,E0,gamma,kappa):
     ax.tick_params(axis='both', which='major', labelsize='large')
     ax.grid(True)
     ax.legend(lines,labels,loc='best')
+    
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description="differential number flux parameterizations")
     p.add_argument('E0',help='characteristic energy [eV]',nargs='+',type=float)
     p.add_argument('-g','--gamma',help='gamma parameter',nargs='+',type=float,default=-1)
@@ -53,3 +55,7 @@ if __name__ == '__main__':
 
     plotdnf(E,phi,p.E0,p.gamma,p.kappa)
     show()
+
+
+if __name__ == '__main__':
+    main()

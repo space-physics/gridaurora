@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 import logging
+from argparse import ArgumentParser
 from pathlib import Path
 from numpy import arange
 from matplotlib.pyplot import show
-#
+from gridaurora.filterload import getSystemT
+from gridaurora.opticalmod import comparejgr2013,plotAllTrans
 import seaborn as sns
 sns.color_palette("cubehelix")
 sns.set(context='paper', style='whitegrid',font_scale=2,
         rc={'image.cmap': 'cubehelix_r'})
-#
-from gridaurora.filterload import getSystemT
-from gridaurora.opticalmod import comparejgr2013,plotAllTrans
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+
+def main():
     p = ArgumentParser(description='computes optical transmission and compares (debug)')
     p.add_argument('--path',help='path to HDF5 data',default='precompute')
     p.add_argument('-a','--altkm',help='observer altitude (km)',type=float,default=0.)
@@ -43,3 +42,7 @@ if __name__ == '__main__':
     except Exception as e:
         logging.warning(f'problem plotting    {e}')
         print(optT)
+        
+
+if __name__ == '__main__':
+    main()

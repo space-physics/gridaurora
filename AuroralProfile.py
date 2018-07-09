@@ -8,7 +8,7 @@ Sept 2015
 """
 from pathlib import Path
 import h5py
-#
+from argparse import ArgumentParser
 from gridaurora.arcexcite import getTranscar
 from transcarread import SimpleSim
 from gridaurora.opticalmod import plotOptMod
@@ -16,9 +16,9 @@ try:
     from histfeas.plotsnew import ploteigver,ploteig1d
 except ImportError as e:
     print(e) #only used for plots
+    
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description='Loads and Plots Auroral Eigenprofiles (VER vs. altitude for a given monoeenergtic electron beam of precipitation')
     p.add_argument('path',help='root path to simulation output')
     p.add_argument('-p','--doplot',help='make plots of data',action='store_true')
@@ -33,8 +33,8 @@ if __name__ == '__main__':
 #%% write output (overwrites existing  HDF5 file)
     if p.outfn:
         h5fn = Path(p.outfn).expanduser()
-        print('writing {}'.format(h5fn))
-        with h5py.File(str(h5fn),'w',libver='latest') as f:
+        print('writing',h5fn)
+        with h5py.File(h5fn,'w') as f:
             d=f.create_dataset('/eigenprofile',data=Peigen.values)
             d.attrs['units']='photons cm^-3 sr^-1 s^-1 eV^-1'
             d=f.create_dataset('/altitude',data=Peigen.index)
@@ -50,3 +50,6 @@ if __name__ == '__main__':
         plotOptMod(Peigenunfilt,Peigen)
 
         ploteig1d(EKpcolor[:-1],Peigen.alt_km,Peigen.values,(None,)*6,sim)
+
+if __name__ == '__main__':
+    main()

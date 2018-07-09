@@ -12,6 +12,15 @@ python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o ~/data/eige
 
 Michael Hirsch
 """
+from argparse import ArgumentParser
+from gridaurora.loadtranscargrid import loadregress,makebin,doplot
+from gridaurora.writeeigen import writeeigen
+from gridaurora.zglow import glowalt
+from glowaurora.eigenprof import makeeigen,ekpcolor
+from glowaurora.plots import plotprodloss,plotenerdep
+from gridaurora.plots import ploteigver
+from reesaurora.rees_model import reesiono
+from reesaurora.plots import plotA
 from pathlib import Path
 from collections import namedtuple
 from matplotlib.pyplot import show
@@ -21,18 +30,9 @@ import seaborn as sns #optional pretty plots
 sns.color_palette(sns.color_palette("cubehelix"))
 sns.set(context='talk', style='whitegrid')
 sns.set(rc={'image.cmap': 'cubehelix_r'}) #for contour
-#
-from gridaurora.loadtranscargrid import loadregress,makebin,doplot
-from gridaurora.writeeigen import writeeigen
-from gridaurora.zglow import glowalt
-from glowaurora.eigenprof import makeeigen,ekpcolor
-from glowaurora.plots import plotprodloss,plotenerdep
-from gridaurora.plots import ploteigver
-from reesaurora.rees_model import reesiono
-from reesaurora.plots import plotA
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+
+def main()
     p = ArgumentParser(description='Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles')
     p.add_argument('-i','--inputgridfn',help='original Zettergren input flux grid to base off of',default='zettflux.csv')
     p.add_argument('-o','--outfn',help='hdf5 file to write with ionospheric response (eigenprofiles)')
@@ -109,3 +109,7 @@ if __name__ == '__main__':
 #%% plots
 
     show()
+    
+
+if __name__ == '__main__':
+    main()

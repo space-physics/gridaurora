@@ -19,9 +19,9 @@ from gridaurora.filterload import getSystemT
 from gridaurora.plots import writeplots
 # github.com/scivision/transcarread
 import transcarread as tr
+from argparse import ArgumentParser
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description = 'using excitation rates and other factors, creates volume emission rate profiles.')
     p.add_argument('path',help='root path where simulation inputs/outputs are')
     p.add_argument('beamenergy',help='beam energy [eV] to plot',type=float)
@@ -75,3 +75,7 @@ if __name__ == '__main__':
             showIncrVER(t, tReqInd, tctime, ver,tver, str(r),p.makeplot)
 
         show()
+        
+
+if __name__ == '__main__':
+    main()
