@@ -30,8 +30,7 @@ def test_opticalfilter():
 
     for f in T.data_vars:
         assert ((0 <= T[f]) & (T[f] <= 1)).all()
-        
-        
+
 
 if __name__ == '__main__':
     pytest.main()

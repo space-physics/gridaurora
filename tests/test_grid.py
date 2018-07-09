@@ -16,7 +16,7 @@ def test_worldgrid():
     assert (glat[0, 0] == glat[0, :]).all()
     assert_allclose(glon[0, 1], -160)
     assert (glon[0, 0] == glon[:, 0]).all()
-    
-    
+
+
 if __name__ == '__main__':
     pytest.main()

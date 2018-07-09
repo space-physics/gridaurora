@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import pytest
 from datetime import datetime
 import pytz
 from numpy.testing import assert_allclose
@@ -17,7 +18,6 @@ def test_dt2ut1():
     assert_allclose(to_ut1unix(tstr),  1435737600.)
     assert_allclose(to_ut1unix(1435708800.), 1435708800.)
     assert_allclose(to_ut1unix([1435708800.]), 1435708800.)
-
 
 
 if __name__ == '__main__':
