@@ -1,6 +1,7 @@
 from numpy import exp
 
-def chapman_profile(Z0,zKM,H):
+
+def chapman_profile(Z0, zKM, H):
     """
     Z0: altitude [km] of intensity peak
     zKM: altitude grid [km]
