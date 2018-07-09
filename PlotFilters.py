@@ -9,6 +9,8 @@ import seaborn as sns
 sns.set_style('whitegrid')
 sns.set_context('talk', font_scale=1.5)
 
+R = Path(__file__).parent
+
 
 def selftest(bg3fn, windfn, qefn, mmsLambda, obsalt_km, zenang_deg):
 
@@ -19,12 +21,12 @@ def selftest(bg3fn, windfn, qefn, mmsLambda, obsalt_km, zenang_deg):
 def main():
     p = ArgumentParser(description='Plots spectral transmission data from filter datasheets')
     p.add_argument('--wlnm', help='START STOP STEP wavelength in nm', nargs=3, default=(200., 1200., 0.1), type=float)
-    p.add_argument('--path', help='path to HDF5 data', default='precompute')
+    p.add_argument('--path', help='path to HDF5 data')
     p.add_argument('-a', '--altkm', help='observer altitude (km)', type=float, default=0.)
     p.add_argument('--zenang', help='zenith angle (deg)', type=float, default=0.)
     p = p.parse_args()
 
-    inpath = Path(p.path).expanduser()
+    inpath = Path(p.path).expanduser() if p.path else R / 'gridaurora/precompute'
 
     flist = ['BG3transmittance.h5', 'NE01transmittance.h5',
              'Wratten32transmittance.h5', 'Wratten21transmittance.h5',

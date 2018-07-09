@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 import logging
 import h5py
+from pathlib import Path
 from xarray import DataArray
 from matplotlib.pyplot import figure, subplots  # must be here to allow plotOptMod to be called from hist-feasibility
 from matplotlib.ticker import MultipleLocator
 #
 from .filterload import getSystemT
-# %% computation
+
+R = Path(__file__).parent
 
 
 def opticalModel(sim, ver, obsAlt_km, zenithang):
@@ -106,9 +108,9 @@ def plotOptMod(verNObg3gray, VERgray):
 
 
 def comparejgr2013(altkm, zenang, bg3fn, windfn, qefn):
-    with h5py.File('precompute/trans_jgr2013a.h5', 'r', libver='latest') as fid:
-        reqLambda = fid['/lambda'].value
-        Tjgr2013 = fid['/T'].value
+    with h5py.File(R/'precompute/trans_jgr2013a.h5', 'r') as f:
+        reqLambda = f['/lambda'][:]
+        Tjgr2013 = f['/T'][:]
 
     optT = getSystemT(reqLambda, bg3fn, windfn, qefn, altkm, zenang)
 

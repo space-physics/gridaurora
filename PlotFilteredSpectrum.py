@@ -11,16 +11,18 @@ sns.color_palette("cubehelix")
 sns.set(context='paper', style='whitegrid', font_scale=2,
         rc={'image.cmap': 'cubehelix_r'})
 
+R = Path(__file__).parent
+
 
 def main():
     p = ArgumentParser(description='computes optical transmission and compares (debug)')
-    p.add_argument('--path', help='path to HDF5 data', default='precompute')
+    p.add_argument('--path', help='path to HDF5 data')
     p.add_argument('-a', '--altkm', help='observer altitude (km)', type=float, default=0.)
     p.add_argument('--zenang', help='zenith angle (deg)', type=float, default=0.)
     p.add_argument('-m', '--makeplot', help='[eps png]', nargs='+')
     p = p.parse_args()
 
-    dpath = Path(p.path).expanduser()
+    dpath = Path(p.path).expanduser() if p.path else R / 'gridaurora/precompute'
     bg3fn = dpath/'BG3transmittance.h5'
     windfn = dpath/'ixonWindowT.h5'
     qefn = dpath/'emccdQE.h5'

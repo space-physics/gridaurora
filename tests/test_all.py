@@ -5,7 +5,8 @@ import pytz
 from numpy.testing import assert_allclose, run_module_suite
 import gridaurora
 #
-rdir = Path(__file__).parents[1]
+R = Path(__file__).parents[1]
+dpath = R / 'gridaurora/precompute'
 
 
 def test_f107apread():
@@ -49,7 +50,6 @@ def test_worldgrid():
 def test_opticalfilter():
     from gridaurora import filterload
 
-    dpath = rdir/'precompute'
     bg3fn = dpath/'BG3transmittance.h5'
     windfn = dpath/'ixonWindowT.h5'
     qefn = dpath/'emccdQE.h5'

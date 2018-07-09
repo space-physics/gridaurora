@@ -1,0 +1,2 @@
+recursive-include gridaurora/precompute *.h5
+recursive-include gridaurora/data *.h5 *.txt
