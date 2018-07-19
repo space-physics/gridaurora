@@ -10,7 +10,8 @@ import urllib.request
 URL = 'ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt'
 
 
-def readmonthlyApF107(yearmon: Union[int, str, datetime], fn: Union[str, Path]=None, forcedownload: bool=False) -> xarray.Dataset:
+def readmonthlyApF107(yearmon: Union[int, str, datetime], fn: Union[str, Path]=None,
+                      forcedownload: bool=False) -> xarray.Dataset:
     """
     We should use:
     ftp://ftp.ngdc.noaa.gov/STP/GEOMAGNETIC_DATA/INDICES/KP_AP/
@@ -60,6 +61,10 @@ def readmonthlyApF107(yearmon: Union[int, str, datetime], fn: Union[str, Path]=N
 
     data = data.fillna(-1)  # by defn of NOAA
 # %% pull out the time we want
-    ApF107 = data.sel(time=yearmon)
+    try:
+        ApF107 = data.sel(time=yearmon)
+    except KeyError as e:
+        logging.error(f'{yearmon} is not in the Indices file. Using last available time {data.time[-1].item()}.')
+        ApF107 = data.sel(time=data.time[-1])
 
     return ApF107
