@@ -5,7 +5,7 @@ from pathlib import Path
 from numpy import arange
 from matplotlib.pyplot import show
 from gridaurora.filterload import getSystemT
-from gridaurora.opticalmod import comparejgr2013, plotAllTrans
+from gridaurora.plots import comparejgr2013, plotAllTrans
 import seaborn as sns
 sns.color_palette("cubehelix")
 sns.set(context='paper', style='whitegrid', font_scale=2,

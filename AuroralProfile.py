@@ -11,7 +11,7 @@ import h5py
 from argparse import ArgumentParser
 from gridaurora.arcexcite import getTranscar
 from transcarread import SimpleSim
-from gridaurora.opticalmod import plotOptMod
+from gridaurora.plots import plotOptMod
 try:
     from histfeas.plotsnew import ploteigver, ploteig1d
 except ImportError as e:

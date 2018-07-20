@@ -6,7 +6,7 @@ from gridaurora.worldgrid import latlonworldgrid
 
 
 def test_ztanh():
-    zgrid = setupz(np=300, zmin=90, gridmin=1.5, gridmax=10.575)
+    zgrid = setupz(Np=300, zmin=90, gridmin=1.5, gridmax=10.575)
     assert_allclose(zgrid[[0, 99, -1]], [90., 701.93775845, 2999.04573563])
 
 

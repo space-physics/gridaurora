@@ -7,7 +7,6 @@ import logging
 import xarray
 import numpy as np
 import h5py
-from pytz import UTC
 #
 from gridaurora.opticalmod import opticalModel
 from gridaurora.calcemissions import calcemissions, sortelimlambda
@@ -41,10 +40,6 @@ def getTranscar(sim, obsAlt_km: float, zenithang: float) -> tuple:
         # Plambda dims: rows: energy columns: altitude
         try:
             tReq = sim.transcarutc
-            if tReq.tzinfo is None:
-                tReq = tReq.replace(tzinfo=UTC)
-            else:
-                tReq = tReq.astimezone(UTC)
         except (ValueError, AttributeError) as e:
             logging.warning(f'must specify a tReq in the spreadsheet for Transcar data.  {e}')
             tReq = None

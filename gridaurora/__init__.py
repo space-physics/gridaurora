@@ -44,7 +44,7 @@ def readmonthlyApF107(yearmon: Union[int, str, datetime], fn: Union[str, Path]=N
 # %% load data
     if not fn.is_file() or forcedownload:
         logging.warning(f'attemping download to {fn} from ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt')
-        urllib.request.urlretrieve(URL, fn)
+        urllib.request.urlretrieve(URL, fn)  # type: ignore
 
     dat = np.loadtxt(fn, comments=('#', ':'), usecols=(0, 1, 7, 8, 9, 10))
 #  genfromtxt didn't eliminate missing values, unsure if bug
@@ -64,7 +64,53 @@ def readmonthlyApF107(yearmon: Union[int, str, datetime], fn: Union[str, Path]=N
     try:
         ApF107 = data.sel(time=yearmon)
     except KeyError as e:
-        logging.error(f'{yearmon} is not in the Indices file. Using last available time {data.time[-1].item()}.')
+        logging.error(f'{yearmon} is not in the Indices file. Using last available time {data.time[-1].item()}.  {e}')
         ApF107 = data.sel(time=data.time[-1])
 
     return ApF107
+
+
+def to_ut1unix(time: Union[str, datetime, float, np.ndarray]) -> np.ndarray:
+    """
+    converts time inputs to UT1 seconds since Unix epoch
+    """
+    # keep this order
+    time = totime(time)
+
+    if isinstance(time[0], (float, int)):
+        return time
+
+    assert isinstance(time, (tuple, list, np.ndarray))
+    assert isinstance(time[0], datetime), f'expected datetime, not {type(time[0])}'
+
+    return np.array(list(map(dt2ut1, time)))
+
+
+def dt2ut1(t: datetime) -> float:
+    epoch = datetime(1970, 1, 1)
+    assert isinstance(t, datetime)
+
+    return (t-epoch).total_seconds()
+
+
+def totime(time: Union[str, datetime, np.datetime64]) -> np.ndarray:
+    time = np.atleast_1d(time)
+
+    if isinstance(time[0], (datetime, np.datetime64)):
+        pass
+    elif isinstance(time[0], str):
+        time = np.atleast_1d(list(map(parse, time)))
+
+    return time
+
+
+def chapman_profile(Z0: float, zKM: np.ndarray, H: float):
+    """
+    Z0: altitude [km] of intensity peak
+    zKM: altitude grid [km]
+    H: scale height [km]
+
+    example:
+    pz = chapman_profile(110,np.arange(90,200,1),20)
+    """
+    return np.exp(.5*(1-(zKM-Z0)/H - np.exp((Z0-zKM)/H)))

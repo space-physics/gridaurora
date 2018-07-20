@@ -3,8 +3,8 @@ load and plot transcar energy grid
 Egrid is not what's used externally by other programs, but rather variable "bins"
 """
 from pathlib import Path
-from numpy import loadtxt, log10, empty, arange, column_stack
-from xarray import DataArray
+import xarray
+import numpy as np
 from scipy.stats import linregress
 from matplotlib.pyplot import figure
 
@@ -13,23 +13,23 @@ Nold = 33
 Nnew = 81  # 100MeV
 
 
-def loadregress(fn):
+def loadregress(fn: Path):
     # %%
-    Egrid = loadtxt(str(Path(fn).expanduser()), delimiter=',')
+    Egrid = np.loadtxt(Path(fn).expanduser(), delimiter=',')
 #    Ematt = asarray([logspace(1.7220248253079387,4.2082263059355824,num=Nold,base=10),
 #                    #[logspace(3.9651086925197356,9.689799159992674,num=33,base=exp(1)),
 #                     logspace(1.8031633895706722,4.2851520785250914,num=Nold,base=10)]).T
 # %% log-lin regression
-    Enew = empty((Nnew, 4))
+    Enew = np.empty((Nnew, 4))
     Enew[:Nold, :] = Egrid
     for k in range(4):
-        s, i = linregress(range(Nold), log10(Egrid[:, k]))[:2]
-        Enew[Nold:, k] = 10**(arange(Nold, Nnew)*s+i)
+        s, i = linregress(range(Nold), np.log10(Egrid[:, k]))[:2]
+        Enew[Nold:, k] = 10**(np.arange(Nold, Nnew)*s+i)
 
     return Enew
 
 
-def doplot(fn, bins, Egrid=None, debug=False):
+def doplot(fn: Path, bins: xarray.DataArray, Egrid: np.ndarray=None, debug: bool=False):
     # %% main plot
     ax = figure().gca()
     ax.bar(left=bins.loc[:, 'low'],
@@ -39,7 +39,7 @@ def doplot(fn, bins, Egrid=None, debug=False):
     ax.set_xscale('log')
     ax.set_ylabel('flux [s$^{-1}$ sr$^{-1}$ cm$^{-2}$ eV$^{-1}$]')
     ax.set_xlabel('bin energy [eV]')
-    ax.set_title('Input flux used to generate eigenprofiles, based on {}'.format(fn))
+    ax.set_title(f'Input flux used to generate eigenprofiles, based on {fn}')
 
 # %% debug plots
     if debug:
@@ -62,7 +62,7 @@ def doplot(fn, bins, Egrid=None, debug=False):
             ax.legend(['E1', 'E2', 'pr1', 'pr2'], loc='best')
 
 
-def makebin(Egrid):
+def makebin(Egrid: np.ndarray):
     E1 = Egrid[:, 0]
     E2 = Egrid[:, 1]
     pr1 = Egrid[:, 2]
@@ -74,9 +74,9 @@ def makebin(Egrid):
     Elow = E1 - 0.5*(E1 - pr1)
     Ehigh = E2 - 0.5*(E2 - pr2)
 
-    E = column_stack((Elow, Ehigh, flux))
+    E = np.column_stack((Elow, Ehigh, flux))
 
-    Ed = DataArray(data=E, dims=['energy', 'type'])
+    Ed = xarray.DataArray(data=E, dims=['energy', 'type'])
     Ed['type'] = ['low', 'high', 'flux']
 
     return Ed

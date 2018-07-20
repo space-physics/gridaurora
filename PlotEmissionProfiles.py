@@ -9,9 +9,9 @@ import logging
 import numpy as np
 import h5py
 from matplotlib.pyplot import show
-from gridaurora.calcemissions import calcemissions, plotspectra, showIncrVER
+from gridaurora.calcemissions import calcemissions
 from gridaurora.filterload import getSystemT
-from gridaurora.plots import writeplots
+from gridaurora.plots import writeplots, plotspectra, showIncrVER
 # github.com/scivision/transcarread
 import transcarread as tr
 from argparse import ArgumentParser

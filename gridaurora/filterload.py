@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pathlib import Path
 import logging
-from numpy import exp, log, ones_like, isfinite, spacing, asarray
+import numpy as np
 from scipy.interpolate import interp1d
 import h5py
 import xarray
@@ -22,15 +22,14 @@ window: http://www.andor.com/pdfs/specifications/Andor_Camera_Windows_Supplement
 '''
 
 
-def getSystemT(newLambda, bg3fn: Path, windfn, qefn,
+def getSystemT(newLambda, bg3fn: Path, windfn: Path, qefn: Path,
                obsalt_km, zenang_deg, verbose: bool=False) -> xarray.Dataset:
 
     bg3fn = Path(bg3fn).expanduser()
-
     windfn = Path(windfn).expanduser()
     qefn = Path(qefn).expanduser()
 
-    newLambda = asarray(newLambda)
+    newLambda = np.asarray(newLambda)
 # %% atmospheric absorption
     if lowtran is not None:
         c1 = {'model': 5, 'h1': obsalt_km, 'angle': zenang_deg,
@@ -40,21 +39,21 @@ def getSystemT(newLambda, bg3fn: Path, windfn, qefn,
         atmT = lowtran.transmittance(c1)['transmission'].squeeze()
         try:
             atmTcleaned = atmT.values.squeeze()
-            atmTcleaned[atmTcleaned == 0] = spacing(1)  # to avoid log10(0)
-            fwl = interp1d(atmT.wavelength_nm, log(atmTcleaned), axis=0)
+            atmTcleaned[atmTcleaned == 0] = np.spacing(1)  # to avoid log10(0)
+            fwl = interp1d(atmT.wavelength_nm, np.log(atmTcleaned), axis=0)
         except AttributeError:  # problem with lowtran
-            fwl = interp1d(newLambda, log(ones_like(newLambda)), kind='linear')
+            fwl = interp1d(newLambda, np.log(np.ones_like(newLambda)), kind='linear')
     else:
-        fwl = interp1d(newLambda, log(ones_like(newLambda)), kind='linear')
+        fwl = interp1d(newLambda, np.log(np.ones_like(newLambda)), kind='linear')
 
-    atmTinterp = exp(fwl(newLambda))
-    if not isfinite(atmTinterp).all():
+    atmTinterp = np.exp(fwl(newLambda))
+    if not np.isfinite(atmTinterp).all():
         logging.error('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 # %% BG3 filter
     with h5py.File(bg3fn, 'r', libver='latest') as f:
         try:
             assert isinstance(f['/T'], h5py.Dataset), 'we only allow one transmission curve per file'  # simple legacy behavior
-            fbg3 = interp1d(f['/wavelength'], log(f['/T']), kind='linear', bounds_error=False)
+            fbg3 = interp1d(f['/wavelength'], np.log(f['/T']), kind='linear', bounds_error=False)
         except KeyError:
             raise KeyError('could not find /wavelength in {}'.format(f.filename))
 
@@ -66,15 +65,15 @@ def getSystemT(newLambda, bg3fn: Path, windfn, qefn,
             fname = ''
 # %% camera window
     with h5py.File(windfn, 'r', libver='latest') as f:
-        fwind = interp1d(f['/lamb'], log(f['/T']), kind='linear')
+        fwind = interp1d(f['/lamb'], np.log(f['/T']), kind='linear')
 # %% quantum efficiency
     with h5py.File(qefn, 'r', libver='latest') as f:
-        fqe = interp1d(f['/lamb'], log(f['/QE']), kind='linear')
+        fqe = interp1d(f['/lamb'], np.log(f['/QE']), kind='linear')
 # %% collect results into DataArray
 
-    T = xarray.Dataset({'filter': ('wavelength_nm', exp(fbg3(newLambda))),
-                        'window': ('wavelength_nm', exp(fwind(newLambda))),
-                        'qe':    ('wavelength_nm', exp(fqe(newLambda))),
+    T = xarray.Dataset({'filter': ('wavelength_nm', np.exp(fbg3(newLambda))),
+                        'window': ('wavelength_nm', np.exp(fwind(newLambda))),
+                        'qe':    ('wavelength_nm', np.exp(fqe(newLambda))),
                         'atm':   ('wavelength_nm', atmTinterp), },
                        coords={'wavelength_nm': newLambda},
                        attrs={'filename': fname})
