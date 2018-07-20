@@ -50,7 +50,7 @@ def getSystemT(newLambda, bg3fn: Path, windfn: Path, qefn: Path,
     if not np.isfinite(atmTinterp).all():
         logging.error('problem in computing LOWTRAN atmospheric attenuation, results are suspect!')
 # %% BG3 filter
-    with h5py.File(bg3fn, 'r', libver='latest') as f:
+    with h5py.File(bg3fn, 'r') as f:
         try:
             assert isinstance(f['/T'], h5py.Dataset), 'we only allow one transmission curve per file'  # simple legacy behavior
             fbg3 = interp1d(f['/wavelength'], np.log(f['/T']), kind='linear', bounds_error=False)
@@ -64,10 +64,10 @@ def getSystemT(newLambda, bg3fn: Path, windfn: Path, qefn: Path,
         except KeyError:
             fname = ''
 # %% camera window
-    with h5py.File(windfn, 'r', libver='latest') as f:
+    with h5py.File(windfn, 'r') as f:
         fwind = interp1d(f['/lamb'], np.log(f['/T']), kind='linear')
 # %% quantum efficiency
-    with h5py.File(qefn, 'r', libver='latest') as f:
+    with h5py.File(qefn, 'r') as f:
         fqe = interp1d(f['/lamb'], np.log(f['/QE']), kind='linear')
 # %% collect results into DataArray
 

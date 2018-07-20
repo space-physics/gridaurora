@@ -9,7 +9,7 @@ git:
 
 python:
   - 3.6
-# -3.7  # FIXME waiting h5py wheel
+  - 3.7
 
 os:
   - linux
