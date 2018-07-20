@@ -12,7 +12,9 @@ URLrecent = 'ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt'
 URL45dayfcast = 'http://services.swpc.noaa.gov/text/45-day-ap-forecast.txt'
 URL20yearfcast = 'https://sail.msfc.nasa.gov/solar_report_archives/May2016Rpt.pdf'
 
-def getApF107(time: Union[str, datetime],
+
+def getApF107(time: Union[str, datetime, date],
+              smoothdays: int=None,
               forcedownload: bool=False) -> xarray.Dataset:
     """
     alternative going back to 1931:
@@ -28,7 +30,7 @@ def getApF107(time: Union[str, datetime],
 
     assert isinstance(time, date)
 
-    fn,url = selectApfile(time)
+    fn, url = selectApfile(time)
 
     if not fn.is_file() or forcedownload:
         print(f'download {fn} from {url}')
@@ -38,7 +40,6 @@ def getApF107(time: Union[str, datetime],
     if not fn.is_file():
         raise FileNotFoundError(f'{fn} not found.')
 
-
     if fn.name == URLrecent.split('/')[-1]:
         dat = readpast(fn)
     elif fn.name == URL45dayfcast.split('/')[-1]:
@@ -47,25 +48,39 @@ def getApF107(time: Union[str, datetime],
         dat = read20yearfcast(fn)
     else:
         raise FileNotFoundError(f'could not determine if you have or which file to read for {time}')
+# %% optional smoothing over days
+    if isinstance(smoothdays, int):
+        periods = np.rint(timedelta(days=smoothdays) / (dat.time[1].item() - dat.time[0].item())).astype(int)
+        dat['f107s'] = ('time', moving_average(dat['f107'], periods))
+        dat['Aps'] = ('time', moving_average(dat['Ap'], periods))
 # %% pull out the time we want
     Indices = dat.sel(time=time, method='nearest')
 
     return Indices
 
 
+def moving_average(dat, periods: int):
+    if periods > dat.size:
+        raise ValueError('cannot smooth over more time periods than exist in the data')
+
+    return np.convolve(dat,
+                       np.ones(periods) / periods,
+                       mode='same')
+
+
 def read20yearfcast(fn: Path) -> xarray.Dataset:
     """
     uses 50th percentile of Ap and f10.7
     """
-    dat = np.loadtxt(fn, usecols=(0,3,6), skiprows=11)
+    dat = np.loadtxt(fn, usecols=(0, 3, 6), skiprows=11)
 
-    time = yeardec2datetime(dat[:,0])
+    time = yeardec2datetime(dat[:, 0])
 
     date = [t.date() for t in time]
 
-    data = xarray.Dataset({'Ap': ('time', dat[:,1]),
-                           'f107': ('time', dat[:,2])},
-                          coords={'time':date})
+    data = xarray.Dataset({'Ap': ('time', dat[:, 1]),
+                           'f107': ('time', dat[:, 2])},
+                          coords={'time': date})
 
     return data
 
@@ -74,16 +89,14 @@ def readpast(fn: Path) -> xarray.Dataset:
     dat = np.loadtxt(fn, comments=('#', ':'), usecols=(0, 1, 7, 8, 9, 10))
     date = [parse(f'{ym[0]:.0f}-{ym[1]:02.0f}-01').date() for ym in dat[:, :2]]
 
-
     data = xarray.Dataset({'f107': ('time', dat[:, 2]),
-                           'f107_smoothed': ('time', dat[:, 3]),
-                           'Ap': ('time', dat[:, 4]),
-                           'Ap_smoothed': ('time', dat[:, 5]), },
+                           'Ap': ('time', dat[:, 4])},
                           coords={'time': date})
 
     data = data.fillna(-1)  # by defn of NOAA
 
     return data
+
 
 def read45dayfcast(fn: Path) -> xarray.Dataset:
     Ap = []
@@ -97,12 +110,12 @@ def read45dayfcast(fn: Path) -> xarray.Dataset:
                 break
 # %% Ap
             ls = line.split()
-            for t,a in zip(ls[::2], ls[1::2]):
+            for t, a in zip(ls[::2], ls[1::2]):
                 time.append(parse(t).date())
                 Ap.append(int(a))
 
-        dat = xarray.Dataset({'Ap': ('time',Ap)},
-                            coords={'time':time})
+        dat = xarray.Dataset({'Ap': ('time', Ap)},
+                             coords={'time': time})
 # %% F10.7
         time = []
         f107 = []
@@ -111,14 +124,14 @@ def read45dayfcast(fn: Path) -> xarray.Dataset:
                 break
 
             ls = line.split()
-            for t,a in zip(ls[::2], ls[1::2]):
+            for t, a in zip(ls[::2], ls[1::2]):
                 time.append(parse(t).date())
                 f107.append(int(a))
 
-        dat['f107'] = ('time',f107)
-
+        dat['f107'] = ('time', f107)
 
     return dat
+
 
 def selectApfile(time: Union[datetime, date]) -> Tuple[Path, str]:
     path = Path(__file__).parent / 'data'
@@ -153,7 +166,7 @@ def toyearmon(time: datetime) -> int:
         time = parse(time)
     elif isinstance(time, np.datetime64):
         time = time.astype(datetime)
-    elif isinstance(time, (datetime,date)):
+    elif isinstance(time, (datetime, date)):
         pass
     else:
         raise TypeError(f'not sure what to do with type {type(time)}')
