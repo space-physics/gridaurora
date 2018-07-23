@@ -27,6 +27,8 @@ def getApF107(time: Union[str, datetime, date],
 
     if isinstance(time, datetime):
         time = time.date()
+    elif isinstance(time, np.datetime64):
+        time = time.astype(datetime).date()
 
     assert isinstance(time, date)
 
