@@ -2,14 +2,13 @@
 import pytest
 from datetime import datetime
 from numpy.testing import assert_allclose
-from gridaurora.solarangle import solarzenithangle
 try:
-    import astropy
+    import gridaurora.solarangle as gas
 except ImportError:
-    astropy = None
+    gas = None
 
 
-@pytest.mark.skipif(astropy is None, reason='CI prereq')
+@pytest.mark.skipif(gas is None, reason='CI prereq')
 def test_solarangle():
 
     t = datetime(2015, 7, 1)
@@ -18,10 +17,10 @@ def test_solarangle():
     glon = -148
     alt_m = 200
 
-    sza, sun, obs = solarzenithangle(t, glat, glon, alt_m)
+    sza, sun, obs = gas.solarzenithangle(t, glat, glon, alt_m)
     assert_allclose(sza, 46.451623)
 
-    sza, sun, obs = solarzenithangle(tstr, glat, glon, alt_m)
+    sza, sun, obs = gas.solarzenithangle(tstr, glat, glon, alt_m)
     assert_allclose(sza, 46.451623)
 
 
