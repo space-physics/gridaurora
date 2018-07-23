@@ -3,8 +3,13 @@ import pytest
 from datetime import datetime
 from numpy.testing import assert_allclose
 from gridaurora.solarangle import solarzenithangle
+try:
+    import astropy
+except ImportError:
+    astropy = None
 
 
+@pytest.mark.skipif(astropy is None, reason='CI prereq')
 def test_solarangle():
 
     t = datetime(2015, 7, 1)
