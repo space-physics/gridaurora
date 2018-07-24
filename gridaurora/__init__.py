@@ -25,12 +25,12 @@ def getApF107(time: Union[str, datetime, date],
     """
     dt = todate(time)
 
-    assert isinstance(dt, date) or isinstance(dt[0], date),'must have datetime.date input'
+    assert isinstance(dt, date) or isinstance(dt[0], date), 'must have datetime.date input'
     if isinstance(dt, (list, tuple, np.ndarray)):
-        Tind = xarray.Dataset({'f107':None, 'f107s': None, 'Ap': None,'Aps': None}, coords={'time':None})
+        Tind = xarray.Dataset({'f107': None, 'f107s': None, 'Ap': None, 'Aps': None}, coords={'time': None})
         for d in dt:
             Tind = xarray.concat((Tind, getApF107(d, smoothdays, forcedownload)), dim='time')
-        return Tind.dropna(dim='time',how='all')
+        return Tind.dropna(dim='time', how='all')
 
     fn, url = selectApfile(dt)
 
