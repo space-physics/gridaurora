@@ -4,7 +4,7 @@ from dateutil.parser import parse
 import numpy as np
 import xarray
 import logging
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 import urllib.request
 from sciencedates import yeardec2datetime
 
@@ -23,16 +23,11 @@ def getApF107(time: Union[str, datetime, date],
     20 year Forecast data from:
     https://sail.msfc.nasa.gov/solar_report_archives/May2016Rpt.pdf
     """
-    time = totime(time).squeeze()[()]
+    dt = todate(time)
 
-    if isinstance(time, datetime):
-        time = time.date()
-    elif isinstance(time, np.datetime64):
-        time = time.astype(datetime).date()
+    assert isinstance(dt, date)
 
-    assert isinstance(time, date)
-
-    fn, url = selectApfile(time)
+    fn, url = selectApfile(dt)
 
     if not fn.is_file() or forcedownload:
         print(f'download {fn} from {url}')
@@ -49,14 +44,14 @@ def getApF107(time: Union[str, datetime, date],
     elif fn.name == URL20yearfcast.split('/')[-1].split('.')[0] + '.txt':
         dat = read20yearfcast(fn)
     else:
-        raise FileNotFoundError(f'could not determine if you have or which file to read for {time}')
+        raise FileNotFoundError(f'could not determine if you have or which file to read for {dt}')
 # %% optional smoothing over days
     if isinstance(smoothdays, int):
         periods = np.rint(timedelta(days=smoothdays) / (dat.time[1].item() - dat.time[0].item())).astype(int)
         dat['f107s'] = ('time', moving_average(dat['f107'], periods))
         dat['Aps'] = ('time', moving_average(dat['Ap'], periods))
 # %% pull out the time we want
-    Indices = dat.sel(time=time, method='nearest')
+    Indices = dat.sel(time=dt, method='nearest')
 
     return Indices
 
@@ -185,13 +180,15 @@ def to_ut1unix(time: Union[str, datetime, float, np.ndarray]) -> np.ndarray:
     # keep this order
     time = totime(time)
 
-    if isinstance(time[0], (float, int)):
+    if isinstance(time, (float, int)):
         return time
 
-    assert isinstance(time, (tuple, list, np.ndarray))
-    assert isinstance(time[0], datetime), f'expected datetime, not {type(time[0])}'
-
-    return np.array(list(map(dt2ut1, time)))
+    if isinstance(time, (tuple, list, np.ndarray)):
+        assert isinstance(time[0], datetime), f'expected datetime, not {type(time[0])}'
+        return np.array(list(map(dt2ut1, time)))
+    else:
+        assert isinstance(time, datetime)
+        return dt2ut1(time)
 
 
 def dt2ut1(t: datetime) -> float:
@@ -209,7 +206,27 @@ def totime(time: Union[str, datetime, np.datetime64]) -> np.ndarray:
     elif isinstance(time[0], str):
         time = np.atleast_1d(list(map(parse, time)))
 
-    return time
+    return time.squeeze()[()]
+
+
+def todate(time: Union[str, date, datetime, np.datetime64]) -> Union[date, List[date]]:
+
+    if isinstance(time, str):
+        d = todate(parse(time))
+    elif isinstance(time, datetime):
+        d = time.date()
+    elif isinstance(time, np.datetime64):
+        d = time.astype(date)
+        if isinstance(d, datetime):
+            d = d.date()
+    elif isinstance(time, date):
+        d = time
+    elif isinstance(time, (tuple, list, np.ndarray)):
+        d = list(map(todate, time))  # type: ignore
+    else:
+        raise TypeError(f'{time} must be representable as datetime.date')
+
+    return d
 
 
 def chapman_profile(Z0: float, zKM: np.ndarray, H: float):
