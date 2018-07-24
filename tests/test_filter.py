@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 from pathlib import Path
 import pytest
-from gridaurora import filterload
 from numpy.testing import assert_allclose
+try:
+    import gridaurora.filter as gaf
+except ImportError:
+    gaf = None
 
 R = Path(__file__).parents[1]
 dpath = R / 'gridaurora/precompute'
 
 
+@pytest.mark.skipif(gaf is None, reason='missing h5py')
 def test_opticalfilter():
     bg3fn = dpath/'BG3transmittance.h5'
     windfn = dpath/'ixonWindowT.h5'

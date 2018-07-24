@@ -5,8 +5,10 @@ import numpy as np
 import xarray
 import logging
 from typing import Union, Tuple, List
-import urllib.request
-from sciencedates import yeardec2datetime
+from ftplib import FTP
+import requests
+from urllib.parse import urlparse
+import sciencedates as sd
 
 URLrecent = 'ftp://ftp.swpc.noaa.gov/pub/weekly/RecentIndices.txt'
 URL45dayfcast = 'http://services.swpc.noaa.gov/text/45-day-ap-forecast.txt'
@@ -35,8 +37,7 @@ def getApF107(time: Union[str, datetime, date],
     fn, url = selectApfile(dt)
 
     if not fn.is_file() or forcedownload:
-        print(f'download {fn} from {url}')
-        urllib.request.urlretrieve(url, fn)  # type: ignore
+        downloadfile(fn, url)
 # %%
     fn = Path(fn).expanduser()
     if not fn.is_file():
@@ -61,6 +62,24 @@ def getApF107(time: Union[str, datetime, date],
     return Indices
 
 
+def downloadfile(fn: Path, url: str):
+    print('download',fn,'from',url)
+
+    p = urlparse(url)
+
+    host = p[1]
+    path = '/'.join(p[2].split('/')[:-1])
+
+    if url.startswith('ftp://'):
+        with FTP(host, 'anonymous', 'guest', timeout=10) as F, fn.open('wb') as f:
+            F.cwd(path)
+            F.retrbinary(f'RETR {fn.name}', f.write)
+    elif url.startswith('http://') or url.startswith('https://'):
+        with fn.open('wb') as f:
+            f.write(requests.get(url, allow_redirects=True, timeout=10).content)
+    else:
+        raise ValueError(f'unsure how to download {url}')
+
 def moving_average(dat, periods: int):
     if periods > dat.size:
         raise ValueError('cannot smooth over more time periods than exist in the data')
@@ -76,7 +95,7 @@ def read20yearfcast(fn: Path) -> xarray.Dataset:
     """
     dat = np.loadtxt(fn, usecols=(0, 3, 6), skiprows=11)
 
-    time = yeardec2datetime(dat[:, 0])
+    time = sd.yeardec2datetime(dat[:, 0])
 
     date = [t.date() for t in time]
 
