@@ -36,8 +36,7 @@ def getApF107(time: Union[str, datetime, date],
 
     fn, url = selectApfile(dt)
 
-    if not fn.is_file() or forcedownload:
-        downloadfile(fn, url)
+    downloadfile(fn, url, forcedownload)
 # %%
     fn = Path(fn).expanduser()
     if not fn.is_file():
@@ -62,8 +61,12 @@ def getApF107(time: Union[str, datetime, date],
     return Indices
 
 
-def downloadfile(fn: Path, url: str):
-    print('download',fn,'from',url)
+def downloadfile(fn: Path, url: str, force: bool):
+
+    if not force and fn.is_file() and fn.stat().st_size > 0:
+        return
+
+    print('download', fn, 'from', url)
 
     p = urlparse(url)
 
@@ -79,6 +82,7 @@ def downloadfile(fn: Path, url: str):
             f.write(requests.get(url, allow_redirects=True, timeout=10).content)
     else:
         raise ValueError(f'unsure how to download {url}')
+
 
 def moving_average(dat, periods: int):
     if periods > dat.size:

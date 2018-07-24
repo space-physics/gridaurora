@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import pytest
 import gridaurora
-import urllib.error
+import socket
+import requests.exceptions
 from datetime import date, timedelta
 from numpy.testing import assert_allclose
 
@@ -13,7 +14,7 @@ def test_past():
 
     try:
         dat = gridaurora.getApF107(tstr, 81)
-    except urllib.error.URLError as e:
+    except socket.error as e:
         pytest.skip(f'possible timeout error {e}')
 
     assert dat.time.item() == t
@@ -30,7 +31,7 @@ def test_nearfuture():
 
     try:
         dat = gridaurora.getApF107(t)
-    except urllib.error.URLError as e:
+    except requests.exceptions.ConnectionError as e:
         pytest.skip(f'possible timeout error {e}')
 
     assert dat.time.item() == t
@@ -45,7 +46,7 @@ def test_farfuture():
 
     try:
         dat = gridaurora.getApF107(t, 81)
-    except urllib.error.URLError as e:
+    except requests.exceptions.ConnectionError as e:
         pytest.skip(f'possible timeout error {e}')
 
     assert t - timedelta(days=31) <= dat.time.item() <= t + timedelta(days=31)

@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from numpy.testing import assert_allclose
 try:
-    import gridaurora.filter as gaf
+    import gridaurora.filterload as gaf
 except ImportError:
     gaf = None
 
@@ -21,7 +21,7 @@ def test_opticalfilter():
     obsalt_km = 0
     zenang_deg = 0
 
-    T = filterload.getSystemT(testlambda, bg3fn, windfn, qefn, obsalt_km, zenang_deg)
+    T = gaf.getSystemT(testlambda, bg3fn, windfn, qefn, obsalt_km, zenang_deg)
     assert_allclose(T.wavelength_nm, testlambda)
     try:  # with lowtran
         assert_allclose(T['sys'],
