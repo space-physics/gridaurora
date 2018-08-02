@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 import pytest
 from datetime import datetime
-from numpy.testing import assert_allclose
-try:
-    import gridaurora.solarangle as gas
-except ImportError:
-    gas = None
+from pytest import approx
 
 
-@pytest.mark.skipif(gas is None, reason='CI prereq')
 def test_solarangle():
+
+    gas = pytest.importorskip('gridaurora.solarangle')
 
     t = datetime(2015, 7, 1)
     tstr = '2015-07-01T00:00:00'
@@ -18,11 +15,11 @@ def test_solarangle():
     alt_m = 200
 
     sza, sun, obs = gas.solarzenithangle(t, glat, glon, alt_m)
-    assert_allclose(sza, 46.451623)
+    assert sza == approx(46.451623)
 
     sza, sun, obs = gas.solarzenithangle(tstr, glat, glon, alt_m)
-    assert_allclose(sza, 46.451623)
+    assert sza == approx(46.451623)
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(['-x', __file__])

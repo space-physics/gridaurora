@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 import pytest
+from pytest import approx
 import gridaurora
 import socket
 import requests.exceptions
 from datetime import date, timedelta
-from numpy.testing import assert_allclose
 
 
 def test_past():
-
     t = date(2017, 8, 1)
     tstr = '2017-08-01'
 
@@ -19,10 +18,10 @@ def test_past():
 
     assert dat.time.item() == t
 
-    assert_allclose(dat['f107'], 77.9)
-    assert_allclose(dat['f107s'], 82.533333)
-    assert_allclose(dat['Ap'], 12.)
-    assert_allclose(dat['Aps'], 13.333333)
+    assert dat['f107'] == approx(77.9)
+    assert dat['f107s'] == approx(82.533333)
+    assert dat['Ap'] == approx(12.)
+    assert dat['Aps'] == approx(13.333333)
 
 
 def test_nearfuture():
@@ -56,4 +55,4 @@ def test_farfuture():
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(['-x', __file__])
