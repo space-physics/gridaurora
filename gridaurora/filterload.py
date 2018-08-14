@@ -33,7 +33,7 @@ def getSystemT(newLambda, bg3fn: Path, windfn: Path, qefn: Path,
 # %% atmospheric absorption
     if lowtran is not None:
         c1 = {'model': 5, 'h1': obsalt_km, 'angle': zenang_deg,
-              'wlnmlim': (newLambda[0], newLambda[-1])}
+              'wlshort': newLambda[0], 'wllong': newLambda[-1]}
         if verbose:
             print('loading LOWTRAN7 atmosphere model...')
         atmT = lowtran.transmittance(c1)['transmission'].squeeze()
