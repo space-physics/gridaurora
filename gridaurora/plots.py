@@ -139,7 +139,7 @@ def ploteigver(EKpcolor, zKM, eigenprofile,
                             norm=LogNorm(),
                             vmin=vlim[4], vmax=vlim[5])
         ax.set_xlabel('Energy [eV]')
-        ax.set_ylabel('$B_\parallel$ [km]')
+        ax.set_ylabel(r'$B_\parallel$ [km]')
         ax.autoscale(True, tight=True)
         ax.set_xscale('log')
         ax.yaxis.set_major_locator(MultipleLocator(dymaj))
@@ -416,7 +416,7 @@ def showIncrVER(tTC: np.ndarray, tReqInd: int, tctime: np.ndarray,
         ax.axvline(tctime['tstartPrecip'], color='red', linestyle='--', label='Precip. Start')
         ax.axvline(tctime['tendPrecip'], color='red', linestyle='--', label='Precip. End')
 
-        titlemean = titxt + ('\n VER/flux: $\lambda \in$' +
+        titlemean = titxt + (r'\n VER/flux: $\lambda \in$' +
                              str(lamb) + ' [nm]' +
                              '\n geodetic lat:' + str(tctime['latgeo_ini'])
                              + ' lon:' + str(tctime['longeo_ini']) +

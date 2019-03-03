@@ -39,7 +39,7 @@ def maxwellian(E: np.ndarray, E0: np.ndarray, Q0: np.ndarray) -> Tuple[np.ndarra
     return Phi, Q
 
 
-def fluxgen(E, E0, Q0, Wbc, bl, bm, bh, Bm, Bhf, verbose: int=0) -> tuple:
+def fluxgen(E, E0, Q0, Wbc, bl, bm, bh, Bm, Bhf, verbose: int = 0) -> tuple:
 
     Wb = Wbc*E0
 
@@ -67,7 +67,7 @@ def fluxgen(E, E0, Q0, Wbc, bl, bm, bh, Bm, Bhf, verbose: int=0) -> tuple:
     return np.asfortranarray(diffnumflux), low, mid, hi, base, Q
 
 
-def letail(E: np.ndarray, E0: float, Q0: float, bl: float, verbose: int=0) -> np.ndarray:
+def letail(E: np.ndarray, E0: float, Q0: float, bl: float, verbose: int = 0) -> np.ndarray:
     # for LET, 1<b<2
     # Bl = 8200.   #820 (typo?)
     Bl = 0.4*Q0/(2*pi*E0**2) * np.exp(-1)
@@ -88,7 +88,7 @@ def midtail(E: np.ndarray, E0: np.ndarray, bm: float, Bm: float):
 
 
 def hitail(E: np.ndarray, diffnumflux: np.ndarray, isimE0: np.ndarray, E0: np.ndarray,
-           Bhf: np.ndarray, bh: float, verbose: int=0):
+           Bhf: np.ndarray, bh: float, verbose: int = 0):
     """
     strickland 1993 said 0.2, but 0.145 gives better match to peak flux at 2500 = E0
     """

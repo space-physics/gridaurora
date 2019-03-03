@@ -29,7 +29,7 @@ def loadregress(fn: Path):
     return Enew
 
 
-def doplot(fn: Path, bins: xarray.DataArray, Egrid: np.ndarray=None, debug: bool=False):
+def doplot(fn: Path, bins: xarray.DataArray, Egrid: np.ndarray = None, debug: bool = False):
     # %% main plot
     ax = figure().gca()
     ax.bar(left=bins.loc[:, 'low'],

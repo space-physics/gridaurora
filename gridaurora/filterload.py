@@ -23,7 +23,7 @@ window: http://www.andor.com/pdfs/specifications/Andor_Camera_Windows_Supplement
 
 
 def getSystemT(newLambda, bg3fn: Path, windfn: Path, qefn: Path,
-               obsalt_km, zenang_deg, verbose: bool=False) -> xarray.Dataset:
+               obsalt_km, zenang_deg, verbose: bool = False) -> xarray.Dataset:
 
     bg3fn = Path(bg3fn).expanduser()
     windfn = Path(windfn).expanduser()

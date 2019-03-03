@@ -26,9 +26,9 @@ def main():
     figure(3).clf()
     ax = figure(3).gca()
     ax.semilogy(alt_km, Ne, label='$N_e$ [cm$^{-3}$]')
-    ax.plot(alt_km, Li, label='$\lambda_e$ [km]')
+    ax.plot(alt_km, Li, label=r'$\lambda_e$ [km]')
     ax.set_xlabel('altitude [km]')
-    ax.set_title('inertial length $\lambda_e$  electron number density $N_e$')
+    ax.set_title(r'inertial length $\lambda_e$  electron number density $N_e$')
     ax.legend()
 
     show()
