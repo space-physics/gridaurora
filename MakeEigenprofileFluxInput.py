@@ -18,20 +18,27 @@ from gridaurora.loadtranscargrid import loadregress, makebin, doplot
 
 def main():
 
-    p = ArgumentParser(description='Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles')
-    p.add_argument('-i', '--inputgridfn', help='original Zettergren grid to base off of', default='zettflux.csv')
-    p.add_argument('-o', '--outputeigenfluxfn', help='hdf5 file to write with eigenflux')
+    p = ArgumentParser(
+        description="Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles"
+    )
+    p.add_argument(
+        "-i",
+        "--inputgridfn",
+        help="original Zettergren grid to base off of",
+        default="zettflux.csv",
+    )
+    p.add_argument("-o", "--outputeigenfluxfn", help="hdf5 file to write with eigenflux")
     p = p.parse_args()
 
     Egrid = loadregress(p.inputgridfn)
     bins = makebin(Egrid)
 
     if p.outputeigenfluxfn:
-        bins.to_hdf(Path(p.outputeigenfluxfn).expanduser(), 'top')
+        bins.to_hdf(Path(p.outputeigenfluxfn).expanduser(), "top")
 
     doplot(p.inputgridfn, bins)
     show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

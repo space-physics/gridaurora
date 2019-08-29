@@ -1,9 +1,9 @@
 [![image](https://zenodo.org/badge/36744963.svg)](https://zenodo.org/badge/latestdoi/36744963)
+
 [![image](https://travis-ci.org/scivision/gridaurora.svg?branch=master)](https://travis-ci.org/scivision/gridaurora)
 [![Coverage Status](https://coveralls.io/repos/github/scivision/gridaurora/badge.svg?branch=master)](https://coveralls.io/github/scivision/gridaurora?branch=master)
 [![image](https://ci.appveyor.com/api/projects/status/2jjhaq3rqjrw77vg?svg=true)](https://ci.appveyor.com/project/scivision/gridaurora)
 [![pypi versions](https://img.shields.io/pypi/pyversions/gridaurora.svg)](https://pypi.python.org/pypi/gridaurora)
-[![pypi format](https://img.shields.io/pypi/format/gridaurora.svg)](https://pypi.python.org/pypi/gridaurora)
 [![PyPi Download stats](http://pepy.tech/badge/gridaurora)](http://pepy.tech/project/gridaurora)
 [![Xarray badge](https://img.shields.io/badge/powered%20by-xarray-orange.svg?style=flat)](http://xarray.pydata.org/en/stable/why-xarray.html)
 
@@ -16,11 +16,11 @@ Discretizations of space (grids) and time conversions useful for aeronomy and au
     python -m pip install -e .
 
 Note: you will need a Fortran compiler on your system for `f2py` modules.
-It works on Linux, Mac, [Windows](https://scivision.co/f2py-running-fortran-code-in-python-on-windows/), etc.
+It works on Linux, Mac, [Windows](https://scivision.dev/f2py-running-fortran-code-in-python-on-windows/), etc.
 
 ## Eigenprofiles
 
-Currently GLOW and Rees-Sergienko-Ivanov are available (Transcar in future). 
+Currently GLOW and Rees-Sergienko-Ivanov are available (Transcar in future).
 You can install these models with
 
 ```sh
@@ -58,7 +58,7 @@ emission rate may be computed.
 ### precompute/vjeinfc.h5
 
 This file is compiled from tables in Vallance Jones *Aurora* 1974 and other sources
-by Matthew Zettergren, and corrected and put into HDF5 format by Michael Hirsch. 
+by Matthew Zettergren, and corrected and put into HDF5 format by Michael Hirsch.
 The information within concerns:
 
 * N2+1NG:   N~2~^+^ first negative group

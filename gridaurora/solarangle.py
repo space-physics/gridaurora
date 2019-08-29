@@ -13,8 +13,8 @@ def solarzenithangle(time: datetime, glat: float, glon: float, alt_m: float) -> 
     """
     time = totime(time)
 
-    obs = EarthLocation(lat=glat*u.deg, lon=glon*u.deg, height=alt_m*u.m)
-    times = Time(time, scale='ut1')
+    obs = EarthLocation(lat=glat * u.deg, lon=glon * u.deg, height=alt_m * u.m)
+    times = Time(time, scale="ut1")
     sun = get_sun(times)
     sunobs = sun.transform_to(AltAz(obstime=times, location=obs))
 

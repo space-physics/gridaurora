@@ -8,7 +8,9 @@ from typing import Union
 def toyearmon(time: datetime) -> int:
     # %% date handle
     if isinstance(time, (tuple, list, np.ndarray)):
-        logging.warning(f'taking only first time {time[0]}, would you like multiple times upgrade to code?')
+        logging.warning(
+            f"taking only first time {time[0]}, would you like multiple times upgrade to code?"
+        )
         time = time[0]
 
     if isinstance(time, str):
@@ -18,9 +20,9 @@ def toyearmon(time: datetime) -> int:
     elif isinstance(time, (datetime, date)):
         pass
     else:
-        raise TypeError(f'not sure what to do with type {type(time)}')
+        raise TypeError(f"not sure what to do with type {type(time)}")
 
-    ym = int(f'{time.year:d}{time.month:02d}')
+    ym = int(f"{time.year:d}{time.month:02d}")
 
     return ym
 
@@ -36,7 +38,7 @@ def to_ut1unix(time: Union[str, datetime, float, np.ndarray]) -> np.ndarray:
         return time
 
     if isinstance(time, (tuple, list, np.ndarray)):
-        assert isinstance(time[0], datetime), f'expected datetime, not {type(time[0])}'
+        assert isinstance(time[0], datetime), f"expected datetime, not {type(time[0])}"
         return np.array(list(map(dt2ut1, time)))
     else:
         assert isinstance(time, datetime)
@@ -47,7 +49,7 @@ def dt2ut1(t: datetime) -> float:
     epoch = datetime(1970, 1, 1)
     assert isinstance(t, datetime)
 
-    return (t-epoch).total_seconds()
+    return (t - epoch).total_seconds()
 
 
 def totime(time: Union[str, datetime, np.datetime64]) -> np.ndarray:
@@ -70,4 +72,4 @@ def chapman_profile(Z0: float, zKM: np.ndarray, H: float):
     example:
     pz = chapman_profile(110,np.arange(90,200,1),20)
     """
-    return np.exp(.5*(1-(zKM-Z0)/H - np.exp((Z0-zKM)/H)))
+    return np.exp(0.5 * (1 - (zKM - Z0) / H - np.exp((Z0 - zKM) / H)))

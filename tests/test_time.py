@@ -8,13 +8,13 @@ from gridaurora import to_ut1unix
 def test_dt2ut1():
 
     t = datetime(2015, 7, 1)
-    tstr = '2015-07-01T00:00:00'
+    tstr = "2015-07-01T00:00:00"
 
-    assert to_ut1unix(t) == approx(1435708800.)
-    assert to_ut1unix(tstr) == approx(1435708800.)
-    assert to_ut1unix(1435708800.) == approx(1435708800.)
-    assert to_ut1unix([1435708800.]) == approx(1435708800.)
+    assert to_ut1unix(t) == approx(1435708800.0)
+    assert to_ut1unix(tstr) == approx(1435708800.0)
+    assert to_ut1unix(1435708800.0) == approx(1435708800.0)
+    assert to_ut1unix([1435708800.0]) == approx(1435708800.0)
 
 
-if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+if __name__ == "__main__":
+    pytest.main(["-x", __file__])

@@ -6,10 +6,10 @@ from pytest import approx
 
 def test_solarangle():
 
-    gas = pytest.importorskip('gridaurora.solarangle')
+    gas = pytest.importorskip("gridaurora.solarangle")
 
     t = datetime(2015, 7, 1)
-    tstr = '2015-07-01T00:00:00'
+    tstr = "2015-07-01T00:00:00"
     glat = 65
     glon = -148
     alt_m = 200
@@ -21,5 +21,5 @@ def test_solarangle():
     assert sza == approx(46.451623)
 
 
-if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+if __name__ == "__main__":
+    pytest.main(["-x", __file__])
