@@ -18,10 +18,7 @@ def opticalModel(sim, ver: xarray.DataArray, obsAlt_km: float, zenithang: float)
     elif sim.opticalfilter == "none":
         VERgray = (ver * optT["sysNObg3"].values[None, :]).sum("wavelength_nm")
     else:
-        logging.warning(
-            f"unknown OpticalFilter type: {sim.opticalfilter}"
-            "   falling back to using no filter at all"
-        )
+        logging.warning(f"unknown OpticalFilter type: {sim.opticalfilter}" "   falling back to using no filter at all")
         VERgray = (ver * optT["sysNObg3"].values[None, :]).sum("wavelength_nm")
 
     return VERgray

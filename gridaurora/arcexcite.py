@@ -68,16 +68,13 @@ def getTranscar(sim, obsAlt_km: float, zenithang: float) -> tuple:
 
             if iEn != lowestBeamUsedInd:
                 if all(Peigen[:, iEn] == Peigen[:, lowestBeamUsedInd]):
-                    logging.error(
-                        f"all Peigen for beam {Ek[iEn]} equal Peigen: beam {Ek[lowestBeamUsedInd]}"
-                    )
+                    logging.error(f"all Peigen for beam {Ek[iEn]} equal Peigen: beam {Ek[lowestBeamUsedInd]}")
 
         if PlambdaAccum is None:  # no beams at all were read
             raise ValueError("No beams were usable")
 
         Peigenunfilt = xarray.DataArray(
-            data=PlambdaAccum.sum(axis=1),  # sum over wavelength axis=1
-            coords=[("alt_km", z), ("energy_ev", Ek)],
+            data=PlambdaAccum.sum(axis=1), coords=[("alt_km", z), ("energy_ev", Ek)],  # sum over wavelength axis=1
         )
 
     Peigen = xarray.DataArray(data=Peigen, coords=[("alt_km", z), ("energy_ev", Ek)])
@@ -90,9 +87,7 @@ def getbeamsused(zeroUnusedBeams, Ek: float, minbeamenergy: float) -> int:
         try:
             return np.where(Ek >= minbeamenergy)[0][0]  # first index
         except IndexError:
-            logging.warning(
-                "minimum energy outside the simulation energy range, falling back to using all beams"
-            )
+            logging.warning("minimum energy outside the simulation energy range, falling back to using all beams")
 
     return 0
 
@@ -107,9 +102,7 @@ def loadver(verfn):
     lamb, plambdasorted = sortelimlambda(lamb, plambda)
 
     pdatf = xarray.DataArray(
-        data=plambdasorted,
-        coords={"wavelength_nm": lamb, "alt_km": zTC, "energy": Ek},
-        dims=["wavelength_nm", "alt_km", "energy"],
+        data=plambdasorted, coords={"wavelength_nm": lamb, "alt_km": zTC, "energy": Ek}, dims=["wavelength_nm", "alt_km", "energy"],
     )
     return pdatf, Ek
 
@@ -125,8 +118,6 @@ def getBeamEnergies(beamEnergyCSV):
 
     Ek = beamEnergies[:, 0]  # TODO should this value be in the log middle of these values?
     # Ek = Ek[Ek>minBeamEnergy] #nope, let's leave it to be zeroed later
-    EKpcolor = np.append(
-        Ek, beamEnergies[-1, 1]
-    )  # the next higher energy is in the next right column
+    EKpcolor = np.append(Ek, beamEnergies[-1, 1])  # the next higher energy is in the next right column
 
     return Ek, EKpcolor

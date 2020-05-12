@@ -33,9 +33,7 @@ def doplot(fn: Path, bins: xarray.DataArray, Egrid: np.ndarray = None, debug: bo
     # %% main plot
     ax = figure().gca()
     ax.bar(
-        left=bins.loc[:, "low"],
-        height=bins.loc[:, "flux"],
-        width=bins.loc[:, "high"] - bins.loc[:, "low"],
+        left=bins.loc[:, "low"], height=bins.loc[:, "flux"], width=bins.loc[:, "high"] - bins.loc[:, "low"],
     )
     ax.set_yscale("log")
     ax.set_xscale("log")

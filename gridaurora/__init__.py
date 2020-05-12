@@ -8,9 +8,7 @@ from typing import Union
 def toyearmon(time: datetime) -> int:
     # %% date handle
     if isinstance(time, (tuple, list, np.ndarray)):
-        logging.warning(
-            f"taking only first time {time[0]}, would you like multiple times upgrade to code?"
-        )
+        logging.warning(f"taking only first time {time[0]}, would you like multiple times upgrade to code?")
         time = time[0]
 
     if isinstance(time, str):

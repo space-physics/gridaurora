@@ -9,16 +9,7 @@ FIXME: refactor to xarray and .to_netcdf()
 
 
 def writeeigen(
-    fn: Path,
-    Ebins,
-    t,
-    z,
-    diffnumflux=None,
-    ver=None,
-    prates=None,
-    lrates=None,
-    tezs=None,
-    latlon=None,
+    fn: Path, Ebins, t, z, diffnumflux=None, ver=None, prates=None, lrates=None, tezs=None, latlon=None,
 ):
     if not fn:
         return

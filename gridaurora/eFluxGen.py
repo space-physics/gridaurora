@@ -88,13 +88,7 @@ def midtail(E: np.ndarray, E0: np.ndarray, bm: float, Bm: float):
 
 
 def hitail(
-    E: np.ndarray,
-    diffnumflux: np.ndarray,
-    isimE0: np.ndarray,
-    E0: np.ndarray,
-    Bhf: np.ndarray,
-    bh: float,
-    verbose: int = 0,
+    E: np.ndarray, diffnumflux: np.ndarray, isimE0: np.ndarray, E0: np.ndarray, Bhf: np.ndarray, bh: float, verbose: int = 0,
 ):
     """
     strickland 1993 said 0.2, but 0.145 gives better match to peak flux at 2500 = E0
@@ -123,7 +117,7 @@ def diprat(E0: np.ndarray, arc: np.ndarray, isimE0: np.ndarray):
 
 def gaussflux(E, Wb, E0, Q0):
     Qc = Q0 / (pi ** (3 / 2) * Wb * E0)
-    return Qc * np.exp(-((E[:, None] - E0) / Wb) ** 2)
+    return Qc * np.exp(-(((E[:, None] - E0) / Wb) ** 2))
 
 
 def writeh5(h5fn: Path, Phi: np.ndarray, E, fp):

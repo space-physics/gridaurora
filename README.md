@@ -1,22 +1,22 @@
+# Grid for Auroral models
+
 [![image](https://zenodo.org/badge/36744963.svg)](https://zenodo.org/badge/latestdoi/36744963)
 
-[![image](https://travis-ci.org/scivision/gridaurora.svg?branch=master)](https://travis-ci.org/scivision/gridaurora)
-[![Coverage Status](https://coveralls.io/repos/github/scivision/gridaurora/badge.svg?branch=master)](https://coveralls.io/github/scivision/gridaurora?branch=master)
-[![image](https://ci.appveyor.com/api/projects/status/2jjhaq3rqjrw77vg?svg=true)](https://ci.appveyor.com/project/scivision/gridaurora)
+[![image](https://travis-ci.org/space-physics/gridaurora.svg?branch=master)](https://travis-ci.org/space-physics/gridaurora)
 [![pypi versions](https://img.shields.io/pypi/pyversions/gridaurora.svg)](https://pypi.python.org/pypi/gridaurora)
 [![PyPi Download stats](http://pepy.tech/badge/gridaurora)](http://pepy.tech/project/gridaurora)
-[![Xarray badge](https://img.shields.io/badge/powered%20by-xarray-orange.svg?style=flat)](http://xarray.pydata.org/en/stable/why-xarray.html)
-
-# Grid for Auroral models
 
 Discretizations of space (grids) and time conversions useful for aeronomy and auroral modeling.
 
 ## Install
 
-    python -m pip install -e .
+```sh
+pip install -e .
+```
 
 Note: you will need a Fortran compiler on your system for `f2py` modules.
-It works on Linux, Mac, [Windows](https://scivision.dev/f2py-running-fortran-code-in-python-on-windows/), etc.
+It works on Linux, Mac,
+[Windows](https://www.scivision.dev/f2py-running-fortran-code-in-python-on-windows/), etc.
 
 ## Eigenprofiles
 
@@ -32,7 +32,6 @@ Once installed, select model by:
 * `-M rees`  Rees-Sergienko-Ivanov
 * `-M glow`  Stan Solomon's GLOW model
 
-
 ### Command Line Options
 
 -t time, format yyyy-mm-ddTHH:MM:SSZ where Z sets UTC time zone -c lat,
@@ -43,8 +42,7 @@ lon WGS84 geodetic degrees -o output, hDF5 ends in .h5 -M model select
 
     python MakeIonoEigenprofile.py -t 2013-01-31T09:00:00Z -c 65 -148 -o out.h5 -M rees
 
-Auroral Data Files
-------------------
+## Auroral Data Files
 
 The functions in `gridaurora/calcemissions.py`, based on work by
 Zettergren, computes per-wavelength volume emission rate along a flux
@@ -92,8 +90,4 @@ excitation cross section multiplicitively.
 
 ## Function Description
 
-function  | description
-----------|----------------------------------------------------------------------------------------------------------------
-ztanh.py  | continuously varying grid using hyperbolic tangent. Inspired by suggestion from Prof. Matt Zettergren of ERAU.
-
-
+* ztanh.py:  continuously varying grid using hyperbolic tangent. from M. Zettergren

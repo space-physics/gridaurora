@@ -22,11 +22,7 @@ def selftest(bg3fn, windfn, qefn, mmsLambda, obsalt_km, zenang_deg):
 def main():
     p = ArgumentParser(description="Plots spectral transmission data from filter datasheets")
     p.add_argument(
-        "--wlnm",
-        help="START STOP STEP wavelength in nm",
-        nargs=3,
-        default=(200.0, 1200.0, 0.1),
-        type=float,
+        "--wlnm", help="START STOP STEP wavelength in nm", nargs=3, default=(200.0, 1200.0, 0.1), type=float,
     )
     p.add_argument("--path", help="path to HDF5 data")
     p.add_argument("-a", "--altkm", help="observer altitude (km)", type=float, default=0.0)

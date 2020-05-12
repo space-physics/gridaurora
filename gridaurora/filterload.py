@@ -10,9 +10,7 @@ import xarray
 try:
     import lowtran
 except ImportError as e:
-    logging.error(
-        f"failure to load LOWTRAN, proceeding without atmospheric absorption model.  {e}"
-    )
+    logging.error(f"failure to load LOWTRAN, proceeding without atmospheric absorption model.  {e}")
     lowtran = None
 """
 gets optical System Transmittance from filter, sensor window, and QE spec.
@@ -25,9 +23,7 @@ window: http://www.andor.com/pdfs/specifications/Andor_Camera_Windows_Supplement
 """
 
 
-def getSystemT(
-    newLambda, bg3fn: Path, windfn: Path, qefn: Path, obsalt_km, zenang_deg, verbose: bool = False
-) -> xarray.Dataset:
+def getSystemT(newLambda, bg3fn: Path, windfn: Path, qefn: Path, obsalt_km, zenang_deg, verbose: bool = False) -> xarray.Dataset:
 
     bg3fn = Path(bg3fn).expanduser()
     windfn = Path(windfn).expanduser()
@@ -61,9 +57,7 @@ def getSystemT(
     # %% BG3 filter
     with h5py.File(bg3fn, "r") as f:
         try:
-            assert isinstance(
-                f["/T"], h5py.Dataset
-            ), "we only allow one transmission curve per file"  # simple legacy behavior
+            assert isinstance(f["/T"], h5py.Dataset), "we only allow one transmission curve per file"  # simple legacy behavior
             fbg3 = interp1d(f["/wavelength"], np.log(f["/T"]), kind="linear", bounds_error=False)
         except KeyError:
             raise KeyError("could not find /wavelength in {}".format(f.filename))

@@ -34,64 +34,33 @@ sns.set(rc={"image.cmap": "cubehelix_r"})  # for contour
 
 
 def main():
-    p = ArgumentParser(
-        description="Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles"
+    p = ArgumentParser(description="Makes unit flux eV^-1 as input to GLOW or Transcar to create ionospheric eigenprofiles")
+    p.add_argument(
+        "-i", "--inputgridfn", help="original Zettergren input flux grid to base off of", default="zettflux.csv",
+    )
+    p.add_argument("-o", "--outfn", help="hdf5 file to write with ionospheric response (eigenprofiles)")
+    p.add_argument(
+        "-t", "--simtime", help="yyyy-mm-ddTHH:MM:SSZ time of sim", nargs="+", default=["1999-12-21T00:00:00Z"],
     )
     p.add_argument(
-        "-i",
-        "--inputgridfn",
-        help="original Zettergren input flux grid to base off of",
-        default="zettflux.csv",
-    )
-    p.add_argument(
-        "-o", "--outfn", help="hdf5 file to write with ionospheric response (eigenprofiles)"
-    )
-    p.add_argument(
-        "-t",
-        "--simtime",
-        help="yyyy-mm-ddTHH:MM:SSZ time of sim",
-        nargs="+",
-        default=["1999-12-21T00:00:00Z"],
-    )
-    p.add_argument(
-        "-c",
-        "--latlon",
-        help="geodetic latitude/longitude (deg)",
-        type=float,
-        nargs=2,
-        default=[65, -148.0],
+        "-c", "--latlon", help="geodetic latitude/longitude (deg)", type=float, nargs=2, default=[65, -148.0],
     )
     #    p.add_argument('-m', '--makeplot', help='show to show plots, png to save pngs of plots', nargs='+', default=['show'])
+    p.add_argument("-M", "--model", help="specify auroral model (glow,rees,transcar)", default="glow")
     p.add_argument(
-        "-M", "--model", help="specify auroral model (glow,rees,transcar)", default="glow"
+        "-z", "--zlim", help="minimum,maximum altitude [km] to plot", nargs=2, default=(None, None), type=float,
     )
     p.add_argument(
-        "-z",
-        "--zlim",
-        help="minimum,maximum altitude [km] to plot",
-        nargs=2,
-        default=(None, None),
-        type=float,
+        "--isotropic", help="(rees model only) isotropic or non-isotropic pitch angle", action="store_true",
     )
     p.add_argument(
-        "--isotropic",
-        help="(rees model only) isotropic or non-isotropic pitch angle",
-        action="store_true",
-    )
-    p.add_argument(
-        "--vlim",
-        help="plotting limits on energy dep and production plots",
-        nargs=2,
-        type=float,
-        default=(1e-7, 1e1),
+        "--vlim", help="plotting limits on energy dep and production plots", nargs=2, type=float, default=(1e-7, 1e1),
     )
 
     p = p.parse_args()
 
     if not p.outfn:
-        print(
-            "you have not specified an output file with -o options, so I will only plot and not save result"
-        )
+        print("you have not specified an output file with -o options, so I will only plot and not save result")
 
     #    makeplot = p.makeplot
 
@@ -117,9 +86,7 @@ def main():
             EK, diffnumflux, T, p.latlon, p.makeplot, p.outfn, p.zlim
         )
 
-        writeeigen(
-            p.outfn, EKpcolor, T, ver.z_km, diffnumflux, ver, prates, lrates, tezs, p.latlon
-        )
+        writeeigen(p.outfn, EKpcolor, T, ver.z_km, diffnumflux, ver, prates, lrates, tezs, p.latlon)
         # %% plots
         # input
         doplot(p.inputgridfn, Ebins)
@@ -131,21 +98,11 @@ def main():
         for t in ver:  # TODO for each time
             # VER eigenprofiles, summed over wavelength
             ploteigver(
-                EKpcolor,
-                ver.z_km,
-                ver.sum("wavelength_nm"),
-                (None,) * 6,
-                sim,
-                "{} Vol. Emis. Rate ".format(t),
+                EKpcolor, ver.z_km, ver.sum("wavelength_nm"), (None,) * 6, sim, "{} Vol. Emis. Rate ".format(t),
             )
             # volume production rate, summed over reaction
             plotprodloss(
-                prates.loc[:, "final", ...].sum("reaction"),
-                lrates.loc[:, "final", ...].sum("reaction"),
-                t,
-                glat,
-                glon,
-                p.zlim,
+                prates.loc[:, "final", ...].sum("reaction"), lrates.loc[:, "final", ...].sum("reaction"), t, glat, glon, p.zlim,
             )
             # energy deposition
             plotenerdep(tezs, t, glat, glon, p.zlim)

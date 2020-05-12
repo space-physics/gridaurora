@@ -25,15 +25,7 @@ dymin = 20
 
 
 def writeplots(
-    fg,
-    plotprefix,
-    tind=None,
-    odir=None,
-    fmt=".png",
-    anno=None,
-    dpi=None,
-    facecolor=None,
-    doclose=True,
+    fg, plotprefix, tind=None, odir=None, fmt=".png", anno=None, dpi=None, facecolor=None, doclose=True,
 ):
     try:
         if fg is None or odir is None:
@@ -112,9 +104,7 @@ def plotflux(E, E0, arc, base=None, hi=None, low=None, mid=None, ttxt="Different
         ax.loglog(E, base)
         ax.set_ylim((FMIN, FMAX))
         # ax.set_xlim((1e2,1e4))
-        ax.set_title(
-            "arc Gaussian base function, E0=" + str(E0) + "[eV]" + "\n Wbc: width, Q0: height"
-        )
+        ax.set_title("arc Gaussian base function, E0=" + str(E0) + "[eV]" + "\n Wbc: width, Q0: height")
         ax.set_xlabel("Electron Energy [eV]")
         ax.set_ylabel("Flux  [cm$^{-2}$s$^{-1}$eV$^{-1}$sr$^{-1}$]")
         ax.legend(lblstr)
@@ -145,15 +135,7 @@ def plotflux(E, E0, arc, base=None, hi=None, low=None, mid=None, ttxt="Different
 
 
 def ploteigver(
-    EKpcolor,
-    zKM,
-    eigenprofile,
-    vlim=(None,) * 6,
-    sim=None,
-    tInd=None,
-    makeplot=None,
-    prefix=None,
-    progms=None,
+    EKpcolor, zKM, eigenprofile, vlim=(None,) * 6, sim=None, tInd=None, makeplot=None, prefix=None, progms=None,
 ):
     try:
         fg = figure()
@@ -240,10 +222,10 @@ def comparefilters(Ts):
 
         forbidden = [630.0, 555.7]
         permitted = [391.4, 427.8, 844.6, 777.4]
-        for l in forbidden:
-            ax.axvline(l, linestyle="--", color="darkred", alpha=0.8)
-        for l in permitted:
-            ax.axvline(l, linestyle="--", color="darkgreen", alpha=0.8)
+        for ln in forbidden:
+            ax.axvline(ln, linestyle="--", color="darkred", alpha=0.8)
+        for ln in permitted:
+            ax.axvline(ln, linestyle="--", color="darkgreen", alpha=0.8)
 
         ax.set_title(f"{T.filename}")
 
@@ -314,14 +296,7 @@ def plotOptMod(verNObg3gray, VERgray):
 
             # place a text box in upper left in axes coords
             axs[i].text(
-                0.95,
-                0.95,
-                "{:0.0f}".format(e) + "eV",
-                transform=axs[i].transAxes,
-                fontsize=12,
-                va="top",
-                ha="right",
-                bbox=props,
+                0.95, 0.95, "{:0.0f}".format(e) + "eV", transform=axs[i].transAxes, fontsize=12, va="top", ha="right", bbox=props,
             )
         for i in range(33, 36):
             axs[i].axis("off")
@@ -451,14 +426,7 @@ def showIncrVER(
         ax = fg.gca()
 
         pcm = ax.pcolormesh(
-            tTC,
-            z,
-            tver.sum(axis=0),  # sum over wavelength
-            edgecolors="none",
-            cmap=None,
-            norm=None,
-            vmin=0,
-            vmax=1e3,
+            tTC, z, tver.sum(axis=0), edgecolors="none", cmap=None, norm=None, vmin=0, vmax=1e3,  # sum over wavelength
         )
 
         ax.axvline(tTC[tReqInd], color="white", linestyle="--", label="Req. Time")
@@ -505,11 +473,8 @@ def showIncrVER(
         fg = figure(figsize=(11, 8), dpi=100)
         ax = fg.gca()
         # fg.subplots_adjust(top=0.85)
-        thistitle = (
-            titxt
-            + ": {:d} emission lines\n VER/flux:  geodetic lat: {} lon: {}  {}".format(
-                ver.shape[0], tctime["latgeo_ini"], tctime["longeo_ini"], tTC[tReqInd]
-            )
+        thistitle = titxt + ": {:d} emission lines\n VER/flux:  geodetic lat: {} lon: {}  {}".format(
+            ver.shape[0], tctime["latgeo_ini"], tctime["longeo_ini"], tTC[tReqInd]
         )
         ax.set_title(thistitle, fontsize=12)
         ax.set_xlabel("VER/flux")
@@ -523,12 +488,7 @@ def showIncrVER(
         ax.grid(True)
         if ver.shape[0] < 20:
             ax.legend(
-                loc="upper center",
-                bbox_to_anchor=(1.05, 0.95),
-                ncol=1,
-                fancybox=True,
-                shadow=True,
-                fontsize=9,
+                loc="upper center", bbox_to_anchor=(1.05, 0.95), ncol=1, fancybox=True, shadow=True, fontsize=9,
             )
 
         ax.tick_params(axis="both", which="both", direction="in", labelsize=12)
@@ -558,24 +518,16 @@ def plotspectra(br, optT: xarray.DataArray, E: float, lambminmax: tuple):
 
     def _plotspectrasub(ax, bf, txt):
         ax.set_yscale("log")
-        ax.set_title(
-            "Auroral spectrum, " + txt + f",integrated along flux tube: $E_0$ = {E:.0f} eV"
-        )
+        ax.set_title("Auroral spectrum, " + txt + f",integrated along flux tube: $E_0$ = {E:.0f} eV")
         ax.set_ylabel("optical intensity")
         ax.set_xlim(lambminmax)
         ax.set_ylim(spectraAminmax)
         ax.xaxis.set_major_locator(MultipleLocator(100))
         # ax.invert_xaxis()
 
-        for l in spectrallines:
+        for ln in spectrallines:
             ax.text(
-                l,
-                bf[l] * 1.7,
-                "{:.1f}".format(l),
-                ha="center",
-                va="bottom",
-                fontsize="medium",
-                rotation=60,
+                ln, bf[ln] * 1.7, "{:.1f}".format(ln), ha="center", va="bottom", fontsize="medium", rotation=60,
             )
 
     # %%

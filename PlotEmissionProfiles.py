@@ -23,9 +23,7 @@ sns.set(context="paper", style="whitegrid", font_scale=2.1, rc={"image.cmap": "c
 
 
 def main():
-    p = ArgumentParser(
-        description="using excitation rates and other factors, creates volume emission rate profiles."
-    )
+    p = ArgumentParser(description="using excitation rates and other factors, creates volume emission rate profiles.")
     p.add_argument("path", help="root path where simulation inputs/outputs are")
     p.add_argument("beamenergy", help="beam energy [eV] to plot", type=float)
     p.add_argument(
@@ -36,11 +34,7 @@ def main():
         default=["metastable", "atomic", "n21ng", "n2meinel", "n22pg", "n21pg"],
     )
     p.add_argument(
-        "-m",
-        "--makeplot",
-        help="specify plots to make e.g. vjinc vjinc1d",
-        nargs="+",
-        default=["eigtime", "eigtime1d", "spectra"],
+        "-m", "--makeplot", help="specify plots to make e.g. vjinc vjinc1d", nargs="+", default=["eigtime", "eigtime1d", "spectra"],
     )
     p.add_argument("--datcarfn", help="path to dir.input/DATCAR", default="dir.input/DATCAR")
     p.add_argument("-o", "--outfile", help="HDF5 filename to write")
@@ -62,9 +56,7 @@ def main():
     t = excrates.time
 
     if t < np.datetime64(tctime["tstartPrecip"]):
-        logging.warning(
-            "you picked a time before precipitation started, so youre looking at AIRGLOW instead of AURORA!"
-        )
+        logging.warning("you picked a time before precipitation started, so youre looking at AIRGLOW instead of AURORA!")
 
     tver, ver, br = calcemissions(excrates["excitation"], sim)
     optT = getSystemT(tver.index, sim.bg3fn, sim.windowfn, sim.qefn, sim.obsalt_km, sim.zenang)
@@ -73,9 +65,7 @@ def main():
         h5fn = Path(p.outfile).expanduser()
         print("writing", h5fn)
         with h5py.File(h5fn, "w") as f:
-            d = f.create_dataset(
-                "/ver", data=tver.values
-            )  # volume emission rate per beam vs. altitude and wavelength
+            d = f.create_dataset("/ver", data=tver.values)  # volume emission rate per beam vs. altitude and wavelength
             d.attrs["units"] = "photons cm^-3 sr^-1 s^-1 eV^-1"
             d = f.create_dataset("/wavelength", data=tver.index)
             d.attrs["units"] = "nm"

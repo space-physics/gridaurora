@@ -87,10 +87,7 @@ def getAtomic(rates, ver, lamb, br, reactfn):
     with h5py.File(reactfn, "r") as f:
         lambnew = f["/atomic/lambda"].value.ravel(order="F")  # some are not 1-D!
 
-    vnew = np.concatenate(
-        (rates.loc[..., "po3p3p"].values[..., None], rates.loc[..., "po3p5p"].values[..., None]),
-        axis=-1,
-    )
+    vnew = np.concatenate((rates.loc[..., "po3p3p"].values[..., None], rates.loc[..., "po3p5p"].values[..., None]), axis=-1,)
 
     return catvl(rates.alt_km, ver, vnew, lamb, lambnew, br)
 
@@ -104,9 +101,7 @@ def getN21NG(rates, ver, lamb, br, reactfn):
         lambdaA = f["/N2+1NG/lambda"].value.ravel(order="F")
         franckcondon = f["/N2+1NG/fc"].value
 
-    return doBandTrapz(
-        A, lambdaA, franckcondon, rates.loc[..., "p1ng"], lamb, ver, rates.alt_km, br
-    )
+    return doBandTrapz(A, lambdaA, franckcondon, rates.loc[..., "p1ng"], lamb, ver, rates.alt_km, br)
 
 
 def getN2meinel(rates, ver, lamb, br, reactfn):
@@ -117,9 +112,7 @@ def getN2meinel(rates, ver, lamb, br, reactfn):
     # normalize
     franckcondon = franckcondon / franckcondon.sum()  # special to this case
 
-    return doBandTrapz(
-        A, lambdaA, franckcondon, rates.loc[..., "pmein"], lamb, ver, rates.alt_km, br
-    )
+    return doBandTrapz(A, lambdaA, franckcondon, rates.loc[..., "pmein"], lamb, ver, rates.alt_km, br)
 
 
 def getN22PG(rates, ver, lamb, br, reactfn):
@@ -129,9 +122,7 @@ def getN22PG(rates, ver, lamb, br, reactfn):
         lambdaA = f["/N2_2PG/lambda"].value.ravel(order="F")
         franckcondon = f["/N2_2PG/fc"].value
 
-    return doBandTrapz(
-        A, lambdaA, franckcondon, rates.loc[..., "p2pg"], lamb, ver, rates.alt_km, br
-    )
+    return doBandTrapz(A, lambdaA, franckcondon, rates.loc[..., "p2pg"], lamb, ver, rates.alt_km, br)
 
 
 def getN21PG(rates, ver, lamb, br, reactfn):

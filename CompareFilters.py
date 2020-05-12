@@ -15,12 +15,7 @@ R = Path(__file__).parent
 
 
 def selftest(
-    bg3fn: Path,
-    windfn: Path,
-    qefn: Path,
-    mmsLambda: List[float],
-    obsalt_km: float,
-    zenang_deg: float,
+    bg3fn: Path, windfn: Path, qefn: Path, mmsLambda: List[float], obsalt_km: float, zenang_deg: float,
 ):
 
     newLambda = arange(mmsLambda[0], mmsLambda[1] + mmsLambda[2], mmsLambda[2], dtype=float)
@@ -30,11 +25,7 @@ def selftest(
 def main():
     p = ArgumentParser(description="Plots spectral transmission data from filter datasheets")
     p.add_argument(
-        "--wlnm",
-        help="START STOP STEP wavelength in nm",
-        nargs=3,
-        default=(400.0, 700.0, 0.1),
-        type=float,
+        "--wlnm", help="START STOP STEP wavelength in nm", nargs=3, default=(400.0, 700.0, 0.1), type=float,
     )
     p.add_argument("--path", help="path to HDF5 data")
     p.add_argument("-a", "--altkm", help="observer altitude (km)", type=float, default=0.0)
